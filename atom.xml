@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.iuwai.com/"/>
-  <updated>2017-12-21T01:39:39.641Z</updated>
+  <updated>2017-12-19T11:02:25.725Z</updated>
   <id>http://www.iuwai.com/</id>
   
   <author>
@@ -15,46 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>dayDayUp</title>
-    <link href="http://www.iuwai.com/2017/12/21/dayDayUp-1/"/>
-    <id>http://www.iuwai.com/2017/12/21/dayDayUp-1/</id>
-    <published>2017-12-21T01:39:39.000Z</published>
-    <updated>2017-12-21T01:39:39.641Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>日日新</title>
-    <link href="http://www.iuwai.com/2017/12/21/dayDayUp/"/>
-    <id>http://www.iuwai.com/2017/12/21/dayDayUp/</id>
-    <published>2017-12-21T01:37:27.000Z</published>
-    <updated>2017-12-21T01:37:45.660Z</updated>
-    
-    <content type="html"><![CDATA[<h4 id="2017-12-21"><a href="#2017-12-21" class="headerlink" title="2017.12.21"></a>2017.12.21</h4><p>基本归隐谬误<br>悬置道德判断</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h4 id=&quot;2017-12-21&quot;&gt;&lt;a href=&quot;#2017-12-21&quot; class=&quot;headerlink&quot; title=&quot;2017.12.21&quot;&gt;&lt;/a&gt;2017.12.21&lt;/h4&gt;&lt;p&gt;基本归隐谬误&lt;br&gt;悬置道德判断&lt;/p&gt;
-
-      
-    
-    </summary>
-    
-      <category term="dayDayUp" scheme="http://www.iuwai.com/categories/dayDayUp/"/>
-    
-    
-      <category term="自我迭代" scheme="http://www.iuwai.com/tags/%E8%87%AA%E6%88%91%E8%BF%AD%E4%BB%A3/"/>
-    
-  </entry>
   
   <entry>
     <title>Hello World</title>
