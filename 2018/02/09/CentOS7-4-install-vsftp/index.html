@@ -15,17 +15,17 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="description" content="1、安装vsftpd查看是否已经安装vsftpd1rpm -qa | grep vsftpd 如果没有，就安装，并设置开机启动12yum -y install vsftpdchkconfig vsftpd on 当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_642、修改配置所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录C">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://www.iuwai.com/2017/12/19/hello-world/index.html">
+<meta property="og:title" content="CentOS7.4 install vsftp">
+<meta property="og:url" content="http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/index.html">
 <meta property="og:site_name" content="Iuwai">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="1、安装vsftpd查看是否已经安装vsftpd1rpm -qa | grep vsftpd 如果没有，就安装，并设置开机启动12yum -y install vsftpdchkconfig vsftpd on 当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_642、修改配置所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录C">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-19T11:02:25.725Z">
+<meta property="og:updated_time" content="2018-02-09T08:46:43.774Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="CentOS7.4 install vsftp">
+<meta name="twitter:description" content="1、安装vsftpd查看是否已经安装vsftpd1rpm -qa | grep vsftpd 如果没有，就安装，并设置开机启动12yum -y install vsftpdchkconfig vsftpd on 当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_642、修改配置所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录C">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -57,7 +57,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>Hello World | Iuwai</title>
+<title>CentOS7.4 install vsftp | Iuwai</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -265,11 +265,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-CentOS7-4-install-vsftp" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/19/hello-world/" class="article-date">
-      <time datetime="2017-12-19T11:02:25.684Z" itemprop="datePublished">2017-12-19</time>
+      <a href="/2018/02/09/CentOS7-4-install-vsftp/" class="article-date">
+      <time datetime="2018-02-09T08:37:03.000Z" itemprop="datePublished">2018-02-09</time>
 </a>
 
 
@@ -284,7 +284,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Hello World
+      CentOS7.4 install vsftp
     </h1>
   
 
@@ -301,15 +301,23 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <h3 id="1、安装vsftpd"><a href="#1、安装vsftpd" class="headerlink" title="1、安装vsftpd"></a>1、安装vsftpd</h3><p>查看是否已经安装vsftpd<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure></p>
+<p>如果没有，就安装，并设置开机启动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure></p>
+<p>当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_64<br>2、修改配置<br>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开/etc/vsftpd/vsftpd.conf，做如下配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/<span class="built_in">log</span>/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure></p>
+<p>经验证，FTP3.0.2版本必须加参数：allow_writeable_chroot=YES，6.8默认安装vsftpd-2.2.2-13.el6_6.1.x86_64不加也能生效，如果3.0.2不加此参数会报如下错误：<br>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>根本原因在于，从vsftpd_2.3.5版开始，取消了根目录的可写权限。因此，网上的普遍解决方案是以下两种：</p>
+<h5 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod a-w /vaf/ftp</span><br></pre></td></tr></table></figure>
+<h5 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h5><p>vim /etc/vsftpd.conf add the following<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure></p>
+<p>经验证，如果加上参数allow_writeable_chroot，即使去掉参数chroot_local_user=YES，也可正常访问。<br>进行认证：<br>首先，安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install db4 db4-utils</span><br></pre></td></tr></table></figure></p>
+<p>然后，创建用户密码文本/etc/vsftpd/vuser_passwd.txt ，注意奇行是用户名，偶行是密码<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">test</span></span><br><span class="line">123456</span><br></pre></td></tr></table></figure></p>
+<p>接着，生成虚拟用户认证的db文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db_load -T -t <span class="built_in">hash</span> -f /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br></pre></td></tr></table></figure></p>
+<p>随后，编辑认证文件/etc/pam.d/vsftpd，全部注释掉原来语句，再增加以下两句：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br></pre></td></tr></table></figure></p>
+<p>mkdir /etc/vsftpd/vuser_conf/<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/vsftpd/vuser_conf/<span class="built_in">test</span> //文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span><br><span class="line"></span><br><span class="line">write_enable=YES //可写</span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_enable=YES</span><br><span class="line">anon_mkdir_write_enable=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line">local_root=/httx/run/appdown/paasftpuser /虚拟用户根目录,根据实际情况修改</span><br></pre></td></tr></table></figure></p>
+<h4 id="设置Selinux"><a href="#设置Selinux" class="headerlink" title="设置Selinux"></a>设置Selinux</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setsebool -P ftp_home_dir=1   //设置ftp可以使用home目录</span><br><span class="line">sersebool -P allow_ftpd_full_access=1 //设置ftp用户可以有所有权限</span><br></pre></td></tr></table></figure>
+<p>设置FTP根目录权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /ftp/www   //创建目录</span><br><span class="line">chmod R 755 /ftp</span><br><span class="line">chmod R 750 /ftp/www</span><br></pre></td></tr></table></figure></p>
+<p>ftp访问目录权限尽量最小</p>
+<h4 id="设置防火墙"><a href="#设置防火墙" class="headerlink" title="设置防火墙"></a>设置防火墙</h4><p>打开/etc/sysconfig/iptables<br>在“-A INPUT –m state –state NEW –m tcp –p –dport 22 –j ACCEPT”，下添加：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport 21 -j ACCEPT</span><br></pre></td></tr></table></figure></p>
+<p>然后保存，并关闭该文件，在终端内运行下面的命令，刷新防火墙配置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service iptables restart</span><br></pre></td></tr></table></figure></p>
+<p>OK，FTP搭建完成！</p>
 
       
     </div>
@@ -318,13 +326,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/19/hello-world/">Hello World</a></p>
+        <p><span>本文标题:</span><a href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
-        <p><span>发布时间:</span>2017-12-19, 19:02:25</p>
-        <p><span>最后更新:</span>2017-12-19, 19:02:25</p>
+        <p><span>发布时间:</span>2018-02-09, 16:37:03</p>
+        <p><span>最后更新:</span>2018-02-09, 16:46:43</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/19/hello-world/" title="Hello World">http://www.iuwai.com/2017/12/19/hello-world/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2017/12/19/hello-world/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/02/09/CentOS7-4-install-vsftp/" title="CentOS7.4 install vsftp">http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -336,12 +344,12 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
+        
+            <div id="article-nav-older" class="article-nav-title">
                 <a href="/2018/02/09/OpenSSH-Update/">
                     OpenSSH Update
                 </a>
             </div>
-        
         
     </nav>
 
@@ -351,7 +359,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-number">1.</span> <span class="toc-text"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-number">1.2.</span> <span class="toc-text"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-number">1.3.</span> <span class="toc-text"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-number">1.4.</span> <span class="toc-text"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</span></a></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、安装vsftpd"><span class="toc-number">1.</span> <span class="toc-text"><a href="#1&#x3001;&#x5B89;&#x88C5;vsftpd" class="headerlink" title="1&#x3001;&#x5B89;&#x88C5;vsftpd"></a>1&#x3001;&#x5B89;&#x88C5;vsftpd</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#方案一"><span class="toc-number">1.0.1.</span> <span class="toc-text"><a href="#&#x65B9;&#x6848;&#x4E00;" class="headerlink" title="&#x65B9;&#x6848;&#x4E00;"></a>&#x65B9;&#x6848;&#x4E00;</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#方案二"><span class="toc-number">1.0.2.</span> <span class="toc-text"><a href="#&#x65B9;&#x6848;&#x4E8C;" class="headerlink" title="&#x65B9;&#x6848;&#x4E8C;"></a>&#x65B9;&#x6848;&#x4E8C;</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置Selinux"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#&#x8BBE;&#x7F6E;Selinux" class="headerlink" title="&#x8BBE;&#x7F6E;Selinux"></a>&#x8BBE;&#x7F6E;Selinux</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置防火墙"><span class="toc-number">1.2.</span> <span class="toc-text"><a href="#&#x8BBE;&#x7F6E;&#x9632;&#x706B;&#x5899;" class="headerlink" title="&#x8BBE;&#x7F6E;&#x9632;&#x706B;&#x5899;"></a>&#x8BBE;&#x7F6E;&#x9632;&#x706B;&#x5899;</span></a></li></ol></li></ol>
         
     </div>
     <style>
@@ -387,7 +395,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"Hello World　| Iuwai　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"CentOS7.4 install vsftp　| Iuwai　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -407,15 +415,15 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/02/09/OpenSSH-Update/" title="上一篇: OpenSSH Update">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2018/02/09/OpenSSH-Update/" title="下一篇: OpenSSH Update">
+                <i class="fa fa-angle-right"></i>
+            </a>
         
     </div>
 
