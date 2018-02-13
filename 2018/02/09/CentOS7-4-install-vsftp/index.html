@@ -15,17 +15,17 @@
 
 
 
-<meta name="description" content="1、安装vsftpd查看是否已经安装vsftpd1rpm -qa | grep vsftpd 如果没有，就安装，并设置开机启动12yum -y install vsftpdchkconfig vsftpd on 当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_642、修改配置所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录C">
+<meta name="description" content="CentOS7.4安装vsftp及配置vsftp版本：vsftpd-3.0.2-22.el7.x86_64">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CentOS7.4 install vsftp">
 <meta property="og:url" content="http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/index.html">
 <meta property="og:site_name" content="Iuwai">
-<meta property="og:description" content="1、安装vsftpd查看是否已经安装vsftpd1rpm -qa | grep vsftpd 如果没有，就安装，并设置开机启动12yum -y install vsftpdchkconfig vsftpd on 当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_642、修改配置所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录C">
+<meta property="og:description" content="CentOS7.4安装vsftp及配置vsftp版本：vsftpd-3.0.2-22.el7.x86_64">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-02-09T08:46:43.774Z">
+<meta property="og:updated_time" content="2018-02-13T03:01:10.845Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS7.4 install vsftp">
-<meta name="twitter:description" content="1、安装vsftpd查看是否已经安装vsftpd1rpm -qa | grep vsftpd 如果没有，就安装，并设置开机启动12yum -y install vsftpdchkconfig vsftpd on 当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_642、修改配置所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录C">
+<meta name="twitter:description" content="CentOS7.4安装vsftp及配置vsftp版本：vsftpd-3.0.2-22.el7.x86_64">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -303,7 +303,8 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="1、安装vsftpd"><a href="#1、安装vsftpd" class="headerlink" title="1、安装vsftpd"></a>1、安装vsftpd</h3><p>查看是否已经安装vsftpd<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure></p>
+        <p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64<br><a id="more"></a></p>
+<h3 id="1、安装vsftpd"><a href="#1、安装vsftpd" class="headerlink" title="1、安装vsftpd"></a>1、安装vsftpd</h3><p>查看是否已经安装vsftpd<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure></p>
 <p>如果没有，就安装，并设置开机启动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure></p>
 <p>当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_64<br>2、修改配置<br>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开/etc/vsftpd/vsftpd.conf，做如下配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/<span class="built_in">log</span>/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure></p>
 <p>经验证，FTP3.0.2版本必须加参数：allow_writeable_chroot=YES，6.8默认安装vsftpd-2.2.2-13.el6_6.1.x86_64不加也能生效，如果3.0.2不加此参数会报如下错误：<br>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>根本原因在于，从vsftpd_2.3.5版开始，取消了根目录的可写权限。因此，网上的普遍解决方案是以下两种：</p>
@@ -331,7 +332,7 @@
         <p><span>本文标题:</span><a href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
         <p><span>发布时间:</span>2018-02-09, 16:37:03</p>
-        <p><span>最后更新:</span>2018-02-09, 16:46:43</p>
+        <p><span>最后更新:</span>2018-02-13, 11:01:10</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/02/09/CentOS7-4-install-vsftp/" title="CentOS7.4 install vsftp">http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
