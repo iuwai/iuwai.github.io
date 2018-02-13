@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.iuwai.com/"/>
-  <updated>2018-02-13T03:22:08.273Z</updated>
+  <updated>2018-02-13T06:35:01.149Z</updated>
   <id>http://www.iuwai.com/</id>
   
   <author>
@@ -15,6 +15,24 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CentOS7.4 update ntp</title>
+    <link href="http://www.iuwai.com/2018/02/13/CentOS7-4-update-ntp/"/>
+    <id>http://www.iuwai.com/2018/02/13/CentOS7-4-update-ntp/</id>
+    <published>2018-02-13T06:23:08.000Z</published>
+    <updated>2018-02-13T06:35:01.149Z</updated>
+    
+    <content type="html"><![CDATA[<p>CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz<br><a id="more"></a></p><p>#准备工作</p><h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure><h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp -ar /etc/ntp /etc/ntp.bak</span><br><span class="line">cp /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line">cp /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line">cp /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line">cp /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure><h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum erase ntp ntpdate</span><br></pre></td></tr></table></figure><h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="configure"><a href="#configure" class="headerlink" title="./configure"></a>./configure</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --<span class="built_in">enable</span>-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --<span class="built_in">enable</span>-all-clocks --<span class="built_in">enable</span>-parse-clocks --<span class="built_in">enable</span>-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure><h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line">cp /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line">cp /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line">mv /etc/ntp.bak /etc/ntp</span><br><span class="line">cp /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure><h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure><h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>CentOS7.4 install vsftp</title>
