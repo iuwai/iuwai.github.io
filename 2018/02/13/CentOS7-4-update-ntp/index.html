@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="Iuwai">
 <meta property="og:description" content="CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-02-13T06:35:01.149Z">
+<meta property="og:updated_time" content="2018-03-16T07:08:08.667Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS7.4 update ntp">
 <meta name="twitter:description" content="CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz">
@@ -307,8 +307,8 @@
 <p>#准备工作</p>
 <h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure>
 <h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp -ar /etc/ntp /etc/ntp.bak</span><br><span class="line">cp /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line">cp /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line">cp /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line">cp /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure>
-<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum erase ntp ntpdate</span><br></pre></td></tr></table></figure>
-<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="configure"><a href="#configure" class="headerlink" title="./configure"></a>./configure</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --<span class="built_in">enable</span>-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --<span class="built_in">enable</span>-all-clocks --<span class="built_in">enable</span>-parse-clocks --<span class="built_in">enable</span>-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y erase ntp ntpdate</span><br></pre></td></tr></table></figure>
+<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="configure"><a href="#configure" class="headerlink" title="./configure"></a>./configure</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf ntp-4.2.8p10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ntp-4.2.8p10</span><br><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --<span class="built_in">enable</span>-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --<span class="built_in">enable</span>-all-clocks --<span class="built_in">enable</span>-parse-clocks --<span class="built_in">enable</span>-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
 <h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line">cp /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line">cp /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line">mv /etc/ntp.bak /etc/ntp</span><br><span class="line">cp /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure>
 <h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure>
 <h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>
@@ -322,7 +322,7 @@
         <p><span>本文标题:</span><a href="/2018/02/13/CentOS7-4-update-ntp/">CentOS7.4 update ntp</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
         <p><span>发布时间:</span>2018-02-13, 14:23:08</p>
-        <p><span>最后更新:</span>2018-02-13, 14:35:01</p>
+        <p><span>最后更新:</span>2018-03-16, 15:08:08</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/02/13/CentOS7-4-update-ntp/" title="CentOS7.4 update ntp">http://www.iuwai.com/2018/02/13/CentOS7-4-update-ntp/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/02/13/CentOS7-4-update-ntp/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -336,6 +336,12 @@
 
 
     <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/03/10/Django-route/">
+                    Django-route
+                </a>
+            </div>
         
         
             <div id="article-nav-older" class="article-nav-title">
@@ -408,7 +414,9 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2018/03/10/Django-route/" title="上一篇: Django-route">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
@@ -420,7 +428,7 @@
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/CentOS7-4-update-ntp/">CentOS7.4 update ntp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/OpenSSH-Update/">OpenSSH Update</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/03/10/Django-route/">Django-route</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/CentOS7-4-update-ntp/">CentOS7.4 update ntp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/OpenSSH-Update/">OpenSSH Update</a></li></ul>
 
 
 
