@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.iuwai.com/"/>
-  <updated>2018-03-10T09:34:34.705Z</updated>
+  <updated>2018-03-25T02:24:08.591Z</updated>
   <id>http://www.iuwai.com/</id>
   
   <author>
@@ -17,20 +17,35 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>xiaochao</title>
+    <link href="http://www.iuwai.com/2018/03/25/xiaochao/"/>
+    <id>http://www.iuwai.com/2018/03/25/xiaochao/</id>
+    <published>2018-03-25T02:11:28.000Z</published>
+    <updated>2018-03-25T02:24:08.591Z</updated>
+    
+    <content type="html"><![CDATA[<p>日常小小抄<br><a id="more"></a></p><h4 id="2018-03-25-10-15"><a href="#2018-03-25-10-15" class="headerlink" title="2018.03.25 10:15"></a>2018.03.25 10:15</h4><p>知世故而不世故，才是真正的少年。<br>被伤害过依然能倾心以赴赤诚相待，才是真正的少年。</p><hr><p>网上曾经流传一句话“中年男人不如狗”。<br>说得有理有据：</p><p>1.年龄逐渐增长，身体机能随之下降，多种病症出现。</p><p>2.他们在家中承担起抚养父母妻儿的责任，在社会上如果没有体面的工作就要忍气吞声。天能塌，他们不能。</p><p>3.男人年轻的时候都想着仗剑走天涯，惦记着诗和远方，后来工作太忙钱不够就没去。</p><p>4.生而为人，无法避免被“比较”。从小到大向来如此，小时候的敌人是别人家的孩子，长大之后是别人家的丈夫，再往后是别人家的父亲。</p><hr><p>知乎上也有这样一个问题：</p><p>“为什么那么多男人开车回家，到了楼下还要在车里坐好久？”</p><p>有一个回答获得了高分点赞：</p><p>“很多时候我也不想下车，因为那是一个分界点。在车上，一个人静一静，抽根烟，发会呆这个躯体属于自己；但推开车门，你就是柴米油盐，是父亲、是儿子、是老公，唯独不是你自己。我们把真实的自己藏在车里；打开车门出去，哪怕是哭着爬着，也只能把被人寄予厚望的身份扮演下去。”</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;日常小小抄&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Django-route</title>
     <link href="http://www.iuwai.com/2018/03/10/Django-route/"/>
     <id>http://www.iuwai.com/2018/03/10/Django-route/</id>
     <published>2018-03-10T08:24:29.000Z</published>
-    <updated>2018-03-10T09:34:34.705Z</updated>
+    <updated>2018-03-25T02:13:17.800Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, list</span><br><span class="line">urlpatterns = patterns(<span class="string">''</span>,</span><br><span class="line">    url(<span class="string">r'^list/(\d*)/$'</span>, list),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r'^list/(\d*)/(\d*)/$'</span>, list),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$'</span>, list),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/$'</span>, list, &#123;<span class="string">'id'</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></p><p>views.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id1, id2)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> id</span><br><span class="line">    <span class="keyword">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p><p>指定参数名：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id, name)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> name, id</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p><p>请求链接：<a href="http://localhost:9000/list/100" target="_blank" rel="noopener">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000" target="_blank" rel="noopener">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加/,如果不加，urls配置中必须要加上终止符：/$,这样请求时会自动加上/</p>]]></content>
+    <content type="html"><![CDATA[<p>Django路由系统:动态路由、指定参数名、默认参数<br><a id="more"></a></p><h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, list</span><br><span class="line">urlpatterns = patterns(<span class="string">''</span>,</span><br><span class="line">    url(<span class="string">r'^list/(\d*)/$'</span>, list),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r'^list/(\d*)/(\d*)/$'</span>, list),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$'</span>, list),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/$'</span>, list, &#123;<span class="string">'id'</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></p><p>views.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id1, id2)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> id</span><br><span class="line">    <span class="keyword">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p><p>指定参数名：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id, name)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> name, id</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p><p>请求链接：<a href="http://localhost:9000/list/100" target="_blank" rel="noopener">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000" target="_blank" rel="noopener">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加/,如果不加，urls配置中必须要加上终止符：/$,这样请求时会自动加上/</p>]]></content>
     
     <summary type="html">
     
-      
-      
-        &lt;h2 id=&quot;Django路由系统&quot;&gt;&lt;a href=&quot;#Django路由系统&quot; class=&quot;headerlink&quot; title=&quot;Django路由系统&quot;&gt;&lt;/a&gt;Django路由系统&lt;/h2&gt;&lt;h3 id=&quot;动态路由&quot;&gt;&lt;a href=&quot;#动态路由&quot; class=&quot;head
-      
+      &lt;p&gt;Django路由系统:动态路由、指定参数名、默认参数&lt;br&gt;
     
     </summary>
     

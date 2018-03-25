@@ -273,6 +273,66 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-xiaochao" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/25/xiaochao/" class="article-date">
+      <time datetime="2018-03-25T02:11:28.000Z" itemprop="datePublished">2018-03-25</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/25/xiaochao/">xiaochao</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>日常小小抄<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      
+        <p class="article-more-link">
+          <a href="/2018/03/25/xiaochao/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Django-route" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -302,11 +362,8 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, list</span><br><span class="line">urlpatterns = patterns(<span class="string">''</span>,</span><br><span class="line">    url(<span class="string">r'^list/(\d*)/$'</span>, list),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r'^list/(\d*)/(\d*)/$'</span>, list),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$'</span>, list),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/$'</span>, list, &#123;<span class="string">'id'</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
-<p>views.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id1, id2)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> id</span><br><span class="line">    <span class="keyword">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p>
-<p>指定参数名：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id, name)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> name, id</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p>
-<p>请求链接：<a href="http://localhost:9000/list/100" target="_blank" rel="noopener">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000" target="_blank" rel="noopener">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加/,如果不加，urls配置中必须要加上终止符：/$,这样请求时会自动加上/</p>
-
+              <p>Django路由系统:动态路由、指定参数名、默认参数<br>
+          
       
     </div>
     
@@ -315,6 +372,10 @@
       
 
       
+      
+        <p class="article-more-link">
+          <a href="/2018/03/10/Django-route/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>

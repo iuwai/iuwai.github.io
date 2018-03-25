@@ -15,17 +15,17 @@
 
 
 
-<meta name="description" content="Django路由系统:动态路由、指定参数名、默认参数">
+<meta name="description" content="日常小小抄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Django-route">
-<meta property="og:url" content="http://www.iuwai.com/2018/03/10/Django-route/index.html">
+<meta property="og:title" content="xiaochao">
+<meta property="og:url" content="http://www.iuwai.com/2018/03/25/xiaochao/index.html">
 <meta property="og:site_name" content="Iuwai">
-<meta property="og:description" content="Django路由系统:动态路由、指定参数名、默认参数">
+<meta property="og:description" content="日常小小抄">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-25T02:13:17.800Z">
+<meta property="og:updated_time" content="2018-03-25T02:24:08.591Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Django-route">
-<meta name="twitter:description" content="Django路由系统:动态路由、指定参数名、默认参数">
+<meta name="twitter:title" content="xiaochao">
+<meta name="twitter:description" content="日常小小抄">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -57,7 +57,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>Django-route | Iuwai</title>
+<title>xiaochao | Iuwai</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -267,11 +267,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-Django-route" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-xiaochao" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/03/10/Django-route/" class="article-date">
-      <time datetime="2018-03-10T08:24:29.000Z" itemprop="datePublished">2018-03-10</time>
+      <a href="/2018/03/25/xiaochao/" class="article-date">
+      <time datetime="2018-03-25T02:11:28.000Z" itemprop="datePublished">2018-03-25</time>
 </a>
 
 
@@ -286,7 +286,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Django-route
+      xiaochao
     </h1>
   
 
@@ -303,11 +303,19 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>Django路由系统:动态路由、指定参数名、默认参数<br><a id="more"></a></p>
-<h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, list</span><br><span class="line">urlpatterns = patterns(<span class="string">''</span>,</span><br><span class="line">    url(<span class="string">r'^list/(\d*)/$'</span>, list),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r'^list/(\d*)/(\d*)/$'</span>, list),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$'</span>, list),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r'^list/(?P&lt;name&gt;\d*)/$'</span>, list, &#123;<span class="string">'id'</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
-<p>views.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id1, id2)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> id</span><br><span class="line">    <span class="keyword">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p>
-<p>指定参数名：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">list</span><span class="params">(request, id, name)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> name, id</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure></p>
-<p>请求链接：<a href="http://localhost:9000/list/100" target="_blank" rel="noopener">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000" target="_blank" rel="noopener">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加/,如果不加，urls配置中必须要加上终止符：/$,这样请求时会自动加上/</p>
+        <p>日常小小抄<br><a id="more"></a></p>
+<h4 id="2018-03-25-10-15"><a href="#2018-03-25-10-15" class="headerlink" title="2018.03.25 10:15"></a>2018.03.25 10:15</h4><p>知世故而不世故，才是真正的少年。<br>被伤害过依然能倾心以赴赤诚相待，才是真正的少年。</p>
+<hr>
+<p>网上曾经流传一句话“中年男人不如狗”。<br>说得有理有据：</p>
+<p>1.年龄逐渐增长，身体机能随之下降，多种病症出现。</p>
+<p>2.他们在家中承担起抚养父母妻儿的责任，在社会上如果没有体面的工作就要忍气吞声。天能塌，他们不能。</p>
+<p>3.男人年轻的时候都想着仗剑走天涯，惦记着诗和远方，后来工作太忙钱不够就没去。</p>
+<p>4.生而为人，无法避免被“比较”。从小到大向来如此，小时候的敌人是别人家的孩子，长大之后是别人家的丈夫，再往后是别人家的父亲。</p>
+<hr>
+<p>知乎上也有这样一个问题：</p>
+<p>“为什么那么多男人开车回家，到了楼下还要在车里坐好久？”</p>
+<p>有一个回答获得了高分点赞：</p>
+<p>“很多时候我也不想下车，因为那是一个分界点。在车上，一个人静一静，抽根烟，发会呆这个躯体属于自己；但推开车门，你就是柴米油盐，是父亲、是儿子、是老公，唯独不是你自己。我们把真实的自己藏在车里；打开车门出去，哪怕是哭着爬着，也只能把被人寄予厚望的身份扮演下去。”</p>
 
       
     </div>
@@ -316,13 +324,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/03/10/Django-route/">Django-route</a></p>
+        <p><span>本文标题:</span><a href="/2018/03/25/xiaochao/">xiaochao</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
-        <p><span>发布时间:</span>2018-03-10, 16:24:29</p>
-        <p><span>最后更新:</span>2018-03-25, 10:13:17</p>
+        <p><span>发布时间:</span>2018-03-25, 10:11:28</p>
+        <p><span>最后更新:</span>2018-03-25, 10:24:08</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/03/10/Django-route/" title="Django-route">http://www.iuwai.com/2018/03/10/Django-route/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/03/10/Django-route/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/03/25/xiaochao/" title="xiaochao">http://www.iuwai.com/2018/03/25/xiaochao/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/03/25/xiaochao/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -334,16 +342,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/03/25/xiaochao/">
-                    xiaochao
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/02/13/CentOS7-4-update-ntp/">
-                    CentOS7.4 update ntp
+                <a href="/2018/03/10/Django-route/">
+                    Django-route
                 </a>
             </div>
         
@@ -355,7 +357,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Django路由系统"><span class="toc-number">1.</span> <span class="toc-text"><a href="#Django&#x8DEF;&#x7531;&#x7CFB;&#x7EDF;" class="headerlink" title="Django&#x8DEF;&#x7531;&#x7CFB;&#x7EDF;"></a>Django&#x8DEF;&#x7531;&#x7CFB;&#x7EDF;</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#动态路由"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#&#x52A8;&#x6001;&#x8DEF;&#x7531;" class="headerlink" title="&#x52A8;&#x6001;&#x8DEF;&#x7531;"></a>&#x52A8;&#x6001;&#x8DEF;&#x7531;</span></a></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#2018-03-25-10-15"><span class="toc-number">1.</span> <span class="toc-text"><a href="#2018-03-25-10-15" class="headerlink" title="2018.03.25 10:15"></a>2018.03.25 10:15</span></a></li></ol>
         
     </div>
     <style>
@@ -391,7 +393,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"Django-route　| Iuwai　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"xiaochao　| Iuwai　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -411,15 +413,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/03/25/xiaochao/" title="上一篇: xiaochao">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/02/13/CentOS7-4-update-ntp/" title="下一篇: CentOS7.4 update ntp">
+            <a href="/2018/03/10/Django-route/" title="下一篇: Django-route">
                 <i class="fa fa-angle-right"></i>
             </a>
         
