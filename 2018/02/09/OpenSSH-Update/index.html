@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Iuwai">
 <meta property="og:description" content="由于公司安全需要，OpenSSH要加固，需升级至当前最新版本OpenSSH_7.6p1环境：CentOS6.8 x64">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-09T03:10:41.206Z">
+<meta property="og:updated_time" content="2018-05-09T03:14:11.328Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenSSH Update">
 <meta name="twitter:description" content="由于公司安全需要，OpenSSH要加固，需升级至当前最新版本OpenSSH_7.6p1环境：CentOS6.8 x64">
@@ -142,13 +142,13 @@
                 <div class="tips-box hide">
                     <div class="tips-arrow"></div>
                     <ul class="tips-inner">
-                        <li>菜单</li>
-                        <li>标签</li>
+                        <li>菜單</li>
+                        <li>標籤</li>
                         
-                        <li>友情链接</li>
+                        <li>友情鏈接</li>
                         
                         
-                        <li>关于我</li>
+                        <li>關於我</li>
                         
                     </ul>
                 </div>
@@ -270,7 +270,7 @@
             </nav>
         </header>                
     </div>
-    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+    <link class="menu-list" tags="標籤" friends="友情鏈接" about="關於我"/>
 </nav>
       <div class="body-wrap"><article id="post-OpenSSH-Update" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -352,8 +352,8 @@
 <p>如有必要，可重新开启防火墙<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service iptables start</span><br><span class="line">chkconfig iptables on</span><br></pre></td></tr></table></figure></p>
 <p>如需还原之前的ssh配置信息，可直接删除升级后的配置信息，恢复备份。<br>ssh大版本升级尽量不要删除新生成的ssh文件，将原文件与新生成文件都保留一份。<br>原版本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -V</span><br><span class="line">OpenSSH_5.3p1, OpenSSL 1.0.1e-fips 11 Feb 2013</span><br></pre></td></tr></table></figure></p>
 <p>升级至：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenSSH_7.4p1, OpenSSL 1.0.2n  7 Dec 2017</span><br></pre></td></tr></table></figure></p>
-<p><font color="#FF6600">后如果执行以下操作，会导致无法登陆。</font></p>
-<p><font color="#FF6600">正确做法：使用此次安装好的文件/etc/ssh，不要用原文件覆盖！不然ssh无法使用。</font><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;del&gt;rm -rf /etc/ssh&lt;/del&gt;</span><br><span class="line">~~mv /etc/ssh.old /etc/ssh~~</span><br></pre></td></tr></table></figure></p>
+<p><font color="#FF6600">后如果执行<strong>以下操作</strong>，会导致无法登陆。</font></p>
+<p><font color="#FF6600">正确做法：使用此次安装好的文件/etc/ssh，不要用原文件覆盖！不然ssh无法使用。</font><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rm -rf /etc/ssh</span></span><br><span class="line"><span class="comment"># mv /etc/ssh.old /etc/ssh</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="遇到的错误-1："><a href="#遇到的错误-1：" class="headerlink" title="遇到的错误-1："></a>遇到的错误-1：</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">make[2]: Entering directory `/tmp/openssl-1.0.2m<span class="string">'</span></span><br><span class="line"><span class="string">[ -z "" ] || gcc -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM -Iinclude \</span></span><br><span class="line"><span class="string">            -DFINGERPRINT_PREMAIN_DSO_LOAD -o fips_premain_dso  \</span></span><br><span class="line"><span class="string">            fips_premain.c fipscanister.o \</span></span><br><span class="line"><span class="string">            libcrypto.a -ldl -lz</span></span><br><span class="line"><span class="string">make[3]: Entering directory `/tmp/openssl-1.0.2m'</span></span><br><span class="line">make[4]: Entering directory `/tmp/openssl-1.0.2m<span class="string">'</span></span><br><span class="line"><span class="string">/usr/bin/ld: /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/libz.a(deflate.o): relocation R_X86_64_32S against `_length_code'</span> can not be used when making a shared object; recompile with -fPIC</span><br><span class="line">/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/libz.a: could not <span class="built_in">read</span> symbols: Bad value</span><br><span class="line">collect2: ld returned 1 <span class="built_in">exit</span> status</span><br><span class="line">make[4]: *** [link_a.gnu] Error 1</span><br><span class="line">make[4]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">'</span></span><br><span class="line"><span class="string">make[3]: *** [do_linux-shared] Error 2</span></span><br><span class="line"><span class="string">make[3]: Leaving directory `/tmp/openssl-1.0.2m'</span></span><br><span class="line">make[2]: *** [libcrypto.so.1.0.0] Error 2</span><br><span class="line">make[2]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">'</span></span><br><span class="line"><span class="string">make[1]: *** [shared] Error 2</span></span><br><span class="line"><span class="string">make[1]: Leaving directory `/tmp/openssl-1.0.2m/crypto'</span></span><br><span class="line">make: *** [build_crypto] Error 1</span><br></pre></td></tr></table></figure>
 <p>解决办法：zlib编译时添加configure前面的配置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CFLAGS=<span class="string">'-mstackrealign -fPIC -O3'</span> ./configure --prefix=/usr</span><br></pre></td></tr></table></figure></p>
 <h2 id="遇到的报错-2："><a href="#遇到的报错-2：" class="headerlink" title="遇到的报错-2："></a>遇到的报错-2：</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">make[2]: Entering directory `/tmp/openssl-1.0.2m<span class="string">'</span></span><br><span class="line"><span class="string">[ -z "" ] || gcc -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -        DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -    DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM -Iinclude \</span></span><br><span class="line"><span class="string">            -DFINGERPRINT_PREMAIN_DSO_LOAD -o fips_premain_dso  \</span></span><br><span class="line"><span class="string">            fips_premain.c fipscanister.o \</span></span><br><span class="line"><span class="string">            libcrypto.a -ldl -lz</span></span><br><span class="line"><span class="string">make[3]: Entering directory `/tmp/openssl-1.0.2m'</span></span><br><span class="line">make[4]: Entering directory `/tmp/openssl-1.0.2m<span class="string">'</span></span><br><span class="line"><span class="string">/usr/bin/ld: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory</span></span><br><span class="line"><span class="string">collect2: ld returned 127 exit status</span></span><br><span class="line"><span class="string">make[4]: *** [link_a.gnu] Error 1</span></span><br><span class="line"><span class="string">make[4]: Leaving directory `/tmp/openssl-1.0.2m'</span></span><br><span class="line">make[3]: *** [do_linux-shared] Error 2</span><br><span class="line">make[3]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">'</span></span><br><span class="line"><span class="string">make[2]: *** [libcrypto.so.1.0.0] Error 2</span></span><br><span class="line"><span class="string">make[2]: Leaving directory `/tmp/openssl-1.0.2m'</span></span><br><span class="line">make[1]: *** [shared] Error 2</span><br><span class="line">make[1]: Leaving directory `/tmp/openssl-1.0.2m/crypto<span class="string">'</span></span><br><span class="line"><span class="string">make: *** [build_crypto] Error 1</span></span><br></pre></td></tr></table></figure>
@@ -368,17 +368,17 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/02/09/OpenSSH-Update/">OpenSSH Update</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
-        <p><span>发布时间:</span>2018-02-09, 15:37:17</p>
-        <p><span>最后更新:</span>2018-05-09, 11:10:41</p>
+        <p><span>本文標題:</span><a href="/2018/02/09/OpenSSH-Update/">OpenSSH Update</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主頁">Iuwai</a></p>
+        <p><span>發布時間:</span>2018-02-09, 15:37:17</p>
+        <p><span>最後更新:</span>2018-05-09, 11:14:11</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/02/09/OpenSSH-Update/" title="OpenSSH Update">http://www.iuwai.com/2018/02/09/OpenSSH-Update/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/02/09/OpenSSH-Update/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始鏈接:</span><a class="post-url" href="/2018/02/09/OpenSSH-Update/" title="OpenSSH Update">http://www.iuwai.com/2018/02/09/OpenSSH-Update/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/02/09/OpenSSH-Update/　　作者: Iuwai" title="點擊複製文章鏈接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+            <span>許可協議:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"姓名標示-非商業性-相同方式分享 4.0 國際"</a> 轉載請保留原文鏈接及作者。
         </p>
     </div>
 
@@ -399,7 +399,7 @@
 </article>
 
     <div id="toc" class="toc-article">
-        <strong class="toc-title">文章目录</strong>
+        <strong class="toc-title">文章目錄</strong>
         
             <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#准备工作"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x51C6;&#x5907;&#x5DE5;&#x4F5C;" class="headerlink" title="&#x51C6;&#x5907;&#x5DE5;&#x4F5C;"></a>&#x51C6;&#x5907;&#x5DE5;&#x4F5C;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#下载相关软件包"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#&#x4E0B;&#x8F7D;&#x76F8;&#x5173;&#x8F6F;&#x4EF6;&#x5305;" class="headerlink" title="&#x4E0B;&#x8F7D;&#x76F8;&#x5173;&#x8F6F;&#x4EF6;&#x5305;"></a>&#x4E0B;&#x8F7D;&#x76F8;&#x5173;&#x8F6F;&#x4EF6;&#x5305;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查看系统当前软件版本"><span class="toc-number">1.2.</span> <span class="toc-text"><a href="#&#x67E5;&#x770B;&#x7CFB;&#x7EDF;&#x5F53;&#x524D;&#x8F6F;&#x4EF6;&#x7248;&#x672C;" class="headerlink" title="&#x67E5;&#x770B;&#x7CFB;&#x7EDF;&#x5F53;&#x524D;&#x8F6F;&#x4EF6;&#x7248;&#x672C;"></a>&#x67E5;&#x770B;&#x7CFB;&#x7EDF;&#x5F53;&#x524D;&#x8F6F;&#x4EF6;&#x7248;&#x672C;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装telnet服务并启用"><span class="toc-number">1.3.</span> <span class="toc-text"><a href="#&#x5B89;&#x88C5;telnet&#x670D;&#x52A1;&#x5E76;&#x542F;&#x7528;" class="headerlink" title="&#x5B89;&#x88C5;telnet&#x670D;&#x52A1;&#x5E76;&#x542F;&#x7528;"></a>&#x5B89;&#x88C5;telnet&#x670D;&#x52A1;&#x5E76;&#x542F;&#x7528;</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A、安装telnet服务"><span class="toc-number">1.3.1.</span> <span class="toc-text"><a href="#A&#x3001;&#x5B89;&#x88C5;telnet&#x670D;&#x52A1;" class="headerlink" title="A&#x3001;&#x5B89;&#x88C5;telnet&#x670D;&#x52A1;"></a>A&#x3001;&#x5B89;&#x88C5;telnet&#x670D;&#x52A1;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B、启用telnet"><span class="toc-number">1.3.2.</span> <span class="toc-text"><a href="#B&#x3001;&#x542F;&#x7528;telnet" class="headerlink" title="B&#x3001;&#x542F;&#x7528;telnet"></a>B&#x3001;&#x542F;&#x7528;telnet</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装编译所需工具包"><span class="toc-number">1.4.</span> <span class="toc-text"><a href="#&#x5B89;&#x88C5;&#x7F16;&#x8BD1;&#x6240;&#x9700;&#x5DE5;&#x5177;&#x5305;" class="headerlink" title="&#x5B89;&#x88C5;&#x7F16;&#x8BD1;&#x6240;&#x9700;&#x5DE5;&#x5177;&#x5305;"></a>&#x5B89;&#x88C5;&#x7F16;&#x8BD1;&#x6240;&#x9700;&#x5DE5;&#x5177;&#x5305;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#正式升级"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x6B63;&#x5F0F;&#x5347;&#x7EA7;" class="headerlink" title="&#x6B63;&#x5F0F;&#x5347;&#x7EA7;"></a>&#x6B63;&#x5F0F;&#x5347;&#x7EA7;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#升级ZLIB"><span class="toc-number">2.1.</span> <span class="toc-text"><a href="#&#x5347;&#x7EA7;ZLIB" class="headerlink" title="&#x5347;&#x7EA7;ZLIB"></a>&#x5347;&#x7EA7;ZLIB</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A、解压zlib-1-2-11源码并编译"><span class="toc-number">2.1.1.</span> <span class="toc-text"><a href="#A&#x3001;&#x89E3;&#x538B;zlib-1-2-11&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;" class="headerlink" title="A&#x3001;&#x89E3;&#x538B;zlib_1.2.11&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;"></a>A&#x3001;&#x89E3;&#x538B;zlib_1.2.11&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B、卸载当前zlib"><span class="toc-number">2.1.2.</span> <span class="toc-text"><a href="#B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;zlib" class="headerlink" title="B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;zlib"></a>B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;zlib</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C、安装之前编译好的zlib"><span class="toc-number">2.1.3.</span> <span class="toc-text"><a href="#C&#x3001;&#x5B89;&#x88C5;&#x4E4B;&#x524D;&#x7F16;&#x8BD1;&#x597D;&#x7684;zlib" class="headerlink" title="C&#x3001;&#x5B89;&#x88C5;&#x4E4B;&#x524D;&#x7F16;&#x8BD1;&#x597D;&#x7684;zlib"></a>C&#x3001;&#x5B89;&#x88C5;&#x4E4B;&#x524D;&#x7F16;&#x8BD1;&#x597D;&#x7684;zlib</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D、共享库注册"><span class="toc-number">2.1.4.</span> <span class="toc-text"><a href="#D&#x3001;&#x5171;&#x4EAB;&#x5E93;&#x6CE8;&#x518C;" class="headerlink" title="D&#x3001;&#x5171;&#x4EAB;&#x5E93;&#x6CE8;&#x518C;"></a>D&#x3001;&#x5171;&#x4EAB;&#x5E93;&#x6CE8;&#x518C;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#升级OpenSSL"><span class="toc-number">2.2.</span> <span class="toc-text"><a href="#&#x5347;&#x7EA7;OpenSSL" class="headerlink" title="&#x5347;&#x7EA7;OpenSSL"></a>&#x5347;&#x7EA7;OpenSSL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A、备份当前openssl"><span class="toc-number">2.2.1.</span> <span class="toc-text"><a href="#A&#x3001;&#x5907;&#x4EFD;&#x5F53;&#x524D;openssl" class="headerlink" title="A&#x3001;&#x5907;&#x4EFD;&#x5F53;&#x524D;openssl"></a>A&#x3001;&#x5907;&#x4EFD;&#x5F53;&#x524D;openssl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B、卸载当前openssl"><span class="toc-number">2.2.2.</span> <span class="toc-text"><a href="#B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;openssl" class="headerlink" title="B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;openssl"></a>B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;openssl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C、解压openssl-1-0-2k源码并编译安装"><span class="toc-number">2.2.3.</span> <span class="toc-text"><a href="#C&#x3001;&#x89E3;&#x538B;openssl-1-0-2k&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;&#x5B89;&#x88C5;" class="headerlink" title="C&#x3001;&#x89E3;&#x538B;openssl_1.0.2k&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;&#x5B89;&#x88C5;"></a>C&#x3001;&#x89E3;&#x538B;openssl_1.0.2k&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;&#x5B89;&#x88C5;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D、恢复共享库"><span class="toc-number">2.2.4.</span> <span class="toc-text"><a href="#D&#x3001;&#x6062;&#x590D;&#x5171;&#x4EAB;&#x5E93;" class="headerlink" title="D&#x3001;&#x6062;&#x590D;&#x5171;&#x4EAB;&#x5E93;"></a>D&#x3001;&#x6062;&#x590D;&#x5171;&#x4EAB;&#x5E93;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#升级OpenSSH"><span class="toc-number">2.3.</span> <span class="toc-text"><a href="#&#x5347;&#x7EA7;OpenSSH" class="headerlink" title="&#x5347;&#x7EA7;OpenSSH"></a>&#x5347;&#x7EA7;OpenSSH</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A、备份当前openssh"><span class="toc-number">2.3.1.</span> <span class="toc-text"><a href="#A&#x3001;&#x5907;&#x4EFD;&#x5F53;&#x524D;openssh" class="headerlink" title="A&#x3001;&#x5907;&#x4EFD;&#x5F53;&#x524D;openssh"></a>A&#x3001;&#x5907;&#x4EFD;&#x5F53;&#x524D;openssh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B、卸载当前openssh"><span class="toc-number">2.3.2.</span> <span class="toc-text"><a href="#B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;openssh" class="headerlink" title="B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;openssh"></a>B&#x3001;&#x5378;&#x8F7D;&#x5F53;&#x524D;openssh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C、openssh安装前环境配置"><span class="toc-number">2.3.3.</span> <span class="toc-text"><a href="#C&#x3001;openssh&#x5B89;&#x88C5;&#x524D;&#x73AF;&#x5883;&#x914D;&#x7F6E;" class="headerlink" title="C&#x3001;openssh&#x5B89;&#x88C5;&#x524D;&#x73AF;&#x5883;&#x914D;&#x7F6E;"></a>C&#x3001;openssh&#x5B89;&#x88C5;&#x524D;&#x73AF;&#x5883;&#x914D;&#x7F6E;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D、解压openssh-7-4p1源码并编译安装"><span class="toc-number">2.3.4.</span> <span class="toc-text"><a href="#D&#x3001;&#x89E3;&#x538B;openssh-7-4p1&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;&#x5B89;&#x88C5;" class="headerlink" title="D&#x3001;&#x89E3;&#x538B;openssh_7.4p1&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;&#x5B89;&#x88C5;"></a>D&#x3001;&#x89E3;&#x538B;openssh_7.4p1&#x6E90;&#x7801;&#x5E76;&#x7F16;&#x8BD1;&#x5B89;&#x88C5;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#E、openssh安装后环境配置"><span class="toc-number">2.3.5.</span> <span class="toc-text"><a href="#E&#x3001;openssh&#x5B89;&#x88C5;&#x540E;&#x73AF;&#x5883;&#x914D;&#x7F6E;" class="headerlink" title="E&#x3001;openssh&#x5B89;&#x88C5;&#x540E;&#x73AF;&#x5883;&#x914D;&#x7F6E;"></a>E&#x3001;openssh&#x5B89;&#x88C5;&#x540E;&#x73AF;&#x5883;&#x914D;&#x7F6E;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#F、启用OpenSSH服务"><span class="toc-number">2.3.6.</span> <span class="toc-text"><a href="#F&#x3001;&#x542F;&#x7528;OpenSSH&#x670D;&#x52A1;" class="headerlink" title="F&#x3001;&#x542F;&#x7528;OpenSSH&#x670D;&#x52A1;"></a>F&#x3001;&#x542F;&#x7528;OpenSSH&#x670D;&#x52A1;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G、修改文件-etc-ssh-sshd-config"><span class="toc-number">2.3.7.</span> <span class="toc-text"><a href="#G&#x3001;&#x4FEE;&#x6539;&#x6587;&#x4EF6;-etc-ssh-sshd-config" class="headerlink" title="G&#x3001;&#x4FEE;&#x6539;&#x6587;&#x4EF6;/etc/ssh/sshd_config"></a>G&#x3001;&#x4FEE;&#x6539;&#x6587;&#x4EF6;/etc/ssh/sshd_config</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#善后工作"><span class="toc-number">2.4.</span> <span class="toc-text"><a href="#&#x5584;&#x540E;&#x5DE5;&#x4F5C;" class="headerlink" title="&#x5584;&#x540E;&#x5DE5;&#x4F5C;"></a>&#x5584;&#x540E;&#x5DE5;&#x4F5C;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的错误-1："><span class="toc-number">2.5.</span> <span class="toc-text"><a href="#&#x9047;&#x5230;&#x7684;&#x9519;&#x8BEF;-1&#xFF1A;" class="headerlink" title="&#x9047;&#x5230;&#x7684;&#x9519;&#x8BEF;-1&#xFF1A;"></a>&#x9047;&#x5230;&#x7684;&#x9519;&#x8BEF;-1&#xFF1A;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的报错-2："><span class="toc-number">2.6.</span> <span class="toc-text"><a href="#&#x9047;&#x5230;&#x7684;&#x62A5;&#x9519;-2&#xFF1A;" class="headerlink" title="&#x9047;&#x5230;&#x7684;&#x62A5;&#x9519;-2&#xFF1A;"></a>&#x9047;&#x5230;&#x7684;&#x62A5;&#x9519;-2&#xFF1A;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的报错-3："><span class="toc-number">2.7.</span> <span class="toc-text"><a href="#&#x9047;&#x5230;&#x7684;&#x62A5;&#x9519;-3&#xFF1A;" class="headerlink" title="&#x9047;&#x5230;&#x7684;&#x62A5;&#x9519;-3&#xFF1A;"></a>&#x9047;&#x5230;&#x7684;&#x62A5;&#x9519;-3&#xFF1A;</span></a></li></ol></li></ol>
         
@@ -415,10 +415,10 @@
         }
     </style>
 
-    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+    <input type="button" id="tocButton" value="隱藏目錄"  title="點擊按鈕隱藏或者顯示文章目錄">
 
     <script>
-        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+        yiliaConfig.toc = ["隱藏目錄", "顯示目錄", !!"false"];
     </script>
 
 
@@ -465,7 +465,7 @@
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/" title="回到主頁"><i class="fa fa-home"></i></a>
         
     </div>
 
@@ -489,14 +489,14 @@
                 2016-2018 Iuwai
             </div>
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+                <a href="http://hexo.io/" target="_blank" title="快速、簡潔且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="簡而不減 Hexo 雙欄博客主題  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
             </div>
         </div>
         
             <div class="visit">
                 
                     <span id="busuanzi_container_site_pv" style='display:none'>
-                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        <span id="site-visit" title="本站到訪數"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
                         </span>
                     </span>
                 
@@ -505,7 +505,7 @@
                 
                 
                     <span id="busuanzi_container_page_pv" style='display:none'>
-                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        <span id="page-visit"  title="本頁閱讀量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
                         </span>
                     </span>
                 
@@ -522,9 +522,9 @@
 
 
 <div class="scroll" id="scroll">
-    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+    <a href="#" title="返回頂部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看評論"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="轉到底部"><i class="fa fa-arrow-down"></i></a>
 </div>
 <script>
     // Open in New Window
