@@ -2,74 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="66427db0-38c9-41a2-b10d-99db2493a87b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/2018/02/09/CentOS7-4-install-vsftp/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/2018/02/09/OpenSSH-Update/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/2018/02/13/CentOS7-4-update-ntp/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/2018/03/10/Django-route/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/2018/03/25/xiaochao/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/404/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/about/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apple-touch-icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/archives/2018/02/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/archives/2018/03/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/archives/2018/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/archives/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/atom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/backup/bg-1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/backup/bg-2.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/backup/bg-3.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/backup/bg-4.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/bg-1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/bg-2.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/bg-3.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/bg-4.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/bg-5.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/bg-6.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/categories/Linux/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/categories/Python/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/categories/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dayDayUp/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/AcFun.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/CSDN.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/Coding.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/LOFTER.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/Plunker.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/Quora.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/SegmentFault.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/TiddlyWiki.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/V2EX.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/avatar.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/bilibili.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/niconico.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/scrollbar_arrow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/博客园.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/新浪微博.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/知乎.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/简书.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/网易云音乐.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/虾米音乐.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/豆瓣.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/GithubRepoWidget.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/instagram.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/main.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/mobile.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/pc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/search.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/toc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/robot.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/dayDayUp/index.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/dayDayUp/index.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/CentOS7-4/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/Django/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/OpenSSH/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/ntp/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/vsftp/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/安全加固/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags/路由系统/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/xiaochao.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/xiaochao.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -87,7 +21,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="md" value="1" />
+          <entry key="md" value="3" />
           <entry key="png" value="1" />
           <entry key="yml" value="1" />
         </counts>
@@ -95,18 +29,20 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Image" value="1" />
-          <entry key="Markdown" value="1" />
+          <entry key="Markdown" value="3" />
           <entry key="YAML" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="md" value="34" />
+          <entry key="md" value="561" />
+          <entry key="txt" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Markdown" value="34" />
+          <entry key="Markdown" value="561" />
+          <entry key="PLAIN_TEXT" value="8" />
         </counts>
       </usages-collector>
     </session>
@@ -116,18 +52,42 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/_config.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="15" column="7" selection-start-line="15" selection-start-column="7" selection-end-line="15" selection-end-column="7" />
+            <state relative-caret-position="387">
+              <caret line="98" column="7" selection-start-line="98" selection-start-column="7" selection-end-line="98" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/source/dayDayUp/index.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="88">
+                <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/source/archives/index.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="110">
+                <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/source/dayDayUp/index.md">
+        <entry file="file://$PROJECT_DIR$/source/_posts/xiaochao.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="FIRST">
-              <first_editor relative-caret-position="248">
-                <caret line="38" column="6" lean-forward="true" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
+              <first_editor relative-caret-position="220">
+                <caret line="10" column="35" lean-forward="true" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
               </first_editor>
               <second_editor />
             </state>
@@ -144,6 +104,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/source/dayDayUp/index.md" />
+        <option value="$PROJECT_DIR$/source/_posts/xiaochao.md" />
       </list>
     </option>
   </component>
@@ -163,11 +124,11 @@
       <path value="$PROJECT_DIR$/themes/yelee/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="2019" />
-    <option name="y" value="122" />
-    <option name="width" value="1552" />
-    <option name="height" value="882" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="108" />
+    <option name="y" value="-9" />
+    <option name="width" value="1820" />
+    <option name="height" value="1098" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -187,6 +148,18 @@
               <item name="iuwai.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="iuwai.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="iuwai.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="iuwai.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="_posts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="iuwai.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="iuwai.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="archives" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="iuwai.github.io" type="b2602c69:ProjectViewProjectNode" />
@@ -230,19 +203,35 @@
       <option name="presentableId" value="Default" />
       <updated>1537272762435</updated>
     </task>
+    <task id="LOCAL-00001" summary="del html">
+      <created>1537274184669</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1537274184669</updated>
+    </task>
+    <task id="LOCAL-00002" summary="del html">
+      <created>1537282293933</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1537282293933</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2019" y="122" width="1552" height="882" extended-state="0" />
+    <frame x="87" y="-7" width="1456" height="878" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.31434315" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.33547926" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.32797858" />
+      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.2657718" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -251,7 +240,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Jenkins" />
+      <window_info anchor="right" id="Jenkins" weight="0.3297568" />
       <window_info anchor="right" id="SciView" />
       <window_info anchor="right" id="Database" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -265,22 +254,46 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="del html" />
+    <option name="LAST_COMMIT_MESSAGE" value="del html" />
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/apple-touch-icon.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/_config.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="15" column="7" selection-start-line="15" selection-start-column="7" selection-end-line="15" selection-end-column="7" />
+        <state relative-caret-position="387">
+          <caret line="98" column="7" selection-start-line="98" selection-start-column="7" selection-end-line="98" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/source/dayDayUp/index.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
-          <first_editor relative-caret-position="248">
-            <caret line="38" column="6" lean-forward="true" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
+          <first_editor relative-caret-position="88">
+            <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/archives/index.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="110">
+            <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/xiaochao.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="220">
+            <caret line="10" column="35" lean-forward="true" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
           </first_editor>
           <second_editor />
         </state>
