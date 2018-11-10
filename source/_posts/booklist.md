@@ -2,7 +2,7 @@
 title: booklist
 date: 2018-11-10 10:56:43
 categories:
-tags:
+tags: ["书单"]
 ---
 ### 小说
 | 书名 | 作者 | 时间 | 阅读状态 |
