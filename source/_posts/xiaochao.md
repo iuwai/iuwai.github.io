@@ -6,6 +6,10 @@ tags:
 ---
 日常小小抄
 <!-- more -->
+#### 2019.06.18 09:02
+倾听：倾听与听不同，倾听是解读别人所说信息的过程，包含听到、专注、理解、回应、记忆五大元素。可以获得更多信息，对对方有更多了解。倾听能让对方感觉到自己被尊重，所以才会跟你分享更多的信息。
+倾听不仅仅只是听，还要思考，要思考更深层的原因，不要被表象所迷惑。
+
 #### 2019.06.13 17:55
 [摘抄地址](https://mp.weixin.qq.com/s?__biz=MzIzNzM5MTI0Nw==&mid=2247491492&idx=5&sn=ff89fda8279741c86f61d51da7a972c9&chksm=e8c80344dfbf8a52ec81d2ab216290d11ecf00c3255761a676b54bd75a837f4683cfdf77a219&scene=0&xtrack=1&key=b0ebf1a5d52c1bb69fb06bc850c8f16b7a8b31c4c30dac1069cdbb9cbd7800680df64e4c487dd11c13db023f62a056d326ec185cf22da40f5b95cc43632442c15ee018aa2a07fff516c585dbefacda81&ascene=1&uin=MTQxMDYwNzEwMg%3D%3D&devicetype=Windows+10&version=62060833&lang=zh_CN&pass_ticket=o8%2BDH7X5izJrv5TEIiQCIHVApW8nc54nKIqNJF19l7IXFi8tp06NWD5Puk9fg6PU)
 上兵伐谋，不战而胜，冷静的把问题解决掉，才是解决争执的最高境界。
