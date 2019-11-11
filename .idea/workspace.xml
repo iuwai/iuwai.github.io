@@ -57,6 +57,8 @@
       <workItem from="1561022352634" duration="3979000" />
       <workItem from="1561606758642" duration="668000" />
       <workItem from="1564378832809" duration="544000" />
+      <workItem from="1571363609390" duration="680000" />
+      <workItem from="1573454468370" duration="708000" />
     </task>
     <task id="LOCAL-00001" summary="del html">
       <created>1537274184669</created>
@@ -286,7 +288,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
