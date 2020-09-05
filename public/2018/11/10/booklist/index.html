@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Iuwai" />
+
+
+
+<meta name="description" content="一日不读书、不思考便觉自己在堕落">
+<meta name="keywords" content="书单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="booklist">
+<meta property="og:url" content="http://www.iuwai.com/2018/11/10/booklist/index.html">
+<meta property="og:site_name" content="Iuwai">
+<meta property="og:description" content="一日不读书、不思考便觉自己在堕落">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-05T05:06:49.484Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="booklist">
+<meta name="twitter:description" content="一日不读书、不思考便觉自己在堕落">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Iuwai" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="https://cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="https://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="https://cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>booklist | Iuwai</title>
+
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "https://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "https://cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "https://cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "https://cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Iuwai</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">学如逆水行舟，不进则退。</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/dayDayUp/">日日新</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:iuwai@foxmail.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" href="https://weibo.com/iyouwai" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/iuwai" title="GitHub"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                                <a class="fa 微信" href="/oom-killer" title="微信"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS7-4/">CentOS7.4</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Django/">Django</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSH/">OpenSSH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vsftp/">vsftp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/书单/">书单</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全加固/">安全加固</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/路由系统/">路由系统</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://iuwai.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">做技术挺好玩</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Iuwai</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Iuwai</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">学如逆水行舟，不进则退。</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/dayDayUp/">日日新</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:iuwai@foxmail.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="https://weibo.com/iyouwai" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/iuwai" title="GitHub"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                                <a class="fa 微信" target="_blank" href="/oom-killer" title="微信"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-booklist" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/11/10/booklist/" class="article-date">
+      <time datetime="2018-11-10T02:56:43.000Z" itemprop="datePublished">2018-11-10</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      booklist
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/书单/">书单</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>一日不读书、不思考便觉自己在堕落<br><a id="more"></a></p>
+<h3 id="传记"><a href="#传记" class="headerlink" title="传记"></a>传记</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th style="text-align:left">书名</th>
+<th style="text-align:left">作者</th>
+<th style="text-align:left">时间</th>
+<th style="text-align:center">阅读状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/26664352/" target="_blank" rel="noopener">褚时健传</a></td>
+<td style="text-align:left">周桦</td>
+<td style="text-align:left">2019.11.9~</td>
+<td style="text-align:center">1%</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/20427187/" target="_blank" rel="noopener">看见</a></td>
+<td style="text-align:left">柴静</td>
+<td style="text-align:left">2019.4</td>
+<td style="text-align:center">100%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="小说"><a href="#小说" class="headerlink" title="小说"></a>小说</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th style="text-align:left">书名</th>
+<th style="text-align:left">作者</th>
+<th style="text-align:left">时间</th>
+<th style="text-align:center">阅读状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">26</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/25900802/" target="_blank" rel="noopener">我在底层的生活</a></td>
+<td style="text-align:left">[美] 芭芭拉·艾伦瑞克</td>
+<td style="text-align:left">2019.10</td>
+<td style="text-align:center">80%</td>
+</tr>
+<tr>
+<td style="text-align:center">25</td>
+<td style="text-align:left"><a href="https://book.qidian.com/info/3333529" target="_blank" rel="noopener">道门法则</a></td>
+<td style="text-align:left">八宝饭</td>
+<td style="text-align:left">2019.11</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">24</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/33379779/" target="_blank" rel="noopener">美国陷阱</a></td>
+<td style="text-align:left">[法] 弗雷德里克·皮耶鲁齐 / [法] 马修·阿伦</td>
+<td style="text-align:left">2019.7</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">23</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/30306452/" target="_blank" rel="noopener">极速写作</a></td>
+<td style="text-align:left">剑飞</td>
+<td style="text-align:left">2019.7</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">22</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/26899537/" target="_blank" rel="noopener">长安十二时辰</a></td>
+<td style="text-align:left">马伯庸</td>
+<td style="text-align:left">2019.7</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">21</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/30475767/" target="_blank" rel="noopener">人生海海</a></td>
+<td style="text-align:left">麦家</td>
+<td style="text-align:left">2019.6</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">20</td>
+<td style="text-align:left">解忧杂货店</td>
+<td style="text-align:left">［日］东野圭吾</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">19</td>
+<td style="text-align:left">秘密</td>
+<td style="text-align:left">［日］东野圭吾</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">18</td>
+<td style="text-align:left">古董局中局</td>
+<td style="text-align:left">马伯庸</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">10%</td>
+</tr>
+<tr>
+<td style="text-align:center">17</td>
+<td style="text-align:left">路西法效应</td>
+<td style="text-align:left">［美］菲利普·津巴多【译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">16</td>
+<td style="text-align:left">趣味生活简史</td>
+<td style="text-align:left">［英］比尔·布莱森【严维明译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">76%</td>
+</tr>
+<tr>
+<td style="text-align:center">15</td>
+<td style="text-align:left">天长地久</td>
+<td style="text-align:left">龙应台</td>
+<td style="text-align:left">2018.11</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">14</td>
+<td style="text-align:left">荆州杀</td>
+<td style="text-align:left">朱苏进、李蔷薇</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">13</td>
+<td style="text-align:left">三体</td>
+<td style="text-align:left">刘慈欣</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">12</td>
+<td style="text-align:left">老人与海</td>
+<td style="text-align:left">海明威</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">11</td>
+<td style="text-align:left">屠夫十字镇</td>
+<td style="text-align:left">［美］约翰·威廉斯【李广荣译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">10</td>
+<td style="text-align:left">战天京</td>
+<td style="text-align:left">谭伯牛</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">2%</td>
+</tr>
+<tr>
+<td style="text-align:center">9</td>
+<td style="text-align:left">琅琊榜</td>
+<td style="text-align:left">海晏</td>
+<td style="text-align:left">2017</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:left">明朝那些事儿</td>
+<td style="text-align:left">当年明月</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:left">藏地密码</td>
+<td style="text-align:left">何马</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:left">三国演义</td>
+<td style="text-align:left">罗贯中</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:left">水浒传</td>
+<td style="text-align:left">施耐庵</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:left">康熙大帝、雍正皇帝、乾隆皇帝</td>
+<td style="text-align:left">二月河</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:left">金瓶梅</td>
+<td style="text-align:left">兰陵笑笑生</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:left">杜月笙全传</td>
+<td style="text-align:left">【忘记】</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:left">无尾狗</td>
+<td style="text-align:left">阿丁</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">100%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="技术类"><a href="#技术类" class="headerlink" title="技术类"></a>技术类</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th style="text-align:left">书名</th>
+<th style="text-align:left">作者</th>
+<th style="text-align:left">时间</th>
+<th style="text-align:center">阅读状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">9</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/24737674/" target="_blank" rel="noopener">图解TCP/IP</a></td>
+<td style="text-align:left">[日]竹下隆史 / [日]村山公保 / [日]荒井透 / [日]苅田幸雄 / 【乌尼日其其格译】</td>
+<td style="text-align:left">2019</td>
+<td style="text-align:center">20%</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:left">深入浅出Prometheus：原理、应用、源码与拓展详解</td>
+<td style="text-align:left">陈晓宇 / 杨川胡 / 陈啸</td>
+<td style="text-align:left">2019</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:left">Kubernetes权威指南——企业级容器云实战</td>
+<td style="text-align:left">闫健勇 / 龚正 / 吴治辉 / 刘晓红 / 崔秀龙</td>
+<td style="text-align:left">2019</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/26644070/" target="_blank" rel="noopener">凤凰项目</a></td>
+<td style="text-align:left">基恩·金 (Gene Kim) / 凯文·贝尔 (Kevin Behr) / 乔治·斯帕福德 (George Spafford) 【成小留】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:left">每天5分钟玩转Docker</td>
+<td style="text-align:left">CloudMan</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:left">每天5分钟玩转Kubernetes</td>
+<td style="text-align:left">CloudMan</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/4843567/" target="_blank" rel="noopener">深入Linux内核架构</a></td>
+<td style="text-align:left">［德］Wolfgang Mauerer【郭旭译】</td>
+<td style="text-align:left">2015~</td>
+<td style="text-align:center">10%</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:left">DevOps</td>
+<td style="text-align:left">［美］Sanjeev Sharma【万金译】</td>
+<td style="text-align:left">2018.10</td>
+<td style="text-align:center">30%</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:left">流畅的Python</td>
+<td style="text-align:left">［巴西］Luciano Ramalho【安道、吴珂译】</td>
+<td style="text-align:left">2017~</td>
+<td style="text-align:center">80%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th style="text-align:left">书名</th>
+<th style="text-align:left">作者</th>
+<th style="text-align:left">时间</th>
+<th style="text-align:center">阅读状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">12</td>
+<td style="text-align:left"><a href="https://book.douban.com/subject/26761696/" target="_blank" rel="noopener">精进-如何成为一个很厉害的人</a></td>
+<td style="text-align:left">采铜</td>
+<td style="text-align:left">2019.4</td>
+<td style="text-align:center">15%</td>
+</tr>
+<tr>
+<td style="text-align:center">11</td>
+<td style="text-align:left">冥想</td>
+<td style="text-align:left">斯瓦米·拉玛 (Swami Rama)</td>
+<td style="text-align:left">2019.4</td>
+<td style="text-align:center">10%</td>
+</tr>
+<tr>
+<td style="text-align:center">10</td>
+<td style="text-align:left">技术：如何用一年时间获得十年经验</td>
+<td style="text-align:left">郝培强</td>
+<td style="text-align:left">2018.11</td>
+<td style="text-align:center">100%</td>
+</tr>
+<tr>
+<td style="text-align:center">9</td>
+<td style="text-align:left">习惯的力量</td>
+<td style="text-align:left">［美］查尔斯·都希格【吴奕俊、陈丽丽、曹烨译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">20%</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:left">深度工作</td>
+<td style="text-align:left">［美］卡尔·纽波特【宋伟、后浪】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">70%</td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:left">秒懂力</td>
+<td style="text-align:left">唐文</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">67%</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:left">微习惯</td>
+<td style="text-align:left">［美］斯蒂芬·盖斯【桂君译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">76%</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:left">刻意练习</td>
+<td style="text-align:left">［美］安德森·艾利克森、罗伯特普尔【王正林译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">22%</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:left">人类简史-从动物到上帝</td>
+<td style="text-align:left">［以色列］尤瓦尔·赫拉利【林俊宏译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">54%</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:left">如何高效学习</td>
+<td style="text-align:left">［加］斯科特·扬【程冕译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">54%</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:left">如何阅读一本书</td>
+<td style="text-align:left">［加］莫提默·J. 艾德勒、查尔斯·范多伦【 郝明义、朱衣译】</td>
+<td style="text-align:left">2018</td>
+<td style="text-align:center">50%</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:left">好孩子：三分天注定，七分靠教育</td>
+<td style="text-align:left">洪兰、尹建莉</td>
+<td style="text-align:left">&lt;2016</td>
+<td style="text-align:center">82%</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/11/10/booklist/">booklist</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
+        <p><span>发布时间:</span>2018-11-10, 10:56:43</p>
+        <p><span>最后更新:</span>2020-09-05, 13:06:49</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/11/10/booklist/" title="booklist">http://www.iuwai.com/2018/11/10/booklist/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/11/10/booklist/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/03/25/xiaochao/">
+                    xiaochao
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#传记"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x4F20;&#x8BB0;" class="headerlink" title="&#x4F20;&#x8BB0;"></a>&#x4F20;&#x8BB0;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小说"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x5C0F;&#x8BF4;" class="headerlink" title="&#x5C0F;&#x8BF4;"></a>&#x5C0F;&#x8BF4;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#技术类"><span class="toc-number">3.</span> <span class="toc-text"><a href="#&#x6280;&#x672F;&#x7C7B;" class="headerlink" title="&#x6280;&#x672F;&#x7C7B;"></a>&#x6280;&#x672F;&#x7C7B;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他"><span class="toc-number">4.</span> <span class="toc-text"><a href="#&#x5176;&#x4ED6;" class="headerlink" title="&#x5176;&#x4ED6;"></a>&#x5176;&#x4ED6;</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-6 i,
+        .toc-level-6 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"booklist　| Iuwai　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/03/25/xiaochao/" title="下一篇: xiaochao">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/10/booklist/">booklist</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/25/xiaochao/">xiaochao</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/10/Django-route/">Django-route</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/CentOS7-4-update-ntp/">CentOS7.4 update ntp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/OpenSSH-Update/">OpenSSH Update</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                浙ICP备17036958号
+            </div>
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2020 Iuwai
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="https://cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
