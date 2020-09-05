@@ -7,3 +7,4 @@ gen
 .git
 db.json
 node_modules/
+public
