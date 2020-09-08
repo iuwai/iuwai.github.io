@@ -62,7 +62,7 @@ tags: ["书单"]
 | 16 | [态度-吴军家书](https://book.douban.com/subject/30346218/) | 吴军 | 2020.9~ | 27% |
 | 16 | [如何成为一个有趣的人](https://book.douban.com/subject/27055728/) | 王小圈 | 2020.9~ | 18% |
 | 15 | [学会呼吸-重新掌握天生本能](https://book.douban.com/subject/34464343/) | [爱尔兰] 帕特里克·麦基翁 / Patrick McKeown | 2020.8~ | 13% |
-| 14 | [学习究竟是什么](https://book.douban.com/subject/35082292/) | 万维钢 | 2020.6~ | 55% |
+| 14 | [学习究竟是什么](https://book.douban.com/subject/35082292/) | 万维钢 | 2020.6~2020.9.6 | 100% |
 | 13 | [鼠疫](https://book.douban.com/subject/24257229/) | (法)阿尔贝·加缪 | 2020.5~ | 50% |
 | 12 | [精进-如何成为一个很厉害的人](https://book.douban.com/subject/26761696/) | 采铜 | 2019.4 | 15% |
 | 11 | 冥想 | 斯瓦米·拉玛 (Swami Rama)  | 2019.4 | 10% |
