@@ -60,7 +60,7 @@ tags: ["书单"]
 | :------: | :------| :------ | :------ | :------: |
 | 16 | [陆羽茶经：经典本](https://book.douban.com/subject/30377427/) | 王建荣 | 2020.9~ | 1% |
 | 16 | [态度-吴军家书](https://book.douban.com/subject/30346218/) | 吴军 | 2020.9~ | 27% |
-| 16 | [如何成为一个有趣的人](https://book.douban.com/subject/27055728/) | 王小圈 | 2020.9~ | 18% |
+| 16 | [如何成为一个有趣的人](https://book.douban.com/subject/27055728/) | 王小圈 | 2020.9~2020.9.29 | 100% |
 | 15 | [学会呼吸-重新掌握天生本能](https://book.douban.com/subject/34464343/) | [爱尔兰] 帕特里克·麦基翁 / Patrick McKeown | 2020.8~ | 13% |
 | 14 | [学习究竟是什么](https://book.douban.com/subject/35082292/) | 万维钢 | 2020.6~2020.9.6 | 100% |
 | 13 | [鼠疫](https://book.douban.com/subject/24257229/) | (法)阿尔贝·加缪 | 2020.5~ | 50% |
