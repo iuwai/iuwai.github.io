@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.iuwai.com/"/>
-  <updated>2020-10-26T08:25:30.383Z</updated>
+  <updated>2020-10-26T08:30:12.614Z</updated>
   <id>http://www.iuwai.com/</id>
   
   <author>
@@ -21,16 +21,13 @@
     <link href="http://www.iuwai.com/2020/10/26/aliyunbugfix/"/>
     <id>http://www.iuwai.com/2020/10/26/aliyunbugfix/</id>
     <published>2020-10-26T08:08:44.000Z</published>
-    <updated>2020-10-26T08:25:30.383Z</updated>
+    <updated>2020-10-26T08:30:12.614Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="RHSA-2019-0368-高危-systemd-安全更新"><a href="#RHSA-2019-0368-高危-systemd-安全更新" class="headerlink" title="RHSA-2019:0368-高危: systemd 安全更新"></a>RHSA-2019:0368-高危: systemd 安全更新</h2><h3 id="漏洞详情"><a href="#漏洞详情" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table><thead><tr><th style="text-align:center">漏洞编号</th><th style="text-align:left">影响分</th><th style="text-align:left">漏洞公告</th></tr></thead><tbody><tr><td style="text-align:center">CVE-2019-6454</td><td style="text-align:left">7</td><td style="text-align:left">bus_process_object()中的输入验证不足导致PID1崩溃</td></tr></tbody></table><h3 id="修复命令"><a href="#修复命令" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update systemd </span><br><span class="line">yum update systemd-libs </span><br><span class="line">yum update systemd-sysv</span><br></pre></td></tr></table></figure><h2 id="RHSA-2019-1228-高危-wget-安全更新"><a href="#RHSA-2019-1228-高危-wget-安全更新" class="headerlink" title="RHSA-2019:1228-高危: wget 安全更新"></a>RHSA-2019:1228-高危: wget 安全更新</h2><h3 id="漏洞详情-1"><a href="#漏洞详情-1" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table><thead><tr><th style="text-align:center">漏洞编号</th><th style="text-align:left">影响分</th><th style="text-align:left">漏洞公告</th></tr></thead><tbody><tr><td style="text-align:center">CVE-2019-5953</td><td style="text-align:left">8.8</td><td style="text-align:left">缓冲区溢出漏洞</td></tr></tbody></table><h3 id="修复命令-1"><a href="#修复命令-1" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update wget</span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<p>一阿里云漏洞修复记录<br><a id="more"></a></p><h2 id="RHSA-2019-0368-高危-systemd-安全更新"><a href="#RHSA-2019-0368-高危-systemd-安全更新" class="headerlink" title="RHSA-2019:0368-高危: systemd 安全更新"></a>RHSA-2019:0368-高危: systemd 安全更新</h2><h3 id="漏洞详情"><a href="#漏洞详情" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table><thead><tr><th style="text-align:center">漏洞编号</th><th style="text-align:left">影响分</th><th style="text-align:left">漏洞公告</th></tr></thead><tbody><tr><td style="text-align:center">CVE-2019-6454</td><td style="text-align:left">7</td><td style="text-align:left">bus_process_object()中的输入验证不足导致PID1崩溃</td></tr></tbody></table><h3 id="修复命令"><a href="#修复命令" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update systemd </span><br><span class="line">yum update systemd-libs </span><br><span class="line">yum update systemd-sysv</span><br></pre></td></tr></table></figure><h2 id="RHSA-2019-1228-高危-wget-安全更新"><a href="#RHSA-2019-1228-高危-wget-安全更新" class="headerlink" title="RHSA-2019:1228-高危: wget 安全更新"></a>RHSA-2019:1228-高危: wget 安全更新</h2><h3 id="漏洞详情-1"><a href="#漏洞详情-1" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table><thead><tr><th style="text-align:center">漏洞编号</th><th style="text-align:left">影响分</th><th style="text-align:left">漏洞公告</th></tr></thead><tbody><tr><td style="text-align:center">CVE-2019-5953</td><td style="text-align:left">8.8</td><td style="text-align:left">缓冲区溢出漏洞</td></tr></tbody></table><h3 id="修复命令-1"><a href="#修复命令-1" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update wget</span><br></pre></td></tr></table></figure>]]></content>
     
     <summary type="html">
     
-      
-      
-        &lt;h2 id=&quot;RHSA-2019-0368-高危-systemd-安全更新&quot;&gt;&lt;a href=&quot;#RHSA-2019-0368-高危-systemd-安全更新&quot; class=&quot;headerlink&quot; title=&quot;RHSA-2019:0368-高危: systemd 安全更新&quot;
-      
+      &lt;p&gt;一阿里云漏洞修复记录&lt;br&gt;
     
     </summary>
     
