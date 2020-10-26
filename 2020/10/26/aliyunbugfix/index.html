@@ -22,12 +22,10 @@
 <meta property="og:site_name" content="Iuwai">
 <meta property="og:description" content="阿里云漏洞修复记录">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://qiniu.iuwai.com/WechatIMG2789.jpeg">
-<meta property="og:updated_time" content="2020-10-26T12:37:25.909Z">
+<meta property="og:updated_time" content="2020-10-26T12:49:31.085Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="aliyunbugfix">
 <meta name="twitter:description" content="阿里云漏洞修复记录">
-<meta name="twitter:image" content="http://qiniu.iuwai.com/WechatIMG2789.jpeg">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -531,8 +529,62 @@
 </tbody>
 </table>
 <h3 id="修复命令-9"><a href="#修复命令-9" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update kernel</span><br></pre></td></tr></table></figure>
-<p><img src="http://qiniu.iuwai.com/WechatIMG2789.jpeg" alt="alt 测试"></p>
-
+<h2 id="RHSA-2020-1113-中危-bash-安全更新"><a href="#RHSA-2020-1113-中危-bash-安全更新" class="headerlink" title="RHSA-2020:1113-中危: bash 安全更新"></a>RHSA-2020:1113-中危: bash 安全更新</h2><h3 id="漏洞详情-10"><a href="#漏洞详情-10" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">漏洞编号</th>
+<th style="text-align:left">影响分</th>
+<th style="text-align:left">漏洞公告</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">CVE-2019-9924</td>
+<td style="text-align:left">7.8</td>
+<td style="text-align:left">Bash任意命令执行安全漏洞</td>
+</tr>
+</tbody>
+</table>
+<h3 id="修复命令-10"><a href="#修复命令-10" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update bash</span><br></pre></td></tr></table></figure>
+<h2 id="RHSA-2020-1011-中危-expat-安全更新"><a href="#RHSA-2020-1011-中危-expat-安全更新" class="headerlink" title="RHSA-2020:1011-中危: expat 安全更新"></a>RHSA-2020:1011-中危: expat 安全更新</h2><h3 id="漏洞详情-11"><a href="#漏洞详情-11" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">漏洞编号</th>
+<th style="text-align:left">影响分</th>
+<th style="text-align:left">漏洞公告</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">CVE-2015-2716</td>
+<td style="text-align:left">7.5</td>
+<td style="text-align:left">Mozilla Thunderbird XML内容解析缓冲区溢出漏洞</td>
+</tr>
+</tbody>
+</table>
+<h3 id="修复命令-11"><a href="#修复命令-11" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update expat</span><br></pre></td></tr></table></figure>
+<h2 id="RHSA-2020-2344-重要-bind-安全更新"><a href="#RHSA-2020-2344-重要-bind-安全更新" class="headerlink" title="RHSA-2020:2344-重要: bind 安全更新"></a>RHSA-2020:2344-重要: bind 安全更新</h2><h3 id="漏洞详情-12"><a href="#漏洞详情-12" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">漏洞编号</th>
+<th style="text-align:left">影响分</th>
+<th style="text-align:left">漏洞公告</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">CVE-2020-8616</td>
+<td style="text-align:left">8.6</td>
+<td style="text-align:left">恶意行为者故意利用这种缺乏有效限制执行次数的行为</td>
+</tr>
+<tr>
+<td style="text-align:center">CVE-2020-8617</td>
+<td style="text-align:left">7.5</td>
+<td style="text-align:left">使用特制的消息，攻击者可能会导致BIND服务器进入不一致状态</td>
+</tr>
+</tbody>
+</table>
+<h3 id="修复命令-12"><a href="#修复命令-12" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update bind-libs-lite</span><br><span class="line">yum update bind-license</span><br><span class="line">yum update bind-export-libs</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -543,7 +595,7 @@
         <p><span>本文标题:</span><a href="/2020/10/26/aliyunbugfix/">aliyunbugfix</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
         <p><span>发布时间:</span>2020-10-26, 16:08:44</p>
-        <p><span>最后更新:</span>2020-10-26, 20:37:25</p>
+        <p><span>最后更新:</span>2020-10-26, 20:49:31</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2020/10/26/aliyunbugfix/" title="aliyunbugfix">http://www.iuwai.com/2020/10/26/aliyunbugfix/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2020/10/26/aliyunbugfix/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -573,7 +625,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2019-0368-高危-systemd-安全更新"><span class="toc-number">1.</span> <span class="toc-text">RHSA-2019:0368-高危: systemd 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情"><span class="toc-number">1.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令"><span class="toc-number">1.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2019-1228-高危-wget-安全更新"><span class="toc-number">2.</span> <span class="toc-text">RHSA-2019:1228-高危: wget 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-1"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-1"><span class="toc-number">2.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-2894-重要-dbus-安全更新"><span class="toc-number">3.</span> <span class="toc-text">RHSA-2020:2894-重要: dbus 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-2"><span class="toc-number">3.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-2"><span class="toc-number">3.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-2337-重要-git-安全更新"><span class="toc-number">4.</span> <span class="toc-text">RHSA-2020:2337-重要: git 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-3"><span class="toc-number">4.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-3"><span class="toc-number">4.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update"><span class="toc-number">5.</span> <span class="toc-text">RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-4"><span class="toc-number">5.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-4"><span class="toc-number">5.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1050-中危-cups-安全和BUG修复更新"><span class="toc-number">6.</span> <span class="toc-text">RHSA-2020:1050-中危: cups 安全和BUG修复更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-5"><span class="toc-number">6.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-5"><span class="toc-number">6.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-0540-重要-sudo-安全更新"><span class="toc-number">7.</span> <span class="toc-text">RHSA-2020:0540-重要: sudo 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-6"><span class="toc-number">7.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-6"><span class="toc-number">7.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1"><span class="toc-number">8.</span> <span class="toc-text">RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-7"><span class="toc-number">8.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-7"><span class="toc-number">8.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1131-中危-python-安全更新"><span class="toc-number">9.</span> <span class="toc-text">RHSA-2020:1131-中危: python 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-8"><span class="toc-number">9.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-8"><span class="toc-number">9.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新"><span class="toc-number">10.</span> <span class="toc-text">RHSA-2020:0374-重要: 内核 安全和BUG修复更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-9"><span class="toc-number">10.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-9"><span class="toc-number">10.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2019-0368-高危-systemd-安全更新"><span class="toc-number">1.</span> <span class="toc-text">RHSA-2019:0368-高危: systemd 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情"><span class="toc-number">1.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令"><span class="toc-number">1.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2019-1228-高危-wget-安全更新"><span class="toc-number">2.</span> <span class="toc-text">RHSA-2019:1228-高危: wget 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-1"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-1"><span class="toc-number">2.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-2894-重要-dbus-安全更新"><span class="toc-number">3.</span> <span class="toc-text">RHSA-2020:2894-重要: dbus 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-2"><span class="toc-number">3.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-2"><span class="toc-number">3.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-2337-重要-git-安全更新"><span class="toc-number">4.</span> <span class="toc-text">RHSA-2020:2337-重要: git 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-3"><span class="toc-number">4.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-3"><span class="toc-number">4.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update"><span class="toc-number">5.</span> <span class="toc-text">RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-4"><span class="toc-number">5.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-4"><span class="toc-number">5.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1050-中危-cups-安全和BUG修复更新"><span class="toc-number">6.</span> <span class="toc-text">RHSA-2020:1050-中危: cups 安全和BUG修复更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-5"><span class="toc-number">6.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-5"><span class="toc-number">6.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-0540-重要-sudo-安全更新"><span class="toc-number">7.</span> <span class="toc-text">RHSA-2020:0540-重要: sudo 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-6"><span class="toc-number">7.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-6"><span class="toc-number">7.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1"><span class="toc-number">8.</span> <span class="toc-text">RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-7"><span class="toc-number">8.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-7"><span class="toc-number">8.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1131-中危-python-安全更新"><span class="toc-number">9.</span> <span class="toc-text">RHSA-2020:1131-中危: python 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-8"><span class="toc-number">9.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-8"><span class="toc-number">9.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新"><span class="toc-number">10.</span> <span class="toc-text">RHSA-2020:0374-重要: 内核 安全和BUG修复更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-9"><span class="toc-number">10.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-9"><span class="toc-number">10.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1113-中危-bash-安全更新"><span class="toc-number">11.</span> <span class="toc-text">RHSA-2020:1113-中危: bash 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-10"><span class="toc-number">11.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-10"><span class="toc-number">11.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-1011-中危-expat-安全更新"><span class="toc-number">12.</span> <span class="toc-text">RHSA-2020:1011-中危: expat 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-11"><span class="toc-number">12.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-11"><span class="toc-number">12.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RHSA-2020-2344-重要-bind-安全更新"><span class="toc-number">13.</span> <span class="toc-text">RHSA-2020:2344-重要: bind 安全更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞详情-12"><span class="toc-number">13.1.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复命令-12"><span class="toc-number">13.2.</span> <span class="toc-text">修复命令</span></a></li></ol></li></ol>
         
     </div>
     <style>
