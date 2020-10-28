@@ -254,3 +254,18 @@ yum update python
 yum update python-devel
 yum update python-libs
 ```
+
+## RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2018-16402 | 9.8 | elfutils拒绝服务漏洞 |
+| CVE-2018-16403 | 5.5 | Libdw/dwar_getabbrev.c和libwd/dwar_hasattr.c中基于堆的缓冲区读取过度会导致崩溃 |
+| CVE-2018-7665 | 5.5 | elf32_elateton.c中函数elf32_xlatetom中基于堆的缓冲区重读 |
+### 修复命令
+```shell
+yum update elfutils-default-yama-scope 
+yum update elfutils-libelf 
+yum update elfutils-libs 
+yum update elfutils 
+```
