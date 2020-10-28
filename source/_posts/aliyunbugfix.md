@@ -122,3 +122,135 @@ yum update python-libs
 ```shell
 yum update kernel
 ```
+
+## RHSA-2020:1113-中危: bash 安全更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2019-9924 | 7.8 | Bash任意命令执行安全漏洞 |
+### 修复命令
+```shell
+yum update bash
+```
+
+## RHSA-2020:1011-中危: expat 安全更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2015-2716 | 7.5 | Mozilla Thunderbird XML内容解析缓冲区溢出漏洞 |
+### 修复命令
+```shell
+yum update expat
+```
+
+## RHSA-2020:2344-重要: bind 安全更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2020-8616 | 8.6 | 恶意行为者故意利用这种缺乏有效限制执行次数的行为 |
+| CVE-2020-8617 | 7.5 | 使用特制的消息，攻击者可能会导致BIND服务器进入不一致状态 |
+### 修复命令
+```shell
+yum update bind-libs-lite
+yum update bind-license
+yum update bind-export-libs
+```
+
+## RHBA-2019:2599: krb5 bug修复更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+### 修复命令
+```shell
+yum update krb5-devel
+yum update krb5-libs
+yum update libkadm5
+```
+
+## RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2018-1000007 | 9.8 | libcurl信息泄露漏洞 |
+| CVE-2018-1000120 | 9.8 | curl缓冲区错误拒绝服务漏洞 |
+| CVE-2018-1000122 | 9.1 | curl缓冲区错误漏洞 |
+### 修复命令
+```shell
+yum update curl
+yum update libcurl
+yum update nss-pem
+```
+
+## RHSA-2019:2079-中危: Xorg 安全和BUG修复更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2018-14599 | 9.8 | 拒绝服务漏洞 |
+| CVE-2018-14600 | 9.8 | 越界访问拒绝服务代码执行漏洞 |
+| CVE-2018-15857 | 7.8 | ExprAppendMultiKeysymList中的无效释放导致崩溃 |
+### 修复命令
+```shell
+yum update libX11
+yum update libX11-common
+```
+
+## RHSA-2018:3092-中危: glibc 安全和BUG修复更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2017-16997 | 7.8 | GNU C Library'elf/dl-load.c'本地权限提升漏洞 |
+| CVE-2018-11236 | 7.8 | glibc基于堆的缓冲区溢出导致任意代码执行 |
+| CVE-2018-6485 | 9.8 | GNU C Library'memalign'函数整数溢出漏洞 |
+### 修复命令
+```shell
+yum update glibc
+yum update glibc-common
+yum update glibc-devel
+yum update glibc-headers
+yum update nscd
+```
+
+## RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2019-17041 | 9.8 | 在contrib/pmaixforward from/pmaixforward from.c中的基于堆的溢出 |
+| CVE-2019-17042 | 9.8 | 在contrib/pmcisconames/pmcisconames.c中基于堆的溢出 |
+### 修复命令
+```shell
+yum update rsyslog
+```
+
+## RHSA-2020:0374-重要: 内核 安全和BUG修复更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2019-11599 | 7 | 修复mmget_not_zero()/get_task_mm()和核心转储之间的竞争条件 |
+| CVE-2019-14895 | 9.8 | 在drivers/net/wireless/slots/mwifiex_process_country_le()函数中基于堆的缓冲区溢出 |
+| CVE-2019-14901 | 9.8 | marvell/mwifiex/tdls.c中的堆溢出 |
+| CVE-2019-17133 | 9.8 | net/wireless/wext-sme.c中的cfg80211_mgd_wext_giwessid中的缓冲区溢出 |
+### 修复命令
+```shell
+yum update kernel
+yum update kernel-devel
+yum update kernel-tools
+yum update kernel-tools-libs
+yum update python-perf
+yum update kernel-headers
+yum update kernel-debug-devel
+yum update perf
+```
+
+## RHSA-2019:2030-中危: python 安全和BUG修复更新
+### 漏洞详情
+| 漏洞编号 | 影响分 | 漏洞公告 |
+| :------: | :------ | :------ |
+| CVE-2019-9948 | 9.1 | local_file允许远程攻击者绕过保护机制 |
+| CVE-2019-5010 | 7.5 | 使用特制的X509证书进行NULL指针取消引用 |
+| CVE-2018-14647 | 5.3 | Python拒绝服务漏洞（CNDV-2018-20081） |
+### 修复命令
+```shell
+yum update python
+yum update python-devel
+yum update python-libs
+```
