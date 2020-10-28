@@ -2,7 +2,7 @@
 title: aliyunbugfix
 date: 2020-10-26 16:08:44
 categories:
-tags:
+tags: ["aliyun", "阿里云"]
 ---
 阿里云漏洞修复记录
 <!-- more -->
