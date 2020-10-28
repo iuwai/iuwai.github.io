@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
 
     <!--[if lt IE 9]>
         <style>body {display: none; background: none !important} </style>
@@ -8,27 +8,28 @@
     <![endif]-->
 
 <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="format-detection" content="telephone=no">
-<meta name="author" content="Iuwai">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Iuwai" />
 
 
 
 <meta name="description" content="CentOS7.4安装vsftp及配置vsftp版本：vsftpd-3.0.2-22.el7.x86_64">
-<meta name="keywords" content="CentOS7.4,vsftp">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CentOS7.4 install vsftp">
 <meta property="og:url" content="http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/index.html">
 <meta property="og:site_name" content="Iuwai">
 <meta property="og:description" content="CentOS7.4安装vsftp及配置vsftp版本：vsftpd-3.0.2-22.el7.x86_64">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-09-05T08:33:13.965Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-02-09T08:37:03.000Z">
+<meta property="article:modified_time" content="2020-09-05T08:33:13.965Z">
+<meta property="article:author" content="Iuwai">
+<meta property="article:tag" content="CentOS7.4">
+<meta property="article:tag" content="vsftp">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CentOS7.4 install vsftp">
-<meta name="twitter:description" content="CentOS7.4安装vsftp及配置vsftp版本：vsftpd-3.0.2-22.el7.x86_64">
 
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
 
     <link rel="alternate" href="/atom.xml" title="Iuwai" type="application/atom+xml">
@@ -51,7 +52,9 @@
     <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
 
 
+
 <link rel="stylesheet" href="/css/style.css">
+
 
 
 
@@ -92,7 +95,7 @@
 
 
 
-</head></html>
+<meta name="generator" content="Hexo 5.2.0"></head>
 <body>
   <div id="container">
     <div class="left-col">
@@ -103,11 +106,9 @@
             <img src="/img/avatar.png" class="animated zoomIn">
         </a>
         <hgroup>
-          <h1 class="header-author"><a href="/">Iuwai</a></h1>
+          <h1 class="header-author"><a href="/"></a></h1>
         </hgroup>
 
-        
-        <p class="header-subtitle">学如逆水行舟，不进则退。</p>
         
 
         
@@ -185,9 +186,9 @@
                             
                                 <a class="fa Email" href="mailto:iuwai@foxmail.com" title="Email"></a>
                             
-                                <a class="fa 新浪微博" href="https://weibo.com/iyouwai" title="新浪微博"></a>
+                                <a class="fa 新浪微博" target="_blank" rel="noopener" href="https://weibo.com/iyouwai" title="新浪微博"></a>
                             
-                                <a class="fa GitHub" href="https://github.com/iuwai" title="GitHub"></a>
+                                <a class="fa GitHub" target="_blank" rel="noopener" href="https://github.com/iuwai" title="GitHub"></a>
                             
                                 <a class="fa RSS" href="/atom.xml" title="RSS"></a>
                             
@@ -200,7 +201,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS7-4/">CentOS7.4</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Django/">Django</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSH/">OpenSSH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vsftp/">vsftp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/书单/">书单</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全加固/">安全加固</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/路由系统/">路由系统</a></li></ul>
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS7-4/" rel="tag">CentOS7.4</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Django/" rel="tag">Django</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSH/" rel="tag">OpenSSH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/" rel="tag">ntp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vsftp/" rel="tag">vsftp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B9%A6%E5%8D%95/" rel="tag">书单</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA/" rel="tag">安全加固</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B7%AF%E7%94%B1%E7%B3%BB%E7%BB%9F/" rel="tag">路由系统</a></li></ul>
                     </div>
                 </section>
                 
@@ -209,11 +210,11 @@
                 <section class="switch-part switch-part3">
                     <div id="js-friends">
                     
-                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a>
                     
-                      <a class="main-nav-link switch-friends-link" href="https://iuwai.github.com/">GitHub</a>
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://iuwai.github.com/">GitHub</a>
                     
-                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">MOxFIVE</a>
                     
                     </div>
                 </section>
@@ -235,7 +236,7 @@
       <nav id="mobile-nav">
       <div class="overlay">
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Iuwai</a></h1>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
       </div>
     <div class="intrude-less">
         <header id="header" class="inner">
@@ -243,10 +244,8 @@
                 <img src="/img/avatar.png" class="animated zoomIn">
             </a>
             <hgroup>
-              <h1 class="header-author"><a href="/" title="回到主页">Iuwai</a></h1>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
             </hgroup>
-            
-            <p class="header-subtitle">学如逆水行舟，不进则退。</p>
             
             <nav class="header-menu">
                 <ul>
@@ -317,7 +316,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CentOS7-4/">CentOS7.4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vsftp/">vsftp</a></li></ul>
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CentOS7-4/" rel="tag">CentOS7.4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vsftp/" rel="tag">vsftp</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -327,24 +326,38 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64<br><a id="more"></a></p>
-<h1 id="安装vsftpd"><a href="#安装vsftpd" class="headerlink" title="安装vsftpd"></a>安装vsftpd</h1><p>查看是否已经安装vsftpd<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure></p>
-<p>如果没有，就安装，并设置开机启动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure></p>
+        <p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64</p>
+<a id="more"></a>
+
+<h1 id="安装vsftpd"><a href="#安装vsftpd" class="headerlink" title="安装vsftpd"></a>安装vsftpd</h1><p>查看是否已经安装vsftpd</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure>
+<p>如果没有，就安装，并设置开机启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure>
 <p>当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_64</p>
-<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><p>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开/etc/vsftpd/vsftpd.conf，做如下配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/<span class="built_in">log</span>/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><p>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开/etc/vsftpd/vsftpd.conf，做如下配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/<span class="built_in">log</span>/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure>
 <p>经验证，FTP3.0.2版本必须加参数：allow_writeable_chroot=YES，6.8默认安装vsftpd-2.2.2-13.el6_6.1.x86_64不加也能生效，如果3.0.2不加此参数会报如下错误：<br>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>根本原因在于，从vsftpd_2.3.5版开始，取消了根目录的可写权限。因此，网上的普遍解决方案是以下两种：</p>
 <h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod a-w /vaf/ftp</span><br></pre></td></tr></table></figure>
-<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>vim /etc/vsftpd.conf add the following<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure></p>
-<p>经验证，如果加上参数allow_writeable_chroot，即使去掉参数chroot_local_user=YES，也可正常访问。<br>进行认证：<br>首先，安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install db4 db4-utils</span><br></pre></td></tr></table></figure></p>
-<p>然后，创建用户密码文本/etc/vsftpd/vuser_passwd.txt ，注意奇行是用户名，偶行是密码<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">test</span></span><br><span class="line">123456</span><br></pre></td></tr></table></figure></p>
-<p>接着，生成虚拟用户认证的db文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db_load -T -t <span class="built_in">hash</span> -f /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br></pre></td></tr></table></figure></p>
-<p>随后，编辑认证文件/etc/pam.d/vsftpd，全部注释掉原来语句，再增加以下两句：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br></pre></td></tr></table></figure></p>
-<p>mkdir /etc/vsftpd/vuser_conf/<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/vsftpd/vuser_conf/<span class="built_in">test</span> //文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span><br><span class="line"></span><br><span class="line">write_enable=YES //可写</span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_enable=YES</span><br><span class="line">anon_mkdir_write_enable=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line">local_root=/httx/run/appdown/paasftpuser /虚拟用户根目录,根据实际情况修改</span><br></pre></td></tr></table></figure></p>
+<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>vim /etc/vsftpd.conf add the following</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure>
+<p>经验证，如果加上参数allow_writeable_chroot，即使去掉参数chroot_local_user=YES，也可正常访问。<br>进行认证：<br>首先，安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install db4 db4-utils</span><br></pre></td></tr></table></figure>
+<p>然后，创建用户密码文本/etc/vsftpd/vuser_passwd.txt ，注意奇行是用户名，偶行是密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">test</span></span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
+<p>接着，生成虚拟用户认证的db文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db_load -T -t <span class="built_in">hash</span> -f /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br></pre></td></tr></table></figure>
+<p>随后，编辑认证文件/etc/pam.d/vsftpd，全部注释掉原来语句，再增加以下两句：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br></pre></td></tr></table></figure>
+<p>mkdir /etc/vsftpd/vuser_conf/</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/vsftpd/vuser_conf/<span class="built_in">test</span> //文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span><br><span class="line"></span><br><span class="line">write_enable=YES //可写</span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_enable=YES</span><br><span class="line">anon_mkdir_write_enable=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line">local_root=/httx/run/appdown/paasftpuser /虚拟用户根目录,根据实际情况修改</span><br></pre></td></tr></table></figure>
 <h4 id="设置Selinux"><a href="#设置Selinux" class="headerlink" title="设置Selinux"></a>设置Selinux</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setsebool -P ftp_home_dir=1   //设置ftp可以使用home目录</span><br><span class="line">sersebool -P allow_ftpd_full_access=1 //设置ftp用户可以有所有权限</span><br></pre></td></tr></table></figure>
-<p>设置FTP根目录权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /ftp/www   //创建目录</span><br><span class="line">chmod R 755 /ftp</span><br><span class="line">chmod R 750 /ftp/www</span><br></pre></td></tr></table></figure></p>
+<p>设置FTP根目录权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /ftp/www   //创建目录</span><br><span class="line">chmod R 755 /ftp</span><br><span class="line">chmod R 750 /ftp/www</span><br></pre></td></tr></table></figure>
 <p>ftp访问目录权限尽量最小</p>
-<h4 id="设置防火墙"><a href="#设置防火墙" class="headerlink" title="设置防火墙"></a>设置防火墙</h4><p>打开/etc/sysconfig/iptables<br>在“-A INPUT –m state –state NEW –m tcp –p –dport 22 –j ACCEPT”，下添加：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport 21 -j ACCEPT</span><br></pre></td></tr></table></figure></p>
-<p>然后保存，并关闭该文件，在终端内运行下面的命令，刷新防火墙配置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service iptables restart</span><br></pre></td></tr></table></figure></p>
+<h4 id="设置防火墙"><a href="#设置防火墙" class="headerlink" title="设置防火墙"></a>设置防火墙</h4><p>打开/etc/sysconfig/iptables<br>在“-A INPUT –m state –state NEW –m tcp –p –dport 22 –j ACCEPT”，下添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport 21 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>然后保存，并关闭该文件，在终端内运行下面的命令，刷新防火墙配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service iptables restart</span><br></pre></td></tr></table></figure>
 <p>OK，FTP搭建完成！</p>
 
       
@@ -355,16 +368,16 @@
     
     <div class="copyright">
         <p><span>本文标题:</span><a href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">Iuwai</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
         <p><span>发布时间:</span>2018-02-09, 16:37:03</p>
         <p><span>最后更新:</span>2020-09-05, 16:33:13</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/02/09/CentOS7-4-install-vsftp/" title="CentOS7.4 install vsftp">http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/　　作者: Iuwai" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2018/02/09/CentOS7-4-install-vsftp/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
         </p>
     </div>
 
@@ -393,7 +406,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#安装vsftpd"><span class="toc-number">1.</span> <span class="toc-text">安装vsftpd</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#修改配置"><span class="toc-number">2.</span> <span class="toc-text">修改配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方案一"><span class="toc-number">2.1.</span> <span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案二"><span class="toc-number">2.2.</span> <span class="toc-text">方案二</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#设置Selinux"><span class="toc-number">2.2.0.1.</span> <span class="toc-text">设置Selinux</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置防火墙"><span class="toc-number">2.2.0.2.</span> <span class="toc-text">设置防火墙</span></a></li></ol></li></ol></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85vsftpd"><span class="toc-number">1.</span> <span class="toc-text">安装vsftpd</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">修改配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80"><span class="toc-number">2.1.</span> <span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C"><span class="toc-number">2.2.</span> <span class="toc-text">方案二</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AESelinux"><span class="toc-number">2.2.0.1.</span> <span class="toc-text">设置Selinux</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-number">2.2.0.2.</span> <span class="toc-text">设置防火墙</span></a></li></ol></li></ol></li></ol></li></ol>
         
     </div>
     <style>
