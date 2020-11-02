@@ -2,7 +2,7 @@
 title: CentOS7.4 update ntp
 date: 2018-02-13 14:23:08
 categories: Linux
-tags: [CentOS7.4,ntp]
+tags: [CentOS7,ntp]
 ---
 CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz
 <!-- more -->
