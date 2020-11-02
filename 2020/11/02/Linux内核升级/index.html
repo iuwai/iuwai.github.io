@@ -15,15 +15,15 @@
 
 
 
-<meta name="description" content="3.10内核升级至4.4环境说明腾讯云Centos7.8内核版本：3.10.0-1127.19.1.el7.x86_64 目标内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64 kernel 3.10-&gt;4.4升级步骤yum源修改123456# 输入公钥rpm --import https:&#x2F;&#x2F;www.elrepo.org&#x2F;RPM-GPG-KEY-elrep">
+<meta name="description" content="Linux内核大版本升级">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux内核升级">
-<meta property="og:url" content="http://www.iuwai.com/2020/11/02/Linux-kernel-update/index.html">
+<meta property="og:url" content="http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/index.html">
 <meta property="og:site_name" content="Iuwai">
-<meta property="og:description" content="3.10内核升级至4.4环境说明腾讯云Centos7.8内核版本：3.10.0-1127.19.1.el7.x86_64 目标内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64 kernel 3.10-&gt;4.4升级步骤yum源修改123456# 输入公钥rpm --import https:&#x2F;&#x2F;www.elrepo.org&#x2F;RPM-GPG-KEY-elrep">
+<meta property="og:description" content="Linux内核大版本升级">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-11-02T09:40:11.000Z">
-<meta property="article:modified_time" content="2020-11-02T11:48:36.332Z">
+<meta property="article:modified_time" content="2020-11-02T11:57:17.855Z">
 <meta property="article:author" content="Iuwai">
 <meta property="article:tag" content="CentOS7">
 <meta property="article:tag" content="kernel">
@@ -270,10 +270,10 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-Linux-kernel-update" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Linux内核升级" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2020/11/02/Linux-kernel-update/" class="article-date">
+      <a href="/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/" class="article-date">
       <time datetime="2020-11-02T09:40:11.000Z" itemprop="datePublished">2020-11-02</time>
 </a>
 
@@ -314,7 +314,10 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="3-10内核升级至4-4"><a href="#3-10内核升级至4-4" class="headerlink" title="3.10内核升级至4.4"></a>3.10内核升级至4.4</h1><h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><p>腾讯云<br>Centos7.8<br>内核版本：3.10.0-1127.19.1.el7.x86_64</p>
+        <p>Linux内核大版本升级</p>
+<a id="more"></a>
+
+<h1 id="3-10内核升级至4-4"><a href="#3-10内核升级至4-4" class="headerlink" title="3.10内核升级至4.4"></a>3.10内核升级至4.4</h1><h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><p>腾讯云<br>Centos7.8<br>内核版本：3.10.0-1127.19.1.el7.x86_64</p>
 <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64</p>
 <h2 id="kernel-3-10-gt-4-4升级步骤"><a href="#kernel-3-10-gt-4-4升级步骤" class="headerlink" title="kernel 3.10-&gt;4.4升级步骤"></a>kernel 3.10-&gt;4.4升级步骤</h2><h3 id="yum源修改"><a href="#yum源修改" class="headerlink" title="yum源修改"></a>yum源修改</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 输入公钥</span></span><br><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line"><span class="meta">#</span><span class="bash"> 升级安装ELRepo</span></span><br><span class="line">yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm</span><br><span class="line"><span class="meta">#</span><span class="bash"> 载入elrepo-kernel 元数据</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel repolist</span><br></pre></td></tr></table></figure>
 <h3 id="查看可用rpm包"><a href="#查看可用rpm包" class="headerlink" title="查看可用rpm包"></a>查看可用rpm包</h3><p>yum –disablerepo=* –enablerepo=elrepo-kernel list kernel*</p>
@@ -343,13 +346,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2020/11/02/Linux-kernel-update/">Linux内核升级</a></p>
+        <p><span>本文标题:</span><a href="/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/">Linux内核升级</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
         <p><span>发布时间:</span>2020-11-02, 17:40:11</p>
-        <p><span>最后更新:</span>2020-11-02, 19:48:36</p>
+        <p><span>最后更新:</span>2020-11-02, 19:57:17</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2020/11/02/Linux-kernel-update/" title="Linux内核升级">http://www.iuwai.com/2020/11/02/Linux-kernel-update/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2020/11/02/Linux-kernel-update/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/" title="Linux内核升级">http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -444,7 +447,7 @@
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/11/02/Linux-kernel-update/">Linux内核升级</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/26/aliyunbugfix/">aliyunbugfix</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/10/booklist/">booklist</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/25/xiaochao/">xiaochao</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/10/Django-route/">Django-route</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/CentOS7-4-update-ntp/">CentOS7.4 update ntp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/OpenSSH-Update/">OpenSSH Update</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/">Linux内核升级</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/26/aliyunbugfix/">aliyunbugfix</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/10/booklist/">booklist</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/25/xiaochao/">xiaochao</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/10/Django-route/">Django-route</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/CentOS7-4-update-ntp/">CentOS7.4 update ntp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/CentOS7-4-install-vsftp/">CentOS7.4 install vsftp</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/09/OpenSSH-Update/">OpenSSH Update</a></li></ul>
 
 
 
