@@ -136,9 +136,9 @@
     <category term="Linux" scheme="http://www.iuwai.com/categories/Linux/"/>
     
     
-    <category term="ntp" scheme="http://www.iuwai.com/tags/ntp/"/>
-    
     <category term="CentOS7" scheme="http://www.iuwai.com/tags/CentOS7/"/>
+    
+    <category term="ntp" scheme="http://www.iuwai.com/tags/ntp/"/>
     
   </entry>
   
