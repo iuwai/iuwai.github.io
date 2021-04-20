@@ -633,7 +633,7 @@
     <title>booklist</title>
     <url>/2018/11/10/booklist/</url>
     <content><![CDATA[<p>一日不读书、不思考便觉自己在堕落</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>1.每年看至少一部人物传记</p>
 <h3 id="传记"><a href="#传记" class="headerlink" title="传记"></a>传记</h3><table>
 <thead>
@@ -1161,7 +1161,7 @@
 <td align="left"><a href="https://book.douban.com/subject/35143751/">写作是门手艺</a></td>
 <td align="left">刘军强</td>
 <td align="left">2021.4.13~</td>
-<td align="center">5%</td>
+<td align="center">6%</td>
 </tr>
 <tr>
 <td align="center">27</td>
