@@ -8,7 +8,7 @@ subtitle: 学如逆水行舟，不进则退。
 description: 真正学会一项技能的标志就是能够出教程
 author: Iuwai
 language: zh-CN
-timezone:
+timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
