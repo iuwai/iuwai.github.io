@@ -8,3 +8,4 @@ gen
 db.json
 node_modules/
 public
+.vscode/
