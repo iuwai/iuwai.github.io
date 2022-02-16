@@ -137,7 +137,7 @@ require([], function (){
 
     // TOC
     if (yiliaConfig.toc) {
-        require(['toc'], function(){ })
+        require(['./toc'], function(){ })
     }
 
     // Random Color 边栏顶部随机颜色

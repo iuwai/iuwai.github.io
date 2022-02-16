@@ -13,9 +13,9 @@
     "_vendors.yml"
   ],
   "scripts": {
-    "eslint": "eslint scripts/ source/js test/",
+    "eslint": "eslint scripts source/js test/",
     "prepare": "node .githooks/install.js",
-    "stylint": "stylint source/css/",
+    "stylint": "stylint source/css",
     "test": "mocha test/index.js"
   },
   "repository": "next-theme/hexo-theme-next",
