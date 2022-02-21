@@ -79,17 +79,16 @@ creative_commons:
 # Key is the name of menu item. If the translation for this item is available, the translated text will be loaded, otherwise the Key name will be used. Key is case-senstive.
 # Value before `||` delimiter is the target link, value after `||` delimiter is the name of Font Awesome icon.
 # External url should start with http:// or https://
+# <script src="https://kit.fontawesome.com/a6977a32e1.js" crossorigin="anonymous"></script>
+# https://fontawesome.com/search
 menu:
   home: / || fa fa-home
+  tags: /tags/ || fa fa-tags
+  categories: /categories/ || fa fa-th
+  archives: /archives/ || fa fa-archive
+  dayDayUp: /dayDayUp || fa fa-pen-nib
   about: /about/ || fa fa-user
-  tags: /tags
-  archives: /archives
-  dayDayUp: /dayDayUp
-  #home: / || fa fa-home
-  #about: /about/ || fa fa-user
-  #tags: /tags/ || fa fa-tags
-  #categories: /categories/ || fa fa-th
-  #archives: /archives/ || fa fa-archive
+  search: /search/ || fa fa-search
   #schedule: /schedule/ || fa fa-calendar
   #sitemap: /sitemap.xml || fa fa-sitemap
   #commonweal: /404/ || fa fa-heartbeat
@@ -374,8 +373,9 @@ codeblock:
     light: prism
     dark: prism-dark
   # Add copy button on codeblock
-  copy_button:
+  copy_button:  # 设置是否开启代码块复制按钮
     enable: true
+    show_result: true  # 是否显示复制成功信息
     # Available values: default | flat | mac
     style: mac
 
@@ -424,12 +424,14 @@ github_banner:
 # Web Safe fonts are recommended for `global` (and `title`):
 # Arial | Tahoma | Helvetica | Times New Roman | Courier New | Verdana | Georgia | Palatino | Garamond | Comic Sans MS | Trebuchet MS
 # ---------------------------------------------------------------
-
+# 访问系统总是会耗费一大部分的时间在加载google字体库上, 而且经常加载不成功.
+# 方法一: 用国内的CDN库来替代主题中的google字体库, 到主题配置文件中设置默认字体库:
+# 方法二: 关掉字体库的引用, 默认加载本地字体库, 到主题配置文件设置:
 font:
   enable: false
 
   # Uri of fonts host, e.g. https://fonts.googleapis.com (Default).
-  host:
+  host: fonts.useso.com
 
   # Font options:
   # `external: true` will load this font family from `host` above.
@@ -735,6 +737,11 @@ busuanzi_count:
 # Search Services
 # See: https://theme-next.js.org/docs/third-party-services/search-services
 # ---------------------------------------------------------------
+#search:
+#path: search.xml
+#field: post
+#format: html
+#limit: 10000
 
 # Algolia Search
 # For more information: https://www.algolia.com
@@ -745,8 +752,9 @@ algolia_search:
 
 # Local Search
 # Dependencies: https://github.com/next-theme/hexo-generator-searchdb
+# 安装插件 npm install hexo-generator-searchdb --save
 local_search:
-  enable: false
+  enable: true
   # If auto, trigger search by changing input.
   # If manual, trigger search by pressing enter key or search button.
   trigger: auto
@@ -755,7 +763,7 @@ local_search:
   # Unescape html strings to the readable one.
   unescape: false
   # Preload the search data when the page loads.
-  preload: false
+  preload: true
 
 
 # ---------------------------------------------------------------
