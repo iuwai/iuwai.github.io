@@ -66,10 +66,10 @@ token:      it-is-example-token-pZCI6IlB0MUR2dEdtRW5lN19nQWg1WWdWN2o5U1FicTA2dDY
 ```
 ### 二、配置Jumpserver
 #### 1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token
-![输入token](/images/jumpserver-input_token.png)
+![输入token]<img height="60%" src="/images/jumpserver-input_token.png" width="60%"/>
 #### 2.应用管理-kubernetes中创建应用
 注：“集群”中填写jms能够访问到的集群地址，此处填写TKE提供的内网ip地址
-![输入集群地址](/images/jumpserver-input_cluster_addr.png)
+![输入集群地址]<img height="60%" src="/images/jumpserver-input_cluster_addr.png" width="60%"/>
 #### 3.赋权后即可访问k8s集群信息，测试
 ```shell
 kubectl get nodes
