@@ -20,7 +20,7 @@ module.exports = hexo => {
     cache.enable = false;
   }
   if (cache && cache.enable && hexo.config.relative_link) {
-    warning('caching', '`relative_link` option in Hexo `_config.yml`');
+    warning('caching', '`relative_link` option in Hexo `_config.next.yml`');
     hexo.config.relative_link = false;
   }
   hexo.config.meta_generator = false;

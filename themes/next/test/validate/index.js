@@ -7,7 +7,7 @@ const should = require('chai').should();
 
 describe('Validate', () => {
   it('config', () => {
-    const themeConfig = fs.readFileSync(path.join(__dirname, '../../_config.yml'));
+    const themeConfig = fs.readFileSync(path.join(__dirname, '../../_config.next.yml'));
     should.not.throw(() => {
       yaml.load(themeConfig);
     });

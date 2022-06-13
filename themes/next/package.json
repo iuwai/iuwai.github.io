@@ -9,7 +9,7 @@
     "layout",
     "scripts",
     "source",
-    "_config.yml",
+    "../../_config.next.yml",
     "_vendors.yml"
   ],
   "scripts": {
