@@ -88,7 +88,7 @@ menu:
   archives: /archives/ || fa fa-archive
   dayDayUp: /dayDayUp || fa fa-pen-nib
   about: /about/ || fa fa-user
-  search: /search/ || fa fa-search
+#  search: /search/ || fa fa-search
   #schedule: /schedule/ || fa fa-calendar
   #sitemap: /sitemap.xml || fa fa-sitemap
   #commonweal: /404/ || fa fa-heartbeat
