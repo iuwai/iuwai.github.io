@@ -3,9 +3,11 @@
 *.iml
 out
 gen
-.deploy_git/
+.deploy*/
 .git
 db.json
 node_modules/
 public
 .vscode/
+.DS_Store
+Thumbs.db
