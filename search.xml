@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CentOS7.4 update ntp</title>
-    <url>/2018/02/13/CentOS7-4-update-ntp/</url>
-    <content><![CDATA[<p>CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz</p>
-<span id="more"></span>
-
-<p>#准备工作</p>
-<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure>
-<h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> -ar /etc/ntp /etc/ntp.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure>
-<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y erase ntp ntpdate</span><br></pre></td></tr></table></figure>
-<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="x2F-configure"><a href="#x2F-configure" class="headerlink" title=".&#x2F;configure"></a>.&#x2F;configure</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf ntp-4.2.8p10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ntp-4.2.8p10</span><br><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --enable-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --enable-all-clocks --enable-parse-clocks --enable-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-<h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line"><span class="built_in">mv</span> /etc/ntp.bak /etc/ntp</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure>
-<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure>
-<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS7</tag>
-        <tag>ntp</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CentOS7.4 install vsftp</title>
     <url>/2018/02/09/CentOS7-4-install-vsftp/</url>
     <content><![CDATA[<p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64</p>
@@ -68,6 +46,28 @@
       </tags>
   </entry>
   <entry>
+    <title>CentOS7.4 update ntp</title>
+    <url>/2018/02/13/CentOS7-4-update-ntp/</url>
+    <content><![CDATA[<p>CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz</p>
+<span id="more"></span>
+
+<p>#准备工作</p>
+<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure>
+<h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> -ar /etc/ntp /etc/ntp.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure>
+<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y erase ntp ntpdate</span><br></pre></td></tr></table></figure>
+<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="x2F-configure"><a href="#x2F-configure" class="headerlink" title=".&#x2F;configure"></a>.&#x2F;configure</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf ntp-4.2.8p10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ntp-4.2.8p10</span><br><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --enable-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --enable-all-clocks --enable-parse-clocks --enable-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line"><span class="built_in">mv</span> /etc/ntp.bak /etc/ntp</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure>
+<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure>
+<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS7</tag>
+        <tag>ntp</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Django-route</title>
     <url>/2018/03/10/Django-route/</url>
     <content><![CDATA[<p>Django路由系统:动态路由、指定参数名、默认参数</p>
@@ -87,6 +87,31 @@
       <tags>
         <tag>Django</tag>
         <tag>路由系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JumpServer添加访问k8s集群</title>
+    <url>/2022/02/22/JumpServer%E6%B7%BB%E5%8A%A0%E8%AE%BF%E9%97%AEk8s%E9%9B%86%E7%BE%A4/</url>
+    <content><![CDATA[<p>Jumpserver中添加k8s，方便直接从Jumpserver管理k8s集群</p>
+<span id="more"></span>
+
+<h3 id="一、k8s准备"><a href="#一、k8s准备" class="headerlink" title="一、k8s准备"></a>一、k8s准备</h3><h4 id="1-创建对象ClusterRole"><a href="#1-创建对象ClusterRole" class="headerlink" title="1.创建对象ClusterRole"></a>1.创建对象ClusterRole</h4><p>此对象定义具体权限</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">create</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">delete</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deletecollection</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">patch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-创建对象ServiceAccount"><a href="#2-创建对象ServiceAccount" class="headerlink" title="2.创建对象ServiceAccount"></a>2.创建对象ServiceAccount</h4><p>此对象为创建用户，并自动生成Secret对象，即token</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
+<h4 id="3-创建对象ClusterRoleBinding"><a href="#3-创建对象ClusterRoleBinding" class="headerlink" title="3.创建对象ClusterRoleBinding"></a>3.创建对象ClusterRoleBinding</h4><p>此对象将ClusterRole定义的权限赋给ServiceAccount</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-bind-jmsClusterRole</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-获取token值"><a href="#4-获取token值" class="headerlink" title="4.获取token值"></a>4.获取token值</h4><p>此步骤也可参考Jumpserver官网：<a href="https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/">https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export</span> <span class="string">POD_NAME=`kubectl</span> <span class="string">get</span> <span class="string">secret</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">jms|awk</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span><span class="string">`</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">describe</span> <span class="string">secret</span> <span class="string">$&#123;POD_NAME&#125;</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">&#x27;token:&#x27;</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="attr">token:</span>      <span class="string">it-is-example-token-pZCI6IlB0MUR2dEdtRW5lN19nQWg1WWdWN2o5U1FicTA2dDYtT2VfMk1ScTd0RG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJqbXMtc2VydmljZWFjY291bnQtdG9rZW4tcnB3d2giLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiam1zLXNlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMGZkYjIwOWUtMTgyYi00M2JmLTgyNDctZTAwN2VkOWI1ZTY4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmptcy1zZXJ2aWNlYWNjb3VudCJ9.o8N_m_QtpLOj5OHxvlnepzqypmx8xfE63_GQnzbSfy4deGR1WY0UElxLZcWrajhzHIOP2cBkzVF-X4K6sZoixV1tI0qevHC-gu2v-VZkzv0h-lwbJfMWNV9fiF2alZ9VCVSIXXUBRJ49Wd6ecn8N5_BAIXZ3rLePYxhJA9t_Vlx8l_8stE-AXn9W5IRRy6bzFCpJqR0Mua8BDvv8UJMPT7PPFp3bmBdTNuFOlwpoUNHNtKERGpN19N9Zg05bNaHZwphABOK2mlHDwERAJ3JDFrC1bztUZCYgxXhDQnCG_EJE54SpoMNVvvRgyTw5BJAZYizEmM2_ljytCgdAEznD5g</span></span><br></pre></td></tr></table></figure>
+<h3 id="二、配置Jumpserver"><a href="#二、配置Jumpserver" class="headerlink" title="二、配置Jumpserver"></a>二、配置Jumpserver</h3><h4 id="1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"><a href="#1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token" class="headerlink" title="1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"></a>1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token</h4><p>![输入token]<img height="60%" src="/images/jumpserver-input_token.png" width="60%"/></p>
+<h4 id="2-应用管理-kubernetes中创建应用"><a href="#2-应用管理-kubernetes中创建应用" class="headerlink" title="2.应用管理-kubernetes中创建应用"></a>2.应用管理-kubernetes中创建应用</h4><p>注：“集群”中填写jms能够访问到的集群地址，此处填写TKE提供的内网ip地址<br>![输入集群地址]<img height="60%" src="/images/jumpserver-input_cluster_addr.png" width="60%"/></p>
+<h4 id="3-赋权后即可访问k8s集群信息，测试"><a href="#3-赋权后即可访问k8s集群信息，测试" class="headerlink" title="3.赋权后即可访问k8s集群信息，测试"></a>3.赋权后即可访问k8s集群信息，测试</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Jumpserver</category>
+      </categories>
+      <tags>
+        <tag>jumpserver</tag>
+        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -124,31 +149,6 @@
       <tags>
         <tag>CentOS7</tag>
         <tag>kernel</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JumpServer添加访问k8s集群</title>
-    <url>/2022/02/22/JumpServer%E6%B7%BB%E5%8A%A0%E8%AE%BF%E9%97%AEk8s%E9%9B%86%E7%BE%A4/</url>
-    <content><![CDATA[<p>Jumpserver中添加k8s，方便直接从Jumpserver管理k8s集群</p>
-<span id="more"></span>
-
-<h3 id="一、k8s准备"><a href="#一、k8s准备" class="headerlink" title="一、k8s准备"></a>一、k8s准备</h3><h4 id="1-创建对象ClusterRole"><a href="#1-创建对象ClusterRole" class="headerlink" title="1.创建对象ClusterRole"></a>1.创建对象ClusterRole</h4><p>此对象定义具体权限</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">create</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">delete</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deletecollection</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">patch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-创建对象ServiceAccount"><a href="#2-创建对象ServiceAccount" class="headerlink" title="2.创建对象ServiceAccount"></a>2.创建对象ServiceAccount</h4><p>此对象为创建用户，并自动生成Secret对象，即token</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
-<h4 id="3-创建对象ClusterRoleBinding"><a href="#3-创建对象ClusterRoleBinding" class="headerlink" title="3.创建对象ClusterRoleBinding"></a>3.创建对象ClusterRoleBinding</h4><p>此对象将ClusterRole定义的权限赋给ServiceAccount</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-bind-jmsClusterRole</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
-<h4 id="4-获取token值"><a href="#4-获取token值" class="headerlink" title="4.获取token值"></a>4.获取token值</h4><p>此步骤也可参考Jumpserver官网：<a href="https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/">https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/</a></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export</span> <span class="string">POD_NAME=`kubectl</span> <span class="string">get</span> <span class="string">secret</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">jms|awk</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span><span class="string">`</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">describe</span> <span class="string">secret</span> <span class="string">$&#123;POD_NAME&#125;</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">&#x27;token:&#x27;</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="attr">token:</span>      <span class="string">it-is-example-token-pZCI6IlB0MUR2dEdtRW5lN19nQWg1WWdWN2o5U1FicTA2dDYtT2VfMk1ScTd0RG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJqbXMtc2VydmljZWFjY291bnQtdG9rZW4tcnB3d2giLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiam1zLXNlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMGZkYjIwOWUtMTgyYi00M2JmLTgyNDctZTAwN2VkOWI1ZTY4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmptcy1zZXJ2aWNlYWNjb3VudCJ9.o8N_m_QtpLOj5OHxvlnepzqypmx8xfE63_GQnzbSfy4deGR1WY0UElxLZcWrajhzHIOP2cBkzVF-X4K6sZoixV1tI0qevHC-gu2v-VZkzv0h-lwbJfMWNV9fiF2alZ9VCVSIXXUBRJ49Wd6ecn8N5_BAIXZ3rLePYxhJA9t_Vlx8l_8stE-AXn9W5IRRy6bzFCpJqR0Mua8BDvv8UJMPT7PPFp3bmBdTNuFOlwpoUNHNtKERGpN19N9Zg05bNaHZwphABOK2mlHDwERAJ3JDFrC1bztUZCYgxXhDQnCG_EJE54SpoMNVvvRgyTw5BJAZYizEmM2_ljytCgdAEznD5g</span></span><br></pre></td></tr></table></figure>
-<h3 id="二、配置Jumpserver"><a href="#二、配置Jumpserver" class="headerlink" title="二、配置Jumpserver"></a>二、配置Jumpserver</h3><h4 id="1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"><a href="#1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token" class="headerlink" title="1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"></a>1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token</h4><p>![输入token]<img height="60%" src="/images/jumpserver-input_token.png" width="60%"/></p>
-<h4 id="2-应用管理-kubernetes中创建应用"><a href="#2-应用管理-kubernetes中创建应用" class="headerlink" title="2.应用管理-kubernetes中创建应用"></a>2.应用管理-kubernetes中创建应用</h4><p>注：“集群”中填写jms能够访问到的集群地址，此处填写TKE提供的内网ip地址<br>![输入集群地址]<img height="60%" src="/images/jumpserver-input_cluster_addr.png" width="60%"/></p>
-<h4 id="3-赋权后即可访问k8s集群信息，测试"><a href="#3-赋权后即可访问k8s集群信息，测试" class="headerlink" title="3.赋权后即可访问k8s集群信息，测试"></a>3.赋权后即可访问k8s集群信息，测试</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Jumpserver</category>
-      </categories>
-      <tags>
-        <tag>jumpserver</tag>
-        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
