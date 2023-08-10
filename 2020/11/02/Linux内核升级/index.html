@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.iuwai.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Linux内核大版本升级">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux内核升级">
+<meta property="og:url" content="http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/index.html">
+<meta property="og:site_name" content="Iuwai">
+<meta property="og:description" content="Linux内核大版本升级">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-02T09:40:11.000Z">
+<meta property="article:modified_time" content="2023-08-10T02:34:22.532Z">
+<meta property="article:author" content="Iuwai">
+<meta property="article:tag" content="CentOS7">
+<meta property="article:tag" content="kernel">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/","path":"2020/11/02/Linux内核升级/","title":"Linux内核升级"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux内核升级 | Iuwai</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Iuwai" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Iuwai</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">学如逆水行舟，不进则退。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">14</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a></li><li class="menu-item menu-item-daydayup"><a href="/dayDayUp" rel="section"><i class="fa fa-pen-nib fa-fw"></i>dayDayUp</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#3-10%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7%E8%87%B34-4"><span class="nav-number">1.</span> <span class="nav-text">3.10内核升级至4.4</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E"><span class="nav-number">1.1.</span> <span class="nav-text">环境说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kernel-3-10-gt-4-4%E5%8D%87%E7%BA%A7%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.3.</span> <span class="nav-text">kernel 3.10-&gt;4.4升级步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#yum%E6%BA%90%E4%BF%AE%E6%94%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">yum源修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8F%AF%E7%94%A8rpm%E5%8C%85"><span class="nav-number">1.3.2.</span> <span class="nav-text">查看可用rpm包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%9C%80%E6%96%B0%E7%A8%B3%E5%AE%9A%E7%89%88kernel"><span class="nav-number">1.3.3.</span> <span class="nav-text">安装最新稳定版kernel</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%97%A7%E7%89%88%E6%9C%AC%E5%B7%A5%E5%85%B7%E5%8C%85"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">删除旧版本工具包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%96%B0%E7%89%88%E6%9C%AC%E5%B7%A5%E5%85%B7%E5%8C%85"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">安装新版本工具包</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E5%86%85%E6%A0%B8%E5%90%AF%E5%8A%A8%E4%BF%AE%E6%94%B9%E4%B8%BA%E6%9C%AC%E6%9C%BA%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC"><span class="nav-number">1.3.4.</span> <span class="nav-text">将内核启动修改为本机最新版本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">查看内核版本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">设置默认启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90grub%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">生成grub配置文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%90%AF-amp-%E9%AA%8C%E8%AF%81"><span class="nav-number">1.3.5.</span> <span class="nav-text">重启&amp;验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%97%A7%E5%86%85%E6%A0%B8%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="nav-number">1.3.6.</span> <span class="nav-text">删除旧内核（可选）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%AC%E6%9C%BA%E5%86%85%E6%89%80%E6%9C%89%E5%86%85%E6%A0%B8"><span class="nav-number">1.3.6.1.</span> <span class="nav-text">查看本机内所有内核</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yum-remove"><span class="nav-number">1.3.6.2.</span> <span class="nav-text">yum remove</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yum-utils%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.6.3.</span> <span class="nav-text">yum-utils工具</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Iuwai"
+      src="/images/iuwai.jpg">
+  <p class="site-author-name" itemprop="name">Iuwai</p>
+  <div class="site-description" itemprop="description">还是多读点书吧</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:iuwai@foxmail.com" title="E-Mail → mailto:iuwai@foxmail.com" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/iuwai.jpg">
+      <meta itemprop="name" content="Iuwai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Iuwai">
+      <meta itemprop="description" content="还是多读点书吧">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux内核升级 | Iuwai">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux内核升级
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-02 17:40:11" itemprop="dateCreated datePublished" datetime="2020-11-02T17:40:11+08:00">2020-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-10 10:34:22" itemprop="dateModified" datetime="2023-08-10T10:34:22+08:00">2023-08-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>719</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Linux内核大版本升级</p>
+<span id="more"></span>
+
+<h1 id="3-10内核升级至4-4"><a href="#3-10内核升级至4-4" class="headerlink" title="3.10内核升级至4.4"></a>3.10内核升级至4.4</h1><h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><p>腾讯云<br>Centos7.8<br>内核版本：3.10.0-1127.19.1.el7.x86_64</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64</p>
+<h2 id="kernel-3-10-gt-4-4升级步骤"><a href="#kernel-3-10-gt-4-4升级步骤" class="headerlink" title="kernel 3.10-&gt;4.4升级步骤"></a>kernel 3.10-&gt;4.4升级步骤</h2><h3 id="yum源修改"><a href="#yum源修改" class="headerlink" title="yum源修改"></a>yum源修改</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入公钥</span></span><br><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">升级安装ELRepo</span></span><br><span class="line">yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">载入elrepo-kernel 元数据</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel repolist</span><br></pre></td></tr></table></figure>
+<h3 id="查看可用rpm包"><a href="#查看可用rpm包" class="headerlink" title="查看可用rpm包"></a>查看可用rpm包</h3><p>yum –disablerepo&#x3D;* –enablerepo&#x3D;elrepo-kernel list kernel*</p>
+<h3 id="安装最新稳定版kernel"><a href="#安装最新稳定版kernel" class="headerlink" title="安装最新稳定版kernel"></a>安装最新稳定版kernel</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">lt：长期支持版本；ml：主线版本</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install  kernel-lt.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h4 id="删除旧版本工具包"><a href="#删除旧版本工具包" class="headerlink" title="删除旧版本工具包"></a>删除旧版本工具包</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum remove kernel-tools-libs.x86_64 kernel-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h4 id="安装新版本工具包"><a href="#安装新版本工具包" class="headerlink" title="安装新版本工具包"></a>安装新版本工具包</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install kernel-lt-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h3 id="将内核启动修改为本机最新版本"><a href="#将内核启动修改为本机最新版本" class="headerlink" title="将内核启动修改为本机最新版本"></a>将内核启动修改为本机最新版本</h3><h4 id="查看内核版本"><a href="#查看内核版本" class="headerlink" title="查看内核版本"></a>查看内核版本</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看内核启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# awk -F \&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">0 : CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">1 : CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">2 : CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">3 : CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">4 : CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br><span class="line">或</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看系统可用内核</span></span><br><span class="line">[root@dev-node-1 ~]# grep &quot;^menuentry&quot; /boot/grub2/grub.cfg | cut -d &quot;&#x27;&quot; -f2</span><br><span class="line">CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前实际启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# grub2-editenv list</span><br><span class="line">saved_entry=CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br></pre></td></tr></table></figure>
+<h4 id="设置默认启动"><a href="#设置默认启动" class="headerlink" title="设置默认启动"></a>设置默认启动</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-set-default &quot;CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)&quot;</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub2-set-default 0     // 0代表查看内核启动顺序时的序号</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑/etc/default/grub文件</span></span><br><span class="line">vim /etc/default/grub</span><br><span class="line">GRUB_DEFAULT=saved 改为GRUB_DEFAULT=0</span><br></pre></td></tr></table></figure>
+<h4 id="生成grub配置文件"><a href="#生成grub配置文件" class="headerlink" title="生成grub配置文件"></a>生成grub配置文件</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-mkconfig  -o /boot/grub2/grub.cfg</span><br><span class="line">Generating grub configuration file ...</span><br><span class="line">Found linux image: /boot/vmlinuz-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-4.4.241-1.el7.elrepo.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.19.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.13.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-4acec6de0e4741b6bc249381506fa844</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-4acec6de0e4741b6bc249381506fa844.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-0ea734564f9a4e2881b866b82d679dfc</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-0ea734564f9a4e2881b866b82d679dfc.img</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="重启-amp-验证"><a href="#重启-amp-验证" class="headerlink" title="重启&amp;验证"></a>重启&amp;验证</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@dev-node-1 ~]# reboot</span><br><span class="line"></span><br><span class="line">[root@dev-node-1 ~]# uname -r</span><br><span class="line">4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除旧内核（可选）"><a href="#删除旧内核（可选）" class="headerlink" title="删除旧内核（可选）"></a>删除旧内核（可选）</h3><h4 id="查看本机内所有内核"><a href="#查看本机内所有内核" class="headerlink" title="查看本机内所有内核"></a>查看本机内所有内核</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@dev-node-1 ~]# rpm -qa | grep kernel</span><br><span class="line">kernel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-headers-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-lt-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">kernel-lt-tools-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">abrt-addon-kerneloops-2.1.11-57.el7.centos.x86_64</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">kernel-lt-tools-libs-4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+<h4 id="yum-remove"><a href="#yum-remove" class="headerlink" title="yum remove"></a>yum remove</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum remove kernel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>或</p>
+<h4 id="yum-utils工具"><a href="#yum-utils工具" class="headerlink" title="yum-utils工具"></a>yum-utils工具</h4><p>如果安装的内核不多于 3 个，yum-utils 工具不会删除任何一个。只有在安装的内核大于 3 个时，才会自动删除旧内核。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装yum-utils</span></span><br><span class="line">[root@dev-node-1 ~]# yum install yum-utils</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除旧版本</span></span><br><span class="line">package-cleanup --oldkernels</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Iuwai
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.iuwai.com/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/" title="Linux内核升级">http://www.iuwai.com/2020/11/02/Linux内核升级/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/CentOS7/" rel="tag"># CentOS7</a>
+              <a href="/tags/kernel/" rel="tag"># kernel</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/10/26/aliyunbugfix/" rel="prev" title="aliyunbugfix">
+                  <i class="fa fa-angle-left"></i> aliyunbugfix
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/22/JumpServer%E6%B7%BB%E5%8A%A0%E8%AE%BF%E9%97%AEk8s%E9%9B%86%E7%BE%A4/" rel="next" title="JumpServer添加访问k8s集群">
+                  JumpServer添加访问k8s集群 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">浙ICP备17036958号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Iuwai</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">12k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">43 分钟</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

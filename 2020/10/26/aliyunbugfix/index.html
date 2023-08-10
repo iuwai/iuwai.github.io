@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.iuwai.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="阿里云漏洞修复记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="aliyunbugfix">
+<meta property="og:url" content="http://www.iuwai.com/2020/10/26/aliyunbugfix/index.html">
+<meta property="og:site_name" content="Iuwai">
+<meta property="og:description" content="阿里云漏洞修复记录">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-26T08:08:44.000Z">
+<meta property="article:modified_time" content="2023-08-10T02:34:22.533Z">
+<meta property="article:author" content="Iuwai">
+<meta property="article:tag" content="aliyun">
+<meta property="article:tag" content="阿里云">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.iuwai.com/2020/10/26/aliyunbugfix/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.iuwai.com/2020/10/26/aliyunbugfix/","path":"2020/10/26/aliyunbugfix/","title":"aliyunbugfix"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>aliyunbugfix | Iuwai</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Iuwai" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Iuwai</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">学如逆水行舟，不进则退。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">14</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a></li><li class="menu-item menu-item-daydayup"><a href="/dayDayUp" rel="section"><i class="fa fa-pen-nib fa-fw"></i>dayDayUp</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2019-0368-%E9%AB%98%E5%8D%B1-systemd-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">1.</span> <span class="nav-text">RHSA-2019:0368-高危: systemd 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85"><span class="nav-number">1.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2019-1228-%E9%AB%98%E5%8D%B1-wget-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">2.</span> <span class="nav-text">RHSA-2019:1228-高危: wget 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-1"><span class="nav-number">2.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-1"><span class="nav-number">2.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-2894-%E9%87%8D%E8%A6%81-dbus-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">3.</span> <span class="nav-text">RHSA-2020:2894-重要: dbus 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-2"><span class="nav-number">3.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-2"><span class="nav-number">3.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-2337-%E9%87%8D%E8%A6%81-git-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">4.</span> <span class="nav-text">RHSA-2020:2337-重要: git 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-3"><span class="nav-number">4.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-3"><span class="nav-number">4.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-1021-%E4%B8%AD%E5%8D%B1-GNOME-security-bug-fix-%E5%92%8C-enhancement-update"><span class="nav-number">5.</span> <span class="nav-text">RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-4"><span class="nav-number">5.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-4"><span class="nav-number">5.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-1050-%E4%B8%AD%E5%8D%B1-cups-%E5%AE%89%E5%85%A8%E5%92%8CBUG%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">6.</span> <span class="nav-text">RHSA-2020:1050-中危: cups 安全和BUG修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-5"><span class="nav-number">6.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-5"><span class="nav-number">6.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-0540-%E9%87%8D%E8%A6%81-sudo-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">7.</span> <span class="nav-text">RHSA-2020:0540-重要: sudo 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-6"><span class="nav-number">7.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-6"><span class="nav-number">7.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-1021-%E4%B8%AD%E5%8D%B1-GNOME-security-bug-fix-%E5%92%8C-enhancement-update-1"><span class="nav-number">8.</span> <span class="nav-text">RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-7"><span class="nav-number">8.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-7"><span class="nav-number">8.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-1131-%E4%B8%AD%E5%8D%B1-python-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">9.</span> <span class="nav-text">RHSA-2020:1131-中危: python 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-8"><span class="nav-number">9.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-8"><span class="nav-number">9.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-0374-%E9%87%8D%E8%A6%81-%E5%86%85%E6%A0%B8-%E5%AE%89%E5%85%A8%E5%92%8CBUG%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">10.</span> <span class="nav-text">RHSA-2020:0374-重要: 内核 安全和BUG修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-9"><span class="nav-number">10.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-9"><span class="nav-number">10.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-1113-%E4%B8%AD%E5%8D%B1-bash-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">11.</span> <span class="nav-text">RHSA-2020:1113-中危: bash 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-10"><span class="nav-number">11.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-10"><span class="nav-number">11.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-1011-%E4%B8%AD%E5%8D%B1-expat-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">12.</span> <span class="nav-text">RHSA-2020:1011-中危: expat 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-11"><span class="nav-number">12.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-11"><span class="nav-number">12.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-2344-%E9%87%8D%E8%A6%81-bind-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">13.</span> <span class="nav-text">RHSA-2020:2344-重要: bind 安全更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-12"><span class="nav-number">13.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-12"><span class="nav-number">13.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHBA-2019-2599-krb5-bug%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">14.</span> <span class="nav-text">RHBA-2019:2599: krb5 bug修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-13"><span class="nav-number">14.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-13"><span class="nav-number">14.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2018-3157-%E4%B8%AD%E5%8D%B1-curl-%E5%92%8C-nss-pem-%E5%AE%89%E5%85%A8%E5%92%8CBUG%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">15.</span> <span class="nav-text">RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-14"><span class="nav-number">15.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-14"><span class="nav-number">15.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2019-2079-%E4%B8%AD%E5%8D%B1-Xorg-%E5%AE%89%E5%85%A8%E5%92%8CBUG%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">16.</span> <span class="nav-text">RHSA-2019:2079-中危: Xorg 安全和BUG修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-15"><span class="nav-number">16.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-15"><span class="nav-number">16.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2018-3092-%E4%B8%AD%E5%8D%B1-glibc-%E5%AE%89%E5%85%A8%E5%92%8CBUG%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">17.</span> <span class="nav-text">RHSA-2018:3092-中危: glibc 安全和BUG修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-16"><span class="nav-number">17.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-16"><span class="nav-number">17.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-1000-%E4%B8%AD%E5%8D%B1-rsyslog-security-bug-fix-%E5%92%8C-enhancement-update"><span class="nav-number">18.</span> <span class="nav-text">RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-17"><span class="nav-number">18.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-17"><span class="nav-number">18.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2020-0374-%E9%87%8D%E8%A6%81-%E5%86%85%E6%A0%B8-%E5%AE%89%E5%85%A8%E5%92%8CBUG%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0-1"><span class="nav-number">19.</span> <span class="nav-text">RHSA-2020:0374-重要: 内核 安全和BUG修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-18"><span class="nav-number">19.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-18"><span class="nav-number">19.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2019-2030-%E4%B8%AD%E5%8D%B1-python-%E5%AE%89%E5%85%A8%E5%92%8CBUG%E4%BF%AE%E5%A4%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">20.</span> <span class="nav-text">RHSA-2019:2030-中危: python 安全和BUG修复更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-19"><span class="nav-number">20.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-19"><span class="nav-number">20.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RHSA-2019-2197-%E4%BD%8E%E5%8D%B1-elfutils-security-bug-fix-%E5%92%8C-enhancement-update"><span class="nav-number">21.</span> <span class="nav-text">RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-20"><span class="nav-number">21.1.</span> <span class="nav-text">漏洞详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4-20"><span class="nav-number">21.2.</span> <span class="nav-text">修复命令</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Iuwai"
+      src="/images/iuwai.jpg">
+  <p class="site-author-name" itemprop="name">Iuwai</p>
+  <div class="site-description" itemprop="description">还是多读点书吧</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:iuwai@foxmail.com" title="E-Mail → mailto:iuwai@foxmail.com" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.iuwai.com/2020/10/26/aliyunbugfix/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/iuwai.jpg">
+      <meta itemprop="name" content="Iuwai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Iuwai">
+      <meta itemprop="description" content="还是多读点书吧">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="aliyunbugfix | Iuwai">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          aliyunbugfix
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-26 16:08:44" itemprop="dateCreated datePublished" datetime="2020-10-26T16:08:44+08:00">2020-10-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-10 10:34:22" itemprop="dateModified" datetime="2023-08-10T10:34:22+08:00">2023-08-10</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>阿里云漏洞修复记录</p>
+<span id="more"></span>
+<h2 id="RHSA-2019-0368-高危-systemd-安全更新"><a href="#RHSA-2019-0368-高危-systemd-安全更新" class="headerlink" title="RHSA-2019:0368-高危: systemd 安全更新"></a>RHSA-2019:0368-高危: systemd 安全更新</h2><h3 id="漏洞详情"><a href="#漏洞详情" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-6454</td>
+<td align="left">7</td>
+<td align="left">bus_process_object()中的输入验证不足导致PID1崩溃</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令"><a href="#修复命令" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update systemd </span><br><span class="line">yum update systemd-libs </span><br><span class="line">yum update systemd-sysv </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-1228-高危-wget-安全更新"><a href="#RHSA-2019-1228-高危-wget-安全更新" class="headerlink" title="RHSA-2019:1228-高危: wget 安全更新"></a>RHSA-2019:1228-高危: wget 安全更新</h2><h3 id="漏洞详情-1"><a href="#漏洞详情-1" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-5953</td>
+<td align="left">8.8</td>
+<td align="left">缓冲区溢出漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-1"><a href="#修复命令-1" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update wget</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-2894-重要-dbus-安全更新"><a href="#RHSA-2020-2894-重要-dbus-安全更新" class="headerlink" title="RHSA-2020:2894-重要: dbus 安全更新"></a>RHSA-2020:2894-重要: dbus 安全更新</h2><h3 id="漏洞详情-2"><a href="#漏洞详情-2" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2020-12049</td>
+<td align="left">5.5</td>
+<td align="left">D-BUS安全漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-2"><a href="#修复命令-2" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum update dbus </span><br><span class="line">yum update dbus-libs </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-2337-重要-git-安全更新"><a href="#RHSA-2020-2337-重要-git-安全更新" class="headerlink" title="RHSA-2020:2337-重要: git 安全更新"></a>RHSA-2020:2337-重要: git 安全更新</h2><h3 id="漏洞详情-3"><a href="#漏洞详情-3" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2020-11008</td>
+<td align="left">7.5</td>
+<td align="left">受影响的Git版本存在一个漏洞，可以诱骗Git向攻击者控制的主机发送私有凭据</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-3"><a href="#修复命令-3" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum update git </span><br><span class="line">yum update perl-Git </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update"><a href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update"></a>RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-4"><a href="#漏洞详情-4" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-3820</td>
+<td align="left">4.8</td>
+<td align="left">部分锁屏旁路</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-4"><a href="#修复命令-4" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum update shared-mime-info </span><br><span class="line">yum update gtk-update-icon-cache </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1050-中危-cups-安全和BUG修复更新"><a href="#RHSA-2020-1050-中危-cups-安全和BUG修复更新" class="headerlink" title="RHSA-2020:1050-中危: cups 安全和BUG修复更新"></a>RHSA-2020:1050-中危: cups 安全和BUG修复更新</h2><h3 id="漏洞详情-5"><a href="#漏洞详情-5" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-4180</td>
+<td align="left">6.7</td>
+<td align="left">由于不安全的环境变量处理，本地权限升级到root</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-4181</td>
+<td align="left">5.5</td>
+<td align="left">本地攻击者对cupsd.conf的操作导致以root身份读取任意文件的次数有限</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-4700</td>
+<td align="left">–</td>
+<td align="left">可预测的会话cookie打破CSRF保护</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-5"><a href="#修复命令-5" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum update cups-client </span><br><span class="line">yum update cups-libs </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-0540-重要-sudo-安全更新"><a href="#RHSA-2020-0540-重要-sudo-安全更新" class="headerlink" title="RHSA-2020:0540-重要: sudo 安全更新"></a>RHSA-2020:0540-重要: sudo 安全更新</h2><h3 id="漏洞详情-6"><a href="#漏洞详情-6" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-18634</td>
+<td align="left">7.8</td>
+<td align="left">Sudo缓冲区错误漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-6"><a href="#修复命令-6" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update sudo</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1"><a href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1" class="headerlink" title="RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update"></a>RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-7"><a href="#漏洞详情-7" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-3820</td>
+<td align="left">4.8</td>
+<td align="left">部分锁屏旁路</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-7"><a href="#修复命令-7" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum update gtk-update-icon-cache </span><br><span class="line">yum update shared-mime-info </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1131-中危-python-安全更新"><a href="#RHSA-2020-1131-中危-python-安全更新" class="headerlink" title="RHSA-2020:1131-中危: python 安全更新"></a>RHSA-2020:1131-中危: python 安全更新</h2><h3 id="漏洞详情-8"><a href="#漏洞详情-8" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-20852</td>
+<td align="left">5.3</td>
+<td align="left">Cookie域检查返回不正确的结果</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-16056</td>
+<td align="left">7.5</td>
+<td align="left">email.utils.parseaddr错误地解析电子邮件地址</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-8"><a href="#修复命令-8" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update python </span><br><span class="line">yum update python-devel </span><br><span class="line">yum update python-libs </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-0374-重要-内核-安全和BUG修复更新"><a href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新" class="headerlink" title="RHSA-2020:0374-重要: 内核 安全和BUG修复更新"></a>RHSA-2020:0374-重要: 内核 安全和BUG修复更新</h2><h3 id="漏洞详情-9"><a href="#漏洞详情-9" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-11599</td>
+<td align="left">7</td>
+<td align="left">修复mmget_not_zero（）&#x2F; get_task_mm（）和核心转储之间的竞争条件</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14816</td>
+<td align="left">7.8</td>
+<td align="left">拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14895</td>
+<td align="left">9.8</td>
+<td align="left">在drivers&#x2F;net&#x2F;wireless&#x2F; slots &#x2F; mwifiex_process_country_ie()函数中基于堆的缓冲区溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14898</td>
+<td align="left">7</td>
+<td align="left">CVE-2019-11599中mmget_not_zero()&#x2F;get_task_mm()和核心转储之间的竞争条件的未完成修复</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14901</td>
+<td align="left">9.8</td>
+<td align="left">marvell&#x2F;mwifiex&#x2F;tdls.c中的堆溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-17133</td>
+<td align="left">9.8</td>
+<td align="left">net&#x2F;wireless&#x2F;wext-sme.c中的cfg80211_mgd_wext_giwessid中的缓冲区溢出</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-9"><a href="#修复命令-9" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update kernel</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1113-中危-bash-安全更新"><a href="#RHSA-2020-1113-中危-bash-安全更新" class="headerlink" title="RHSA-2020:1113-中危: bash 安全更新"></a>RHSA-2020:1113-中危: bash 安全更新</h2><h3 id="漏洞详情-10"><a href="#漏洞详情-10" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-9924</td>
+<td align="left">7.8</td>
+<td align="left">Bash任意命令执行安全漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-10"><a href="#修复命令-10" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update bash</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1011-中危-expat-安全更新"><a href="#RHSA-2020-1011-中危-expat-安全更新" class="headerlink" title="RHSA-2020:1011-中危: expat 安全更新"></a>RHSA-2020:1011-中危: expat 安全更新</h2><h3 id="漏洞详情-11"><a href="#漏洞详情-11" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2015-2716</td>
+<td align="left">7.5</td>
+<td align="left">Mozilla Thunderbird XML内容解析缓冲区溢出漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-11"><a href="#修复命令-11" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update expat</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-2344-重要-bind-安全更新"><a href="#RHSA-2020-2344-重要-bind-安全更新" class="headerlink" title="RHSA-2020:2344-重要: bind 安全更新"></a>RHSA-2020:2344-重要: bind 安全更新</h2><h3 id="漏洞详情-12"><a href="#漏洞详情-12" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2020-8616</td>
+<td align="left">8.6</td>
+<td align="left">恶意行为者故意利用这种缺乏有效限制执行次数的行为</td>
+</tr>
+<tr>
+<td align="center">CVE-2020-8617</td>
+<td align="left">7.5</td>
+<td align="left">使用特制的消息，攻击者可能会导致BIND服务器进入不一致状态</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-12"><a href="#修复命令-12" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update bind-libs-lite</span><br><span class="line">yum update bind-license</span><br><span class="line">yum update bind-export-libs</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHBA-2019-2599-krb5-bug修复更新"><a href="#RHBA-2019-2599-krb5-bug修复更新" class="headerlink" title="RHBA-2019:2599: krb5 bug修复更新"></a>RHBA-2019:2599: krb5 bug修复更新</h2><h3 id="漏洞详情-13"><a href="#漏洞详情-13" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+</table>
+<h3 id="修复命令-13"><a href="#修复命令-13" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update krb5-devel</span><br><span class="line">yum update krb5-libs</span><br><span class="line">yum update libkadm5</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2018-3157-中危-curl-和-nss-pem-安全和BUG修复更新"><a href="#RHSA-2018-3157-中危-curl-和-nss-pem-安全和BUG修复更新" class="headerlink" title="RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新"></a>RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新</h2><h3 id="漏洞详情-14"><a href="#漏洞详情-14" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-1000007</td>
+<td align="left">9.8</td>
+<td align="left">libcurl信息泄露漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-1000120</td>
+<td align="left">9.8</td>
+<td align="left">curl缓冲区错误拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-1000122</td>
+<td align="left">9.1</td>
+<td align="left">curl缓冲区错误漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-14"><a href="#修复命令-14" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update curl</span><br><span class="line">yum update libcurl</span><br><span class="line">yum update nss-pem</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-2079-中危-Xorg-安全和BUG修复更新"><a href="#RHSA-2019-2079-中危-Xorg-安全和BUG修复更新" class="headerlink" title="RHSA-2019:2079-中危: Xorg 安全和BUG修复更新"></a>RHSA-2019:2079-中危: Xorg 安全和BUG修复更新</h2><h3 id="漏洞详情-15"><a href="#漏洞详情-15" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-14599</td>
+<td align="left">9.8</td>
+<td align="left">拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-14600</td>
+<td align="left">9.8</td>
+<td align="left">越界访问拒绝服务代码执行漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-15857</td>
+<td align="left">7.8</td>
+<td align="left">ExprAppendMultiKeysymList中的无效释放导致崩溃</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-15"><a href="#修复命令-15" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum update libX11</span><br><span class="line">yum update libX11-common</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2018-3092-中危-glibc-安全和BUG修复更新"><a href="#RHSA-2018-3092-中危-glibc-安全和BUG修复更新" class="headerlink" title="RHSA-2018:3092-中危: glibc 安全和BUG修复更新"></a>RHSA-2018:3092-中危: glibc 安全和BUG修复更新</h2><h3 id="漏洞详情-16"><a href="#漏洞详情-16" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2017-16997</td>
+<td align="left">7.8</td>
+<td align="left">GNU C Library’elf&#x2F;dl-load.c’本地权限提升漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-11236</td>
+<td align="left">7.8</td>
+<td align="left">glibc基于堆的缓冲区溢出导致任意代码执行</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-6485</td>
+<td align="left">9.8</td>
+<td align="left">GNU C Library’memalign’函数整数溢出漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-16"><a href="#修复命令-16" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum update glibc</span><br><span class="line">yum update glibc-common</span><br><span class="line">yum update glibc-devel</span><br><span class="line">yum update glibc-headers</span><br><span class="line">yum update nscd</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1000-中危-rsyslog-security-bug-fix-和-enhancement-update"><a href="#RHSA-2020-1000-中危-rsyslog-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update"></a>RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-17"><a href="#漏洞详情-17" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-17041</td>
+<td align="left">9.8</td>
+<td align="left">在contrib&#x2F;pmaixforward from&#x2F;pmaixforward from.c中的基于堆的溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-17042</td>
+<td align="left">9.8</td>
+<td align="left">在contrib&#x2F;pmcisconames&#x2F;pmcisconames.c中基于堆的溢出</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-17"><a href="#修复命令-17" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update rsyslog</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-0374-重要-内核-安全和BUG修复更新-1"><a href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新-1" class="headerlink" title="RHSA-2020:0374-重要: 内核 安全和BUG修复更新"></a>RHSA-2020:0374-重要: 内核 安全和BUG修复更新</h2><h3 id="漏洞详情-18"><a href="#漏洞详情-18" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-11599</td>
+<td align="left">7</td>
+<td align="left">修复mmget_not_zero()&#x2F;get_task_mm()和核心转储之间的竞争条件</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14895</td>
+<td align="left">9.8</td>
+<td align="left">在drivers&#x2F;net&#x2F;wireless&#x2F;slots&#x2F;mwifiex_process_country_le()函数中基于堆的缓冲区溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14901</td>
+<td align="left">9.8</td>
+<td align="left">marvell&#x2F;mwifiex&#x2F;tdls.c中的堆溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-17133</td>
+<td align="left">9.8</td>
+<td align="left">net&#x2F;wireless&#x2F;wext-sme.c中的cfg80211_mgd_wext_giwessid中的缓冲区溢出</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-18"><a href="#修复命令-18" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yum update kernel</span><br><span class="line">yum update kernel-devel</span><br><span class="line">yum update kernel-tools</span><br><span class="line">yum update kernel-tools-libs</span><br><span class="line">yum update python-perf</span><br><span class="line">yum update kernel-headers</span><br><span class="line">yum update kernel-debug-devel</span><br><span class="line">yum update perf</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-2030-中危-python-安全和BUG修复更新"><a href="#RHSA-2019-2030-中危-python-安全和BUG修复更新" class="headerlink" title="RHSA-2019:2030-中危: python 安全和BUG修复更新"></a>RHSA-2019:2030-中危: python 安全和BUG修复更新</h2><h3 id="漏洞详情-19"><a href="#漏洞详情-19" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-9948</td>
+<td align="left">9.1</td>
+<td align="left">local_file允许远程攻击者绕过保护机制</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-5010</td>
+<td align="left">7.5</td>
+<td align="left">使用特制的X509证书进行NULL指针取消引用</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-14647</td>
+<td align="left">5.3</td>
+<td align="left">Python拒绝服务漏洞（CNDV-2018-20081）</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-19"><a href="#修复命令-19" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum update python</span><br><span class="line">yum update python-devel</span><br><span class="line">yum update python-libs</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-2197-低危-elfutils-security-bug-fix-和-enhancement-update"><a href="#RHSA-2019-2197-低危-elfutils-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update"></a>RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-20"><a href="#漏洞详情-20" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-16402</td>
+<td align="left">9.8</td>
+<td align="left">elfutils拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-16403</td>
+<td align="left">5.5</td>
+<td align="left">Libdw&#x2F;dwar_getabbrev.c和libwd&#x2F;dwar_hasattr.c中基于堆的缓冲区读取过度会导致崩溃</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-7665</td>
+<td align="left">5.5</td>
+<td align="left">elf32_elateton.c中函数elf32_xlatetom中基于堆的缓冲区重读</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-20"><a href="#修复命令-20" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum update elfutils-default-yama-scope </span><br><span class="line">yum update elfutils-libelf </span><br><span class="line">yum update elfutils-libs </span><br><span class="line">yum update elfutils </span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Iuwai
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.iuwai.com/2020/10/26/aliyunbugfix/" title="aliyunbugfix">http://www.iuwai.com/2020/10/26/aliyunbugfix/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/aliyun/" rel="tag"># aliyun</a>
+              <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/" rel="tag"># 阿里云</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/11/10/booklist/" rel="prev" title="booklist">
+                  <i class="fa fa-angle-left"></i> booklist
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/" rel="next" title="Linux内核升级">
+                  Linux内核升级 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">浙ICP备17036958号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Iuwai</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">12k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">43 分钟</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
