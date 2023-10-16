@@ -875,7 +875,7 @@
 <td align="left"><a href="https://book.douban.com/subject/26851890/">虚构的犹太民族</a></td>
 <td align="left">作者: [以色列] 施罗默·桑德 译者: 王岽兴 &#x2F; 张蓉</td>
 <td align="left">2021</td>
-<td align="center">1%</td>
+<td align="center">3%</td>
 </tr>
 <tr>
 <td align="center">1</td>
@@ -1039,7 +1039,7 @@
 <tr>
 <th align="center">序号</th>
 <th align="left">书名</th>
-<th align="left">作者</th>
+<th>作者</th>
 <th align="left">时间</th>
 <th align="center">阅读状态</th>
 </tr>
@@ -1047,70 +1047,70 @@
 <tbody><tr>
 <td align="center">10</td>
 <td align="left"><a href="https://book.douban.com/subject/33474750/">浪潮之巅（第四版）（上下册）</a></td>
-<td align="left">吴军</td>
+<td>吴军</td>
 <td align="left">2021.1.25~</td>
 <td align="center">50%</td>
 </tr>
 <tr>
 <td align="center">9</td>
 <td align="left"><a href="https://book.douban.com/subject/24737674/">图解TCP&#x2F;IP</a></td>
-<td align="left">[日]竹下隆史 &#x2F; [日]村山公保 &#x2F; [日]荒井透 &#x2F; [日]苅田幸雄 &#x2F; 【乌尼日其其格译】</td>
+<td>[日]竹下隆史 &#x2F; [日]村山公保 &#x2F; [日]荒井透 &#x2F; [日]苅田幸雄 &#x2F; 【乌尼日其其格译】</td>
 <td align="left">2019</td>
 <td align="center">20%</td>
 </tr>
 <tr>
 <td align="center">8</td>
 <td align="left">深入浅出Prometheus：原理、应用、源码与拓展详解</td>
-<td align="left">陈晓宇 &#x2F; 杨川胡 &#x2F; 陈啸</td>
+<td>陈晓宇 &#x2F; 杨川胡 &#x2F; 陈啸</td>
 <td align="left">2019</td>
 <td align="center">100%</td>
 </tr>
 <tr>
 <td align="center">7</td>
 <td align="left">Kubernetes权威指南——企业级容器云实战</td>
-<td align="left">闫健勇 &#x2F; 龚正 &#x2F; 吴治辉 &#x2F; 刘晓红 &#x2F; 崔秀龙</td>
+<td>闫健勇 &#x2F; 龚正 &#x2F; 吴治辉 &#x2F; 刘晓红 &#x2F; 崔秀龙</td>
 <td align="left">2019</td>
 <td align="center">100%</td>
 </tr>
 <tr>
 <td align="center">6</td>
 <td align="left"><a href="https://book.douban.com/subject/26644070/">凤凰项目</a></td>
-<td align="left">基恩·金 (Gene Kim) &#x2F; 凯文·贝尔 (Kevin Behr) &#x2F; 乔治·斯帕福德 (George Spafford) 【成小留】</td>
+<td>基恩·金 (Gene Kim) &#x2F; 凯文·贝尔 (Kevin Behr) &#x2F; 乔治·斯帕福德 (George Spafford) 【成小留】</td>
 <td align="left">2018</td>
 <td align="center">100%</td>
 </tr>
 <tr>
 <td align="center">5</td>
 <td align="left">每天5分钟玩转Docker</td>
-<td align="left">CloudMan</td>
+<td>CloudMan</td>
 <td align="left">2018</td>
 <td align="center">100%</td>
 </tr>
 <tr>
 <td align="center">4</td>
 <td align="left">每天5分钟玩转Kubernetes</td>
-<td align="left">CloudMan</td>
+<td>CloudMan</td>
 <td align="left">2018</td>
 <td align="center">100%</td>
 </tr>
 <tr>
 <td align="center">3</td>
 <td align="left"><a href="https://book.douban.com/subject/4843567/">深入Linux内核架构</a></td>
-<td align="left">［德］Wolfgang Mauerer【郭旭译】</td>
+<td>［德］Wolfgang Mauerer【郭旭译】</td>
 <td align="left">2015~</td>
 <td align="center">10%</td>
 </tr>
 <tr>
 <td align="center">2</td>
 <td align="left">DevOps</td>
-<td align="left">［美］Sanjeev Sharma【万金译】</td>
+<td>［美］Sanjeev Sharma【万金译】</td>
 <td align="left">2018.10</td>
 <td align="center">30%</td>
 </tr>
 <tr>
 <td align="center">1</td>
 <td align="left"><a href="https://book.douban.com/subject/27028517/">流畅的Python</a></td>
-<td align="left">［巴西］Luciano Ramalho【安道、吴珂译】</td>
+<td>［巴西］Luciano Ramalho【安道、吴珂译】</td>
 <td align="left">2017~</td>
 <td align="center">80%</td>
 </tr>
@@ -1130,14 +1130,14 @@
 <td align="left"><a href="https://book.douban.com/subject/25842260/">新选组血风录</a></td>
 <td align="left">作者：[日] 司马辽太郎 译者：张博</td>
 <td align="left">2023.09.14~</td>
-<td align="center">1%</td>
+<td align="center">3%</td>
 </tr>
 <tr>
 <td align="center">49</td>
 <td align="left"><a href="https://book.douban.com/subject/27167519/">哈利波特全集</a></td>
 <td align="left">作者：J.K.罗琳 (J.K.Rowling) 译者：苏农 &#x2F; 马爱农 &#x2F; 马爱新</td>
-<td align="left">2023.06~</td>
-<td align="center">60%</td>
+<td align="left">2023.06~2023.10.16</td>
+<td align="center">100%</td>
 </tr>
 <tr>
 <td align="center">48</td>
