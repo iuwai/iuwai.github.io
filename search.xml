@@ -854,7 +854,7 @@
 <td align="left"><a href="https://book.douban.com/subject/26305373/">慈禧全传</a></td>
 <td align="left">高阳</td>
 <td align="left">2021.4.8~</td>
-<td align="center">26%</td>
+<td align="center">29%</td>
 </tr>
 <tr>
 <td align="center">4</td>
@@ -896,6 +896,13 @@
 </tr>
 </thead>
 <tbody><tr>
+<td align="center">5</td>
+<td align="left"><a href="https://book.douban.com/subject/35200726/">跑步治愈</a></td>
+<td align="left">张展晖</td>
+<td align="left">2024.8~</td>
+<td align="center">43%</td>
+</tr>
+<tr>
 <td align="center">4</td>
 <td align="left"><a href="https://book.douban.com/subject/35033507/">数学之美(第三版)</a></td>
 <td align="left">吴军</td>
@@ -935,6 +942,13 @@
 </tr>
 </thead>
 <tbody><tr>
+<td align="center">7</td>
+<td align="left"><a href="https://book.douban.com/subject/33159342/">托林寺壁画&#x2F;典藏中国·中国古代壁画精粹</a></td>
+<td align="left">何鸿 王谦 谢斌</td>
+<td align="left">2024.4.05~</td>
+<td align="center">100%</td>
+</tr>
+<tr>
 <td align="center">7</td>
 <td align="left"><a href="https://book.douban.com/subject/36029725/">手艺里的中国：指尖上的华夏文明之美</a></td>
 <td align="left">李武望</td>
@@ -1126,7 +1140,21 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">50</td>
+<td align="center">53</td>
+<td align="left"><a href="https://book.douban.com/subject/36104107/">长安的荔枝</a></td>
+<td align="left">作者：马伯庸</td>
+<td align="left">2024.08</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">52</td>
+<td align="left"><a href="https://book.douban.com/subject/36328704/">太白金星有点烦</a></td>
+<td align="left">作者：马伯庸</td>
+<td align="left">2024.08</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">51</td>
 <td align="left"><a href="https://book.douban.com/subject/36710597/">食南之徒</a></td>
 <td align="left">作者：马伯庸</td>
 <td align="left">2024.07.24~2024.07.27</td>
@@ -1494,6 +1522,27 @@
 </tr>
 </thead>
 <tbody><tr>
+<td align="center">41</td>
+<td align="left"><a href="https://book.douban.com/subject/36314525/">安·兰德的小说写作课</a></td>
+<td align="left">[美] 安·兰德</td>
+<td align="left">2024.8~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">40</td>
+<td align="left"><a href="https://book.douban.com/subject/36392914/">安·兰德的非虚构写作课</a></td>
+<td align="left">[美] 安·兰德</td>
+<td align="left">2024.7~</td>
+<td align="center">32%</td>
+</tr>
+<tr>
+<td align="center">39</td>
+<td align="left"><a href="https://book.douban.com/subject/6811366/">禅与摩托车维修艺术</a></td>
+<td align="left">罗伯特•M.波西格 (Robert M.Pirsig) 译者: 张国辰</td>
+<td align="left">2024.8~</td>
+<td align="center">12%</td>
+</tr>
+<tr>
 <td align="center">38</td>
 <td align="left"><a href="https://book.douban.com/subject/35960123/">复盘工作法</a></td>
 <td align="left">王建和、宋晓亮</td>
@@ -1761,6 +1810,9 @@
 </tr>
 </tbody></table>
 ]]></content>
+      <categories>
+        <category>dayDayUp</category>
+      </categories>
       <tags>
         <tag>书单</tag>
       </tags>
