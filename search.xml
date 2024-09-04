@@ -1,6 +1,731 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CentOS7.4 install vsftp</title>
+    <url>/2018/02/09/CentOS7-4-install-vsftp/</url>
+    <content><![CDATA[<p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64</p>
+<span id="more"></span>
+
+<h1 id="安装vsftpd"><a href="#安装vsftpd" class="headerlink" title="安装vsftpd"></a>安装vsftpd</h1><p>查看是否已经安装vsftpd</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure>
+<p>如果没有，就安装，并设置开机启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure>
+<p>当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_64</p>
+<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><p>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开&#x2F;etc&#x2F;vsftpd&#x2F;vsftpd.conf，做如下配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/log/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure>
+<p>经验证，FTP3.0.2版本必须加参数：allow_writeable_chroot&#x3D;YES，6.8默认安装vsftpd-2.2.2-13.el6_6.1.x86_64不加也能生效，如果3.0.2不加此参数会报如下错误：<br>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>根本原因在于，从vsftpd_2.3.5版开始，取消了根目录的可写权限。因此，网上的普遍解决方案是以下两种：</p>
+<h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a-w /vaf/ftp</span><br></pre></td></tr></table></figure>
+<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>vim &#x2F;etc&#x2F;vsftpd.conf add the following</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure>
+<p>经验证，如果加上参数allow_writeable_chroot，即使去掉参数chroot_local_user&#x3D;YES，也可正常访问。<br>进行认证：<br>首先，安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install db4 db4-utils</span><br></pre></td></tr></table></figure>
+<p>然后，创建用户密码文本&#x2F;etc&#x2F;vsftpd&#x2F;vuser_passwd.txt ，注意奇行是用户名，偶行是密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">test</span></span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
+<p>接着，生成虚拟用户认证的db文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">db_load -T -t <span class="built_in">hash</span> -f /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br></pre></td></tr></table></figure>
+<p>随后，编辑认证文件&#x2F;etc&#x2F;pam.d&#x2F;vsftpd，全部注释掉原来语句，再增加以下两句：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br></pre></td></tr></table></figure>
+<p>mkdir &#x2F;etc&#x2F;vsftpd&#x2F;vuser_conf&#x2F;</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/vsftpd/vuser_conf/test //文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span><br><span class="line"></span><br><span class="line">write_enable=YES //可写</span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_enable=YES</span><br><span class="line">anon_mkdir_write_enable=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line">local_root=/httx/run/appdown/paasftpuser /虚拟用户根目录,根据实际情况修改</span><br></pre></td></tr></table></figure>
+<h4 id="设置Selinux"><a href="#设置Selinux" class="headerlink" title="设置Selinux"></a>设置Selinux</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setsebool -P ftp_home_dir=1   //设置ftp可以使用home目录</span><br><span class="line">sersebool -P allow_ftpd_full_access=1 //设置ftp用户可以有所有权限</span><br></pre></td></tr></table></figure>
+<p>设置FTP根目录权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /ftp/www   //创建目录</span><br><span class="line"><span class="built_in">chmod</span> R 755 /ftp</span><br><span class="line"><span class="built_in">chmod</span> R 750 /ftp/www</span><br></pre></td></tr></table></figure>
+<p>ftp访问目录权限尽量最小</p>
+<h4 id="设置防火墙"><a href="#设置防火墙" class="headerlink" title="设置防火墙"></a>设置防火墙</h4><p>打开&#x2F;etc&#x2F;sysconfig&#x2F;iptables<br>在“-A INPUT –m state –state NEW –m tcp –p –dport 22 –j ACCEPT”，下添加：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport 21 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>然后保存，并关闭该文件，在终端内运行下面的命令，刷新防火墙配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service iptables restart</span><br></pre></td></tr></table></figure>
+<p>OK，FTP搭建完成！</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS7.4</tag>
+        <tag>vsftp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CentOS7.4 update ntp</title>
+    <url>/2018/02/13/CentOS7-4-update-ntp/</url>
+    <content><![CDATA[<p>CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz</p>
+<span id="more"></span>
+
+<p>#准备工作</p>
+<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure>
+<h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> -ar /etc/ntp /etc/ntp.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure>
+<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y erase ntp ntpdate</span><br></pre></td></tr></table></figure>
+<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="x2F-configure"><a href="#x2F-configure" class="headerlink" title=".&#x2F;configure"></a>.&#x2F;configure</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf ntp-4.2.8p10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ntp-4.2.8p10</span><br><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --enable-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --enable-all-clocks --enable-parse-clocks --enable-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line"><span class="built_in">mv</span> /etc/ntp.bak /etc/ntp</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure>
+<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure>
+<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS7</tag>
+        <tag>ntp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Django-route</title>
+    <url>/2018/03/10/Django-route/</url>
+    <content><![CDATA[<p>Django路由系统:动态路由、指定参数名、默认参数</p>
+<span id="more"></span>
+<h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, <span class="built_in">list</span></span><br><span class="line">urlpatterns = patterns(<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>, &#123;<span class="string">&#x27;id&#x27;</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>views.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, id1, id2</span>):</span><br><span class="line">    <span class="built_in">print</span> <span class="built_in">id</span></span><br><span class="line">    <span class="built_in">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
+<p>指定参数名：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, <span class="built_in">id</span>, name</span>):</span><br><span class="line">    <span class="built_in">print</span> name, <span class="built_in">id</span></span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
+<p>请求链接：<a href="http://localhost:9000/list/100">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加&#x2F;,如果不加，urls配置中必须要加上终止符：&#x2F;$,这样请求时会自动加上&#x2F;</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Django</tag>
+        <tag>路由系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>aliyunbugfix</title>
+    <url>/2020/10/26/aliyunbugfix/</url>
+    <content><![CDATA[<p>阿里云漏洞修复记录</p>
+<span id="more"></span>
+<h2 id="RHSA-2019-0368-高危-systemd-安全更新"><a href="#RHSA-2019-0368-高危-systemd-安全更新" class="headerlink" title="RHSA-2019:0368-高危: systemd 安全更新"></a>RHSA-2019:0368-高危: systemd 安全更新</h2><h3 id="漏洞详情"><a href="#漏洞详情" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-6454</td>
+<td align="left">7</td>
+<td align="left">bus_process_object()中的输入验证不足导致PID1崩溃</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令"><a href="#修复命令" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update systemd </span><br><span class="line">yum update systemd-libs </span><br><span class="line">yum update systemd-sysv </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-1228-高危-wget-安全更新"><a href="#RHSA-2019-1228-高危-wget-安全更新" class="headerlink" title="RHSA-2019:1228-高危: wget 安全更新"></a>RHSA-2019:1228-高危: wget 安全更新</h2><h3 id="漏洞详情-1"><a href="#漏洞详情-1" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-5953</td>
+<td align="left">8.8</td>
+<td align="left">缓冲区溢出漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-1"><a href="#修复命令-1" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update wget</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-2894-重要-dbus-安全更新"><a href="#RHSA-2020-2894-重要-dbus-安全更新" class="headerlink" title="RHSA-2020:2894-重要: dbus 安全更新"></a>RHSA-2020:2894-重要: dbus 安全更新</h2><h3 id="漏洞详情-2"><a href="#漏洞详情-2" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2020-12049</td>
+<td align="left">5.5</td>
+<td align="left">D-BUS安全漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-2"><a href="#修复命令-2" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update dbus </span><br><span class="line">yum update dbus-libs </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-2337-重要-git-安全更新"><a href="#RHSA-2020-2337-重要-git-安全更新" class="headerlink" title="RHSA-2020:2337-重要: git 安全更新"></a>RHSA-2020:2337-重要: git 安全更新</h2><h3 id="漏洞详情-3"><a href="#漏洞详情-3" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2020-11008</td>
+<td align="left">7.5</td>
+<td align="left">受影响的Git版本存在一个漏洞，可以诱骗Git向攻击者控制的主机发送私有凭据</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-3"><a href="#修复命令-3" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update git </span><br><span class="line">yum update perl-Git </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update"><a href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update"></a>RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-4"><a href="#漏洞详情-4" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-3820</td>
+<td align="left">4.8</td>
+<td align="left">部分锁屏旁路</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-4"><a href="#修复命令-4" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update shared-mime-info </span><br><span class="line">yum update gtk-update-icon-cache </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1050-中危-cups-安全和BUG修复更新"><a href="#RHSA-2020-1050-中危-cups-安全和BUG修复更新" class="headerlink" title="RHSA-2020:1050-中危: cups 安全和BUG修复更新"></a>RHSA-2020:1050-中危: cups 安全和BUG修复更新</h2><h3 id="漏洞详情-5"><a href="#漏洞详情-5" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-4180</td>
+<td align="left">6.7</td>
+<td align="left">由于不安全的环境变量处理，本地权限升级到root</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-4181</td>
+<td align="left">5.5</td>
+<td align="left">本地攻击者对cupsd.conf的操作导致以root身份读取任意文件的次数有限</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-4700</td>
+<td align="left">–</td>
+<td align="left">可预测的会话cookie打破CSRF保护</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-5"><a href="#修复命令-5" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update cups-client </span><br><span class="line">yum update cups-libs </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-0540-重要-sudo-安全更新"><a href="#RHSA-2020-0540-重要-sudo-安全更新" class="headerlink" title="RHSA-2020:0540-重要: sudo 安全更新"></a>RHSA-2020:0540-重要: sudo 安全更新</h2><h3 id="漏洞详情-6"><a href="#漏洞详情-6" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-18634</td>
+<td align="left">7.8</td>
+<td align="left">Sudo缓冲区错误漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-6"><a href="#修复命令-6" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update sudo</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1"><a href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1" class="headerlink" title="RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update"></a>RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-7"><a href="#漏洞详情-7" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-3820</td>
+<td align="left">4.8</td>
+<td align="left">部分锁屏旁路</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-7"><a href="#修复命令-7" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update gtk-update-icon-cache </span><br><span class="line">yum update shared-mime-info </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1131-中危-python-安全更新"><a href="#RHSA-2020-1131-中危-python-安全更新" class="headerlink" title="RHSA-2020:1131-中危: python 安全更新"></a>RHSA-2020:1131-中危: python 安全更新</h2><h3 id="漏洞详情-8"><a href="#漏洞详情-8" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-20852</td>
+<td align="left">5.3</td>
+<td align="left">Cookie域检查返回不正确的结果</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-16056</td>
+<td align="left">7.5</td>
+<td align="left">email.utils.parseaddr错误地解析电子邮件地址</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-8"><a href="#修复命令-8" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update python </span><br><span class="line">yum update python-devel </span><br><span class="line">yum update python-libs </span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-0374-重要-内核-安全和BUG修复更新"><a href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新" class="headerlink" title="RHSA-2020:0374-重要: 内核 安全和BUG修复更新"></a>RHSA-2020:0374-重要: 内核 安全和BUG修复更新</h2><h3 id="漏洞详情-9"><a href="#漏洞详情-9" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-11599</td>
+<td align="left">7</td>
+<td align="left">修复mmget_not_zero（）&#x2F; get_task_mm（）和核心转储之间的竞争条件</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14816</td>
+<td align="left">7.8</td>
+<td align="left">拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14895</td>
+<td align="left">9.8</td>
+<td align="left">在drivers&#x2F;net&#x2F;wireless&#x2F; slots &#x2F; mwifiex_process_country_ie()函数中基于堆的缓冲区溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14898</td>
+<td align="left">7</td>
+<td align="left">CVE-2019-11599中mmget_not_zero()&#x2F;get_task_mm()和核心转储之间的竞争条件的未完成修复</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14901</td>
+<td align="left">9.8</td>
+<td align="left">marvell&#x2F;mwifiex&#x2F;tdls.c中的堆溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-17133</td>
+<td align="left">9.8</td>
+<td align="left">net&#x2F;wireless&#x2F;wext-sme.c中的cfg80211_mgd_wext_giwessid中的缓冲区溢出</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-9"><a href="#修复命令-9" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update kernel</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1113-中危-bash-安全更新"><a href="#RHSA-2020-1113-中危-bash-安全更新" class="headerlink" title="RHSA-2020:1113-中危: bash 安全更新"></a>RHSA-2020:1113-中危: bash 安全更新</h2><h3 id="漏洞详情-10"><a href="#漏洞详情-10" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-9924</td>
+<td align="left">7.8</td>
+<td align="left">Bash任意命令执行安全漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-10"><a href="#修复命令-10" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update bash</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1011-中危-expat-安全更新"><a href="#RHSA-2020-1011-中危-expat-安全更新" class="headerlink" title="RHSA-2020:1011-中危: expat 安全更新"></a>RHSA-2020:1011-中危: expat 安全更新</h2><h3 id="漏洞详情-11"><a href="#漏洞详情-11" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2015-2716</td>
+<td align="left">7.5</td>
+<td align="left">Mozilla Thunderbird XML内容解析缓冲区溢出漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-11"><a href="#修复命令-11" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update expat</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-2344-重要-bind-安全更新"><a href="#RHSA-2020-2344-重要-bind-安全更新" class="headerlink" title="RHSA-2020:2344-重要: bind 安全更新"></a>RHSA-2020:2344-重要: bind 安全更新</h2><h3 id="漏洞详情-12"><a href="#漏洞详情-12" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2020-8616</td>
+<td align="left">8.6</td>
+<td align="left">恶意行为者故意利用这种缺乏有效限制执行次数的行为</td>
+</tr>
+<tr>
+<td align="center">CVE-2020-8617</td>
+<td align="left">7.5</td>
+<td align="left">使用特制的消息，攻击者可能会导致BIND服务器进入不一致状态</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-12"><a href="#修复命令-12" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update bind-libs-lite</span><br><span class="line">yum update bind-license</span><br><span class="line">yum update bind-export-libs</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHBA-2019-2599-krb5-bug修复更新"><a href="#RHBA-2019-2599-krb5-bug修复更新" class="headerlink" title="RHBA-2019:2599: krb5 bug修复更新"></a>RHBA-2019:2599: krb5 bug修复更新</h2><h3 id="漏洞详情-13"><a href="#漏洞详情-13" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+</table>
+<h3 id="修复命令-13"><a href="#修复命令-13" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update krb5-devel</span><br><span class="line">yum update krb5-libs</span><br><span class="line">yum update libkadm5</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2018-3157-中危-curl-和-nss-pem-安全和BUG修复更新"><a href="#RHSA-2018-3157-中危-curl-和-nss-pem-安全和BUG修复更新" class="headerlink" title="RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新"></a>RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新</h2><h3 id="漏洞详情-14"><a href="#漏洞详情-14" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-1000007</td>
+<td align="left">9.8</td>
+<td align="left">libcurl信息泄露漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-1000120</td>
+<td align="left">9.8</td>
+<td align="left">curl缓冲区错误拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-1000122</td>
+<td align="left">9.1</td>
+<td align="left">curl缓冲区错误漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-14"><a href="#修复命令-14" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update curl</span><br><span class="line">yum update libcurl</span><br><span class="line">yum update nss-pem</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-2079-中危-Xorg-安全和BUG修复更新"><a href="#RHSA-2019-2079-中危-Xorg-安全和BUG修复更新" class="headerlink" title="RHSA-2019:2079-中危: Xorg 安全和BUG修复更新"></a>RHSA-2019:2079-中危: Xorg 安全和BUG修复更新</h2><h3 id="漏洞详情-15"><a href="#漏洞详情-15" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-14599</td>
+<td align="left">9.8</td>
+<td align="left">拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-14600</td>
+<td align="left">9.8</td>
+<td align="left">越界访问拒绝服务代码执行漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-15857</td>
+<td align="left">7.8</td>
+<td align="left">ExprAppendMultiKeysymList中的无效释放导致崩溃</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-15"><a href="#修复命令-15" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update libX11</span><br><span class="line">yum update libX11-common</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2018-3092-中危-glibc-安全和BUG修复更新"><a href="#RHSA-2018-3092-中危-glibc-安全和BUG修复更新" class="headerlink" title="RHSA-2018:3092-中危: glibc 安全和BUG修复更新"></a>RHSA-2018:3092-中危: glibc 安全和BUG修复更新</h2><h3 id="漏洞详情-16"><a href="#漏洞详情-16" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2017-16997</td>
+<td align="left">7.8</td>
+<td align="left">GNU C Library’elf&#x2F;dl-load.c’本地权限提升漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-11236</td>
+<td align="left">7.8</td>
+<td align="left">glibc基于堆的缓冲区溢出导致任意代码执行</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-6485</td>
+<td align="left">9.8</td>
+<td align="left">GNU C Library’memalign’函数整数溢出漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-16"><a href="#修复命令-16" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update glibc</span><br><span class="line">yum update glibc-common</span><br><span class="line">yum update glibc-devel</span><br><span class="line">yum update glibc-headers</span><br><span class="line">yum update nscd</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-1000-中危-rsyslog-security-bug-fix-和-enhancement-update"><a href="#RHSA-2020-1000-中危-rsyslog-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update"></a>RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-17"><a href="#漏洞详情-17" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-17041</td>
+<td align="left">9.8</td>
+<td align="left">在contrib&#x2F;pmaixforward from&#x2F;pmaixforward from.c中的基于堆的溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-17042</td>
+<td align="left">9.8</td>
+<td align="left">在contrib&#x2F;pmcisconames&#x2F;pmcisconames.c中基于堆的溢出</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-17"><a href="#修复命令-17" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update rsyslog</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2020-0374-重要-内核-安全和BUG修复更新-1"><a href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新-1" class="headerlink" title="RHSA-2020:0374-重要: 内核 安全和BUG修复更新"></a>RHSA-2020:0374-重要: 内核 安全和BUG修复更新</h2><h3 id="漏洞详情-18"><a href="#漏洞详情-18" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-11599</td>
+<td align="left">7</td>
+<td align="left">修复mmget_not_zero()&#x2F;get_task_mm()和核心转储之间的竞争条件</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14895</td>
+<td align="left">9.8</td>
+<td align="left">在drivers&#x2F;net&#x2F;wireless&#x2F;slots&#x2F;mwifiex_process_country_le()函数中基于堆的缓冲区溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-14901</td>
+<td align="left">9.8</td>
+<td align="left">marvell&#x2F;mwifiex&#x2F;tdls.c中的堆溢出</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-17133</td>
+<td align="left">9.8</td>
+<td align="left">net&#x2F;wireless&#x2F;wext-sme.c中的cfg80211_mgd_wext_giwessid中的缓冲区溢出</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-18"><a href="#修复命令-18" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update kernel</span><br><span class="line">yum update kernel-devel</span><br><span class="line">yum update kernel-tools</span><br><span class="line">yum update kernel-tools-libs</span><br><span class="line">yum update python-perf</span><br><span class="line">yum update kernel-headers</span><br><span class="line">yum update kernel-debug-devel</span><br><span class="line">yum update perf</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-2030-中危-python-安全和BUG修复更新"><a href="#RHSA-2019-2030-中危-python-安全和BUG修复更新" class="headerlink" title="RHSA-2019:2030-中危: python 安全和BUG修复更新"></a>RHSA-2019:2030-中危: python 安全和BUG修复更新</h2><h3 id="漏洞详情-19"><a href="#漏洞详情-19" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2019-9948</td>
+<td align="left">9.1</td>
+<td align="left">local_file允许远程攻击者绕过保护机制</td>
+</tr>
+<tr>
+<td align="center">CVE-2019-5010</td>
+<td align="left">7.5</td>
+<td align="left">使用特制的X509证书进行NULL指针取消引用</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-14647</td>
+<td align="left">5.3</td>
+<td align="left">Python拒绝服务漏洞（CNDV-2018-20081）</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-19"><a href="#修复命令-19" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update python</span><br><span class="line">yum update python-devel</span><br><span class="line">yum update python-libs</span><br></pre></td></tr></table></figure>
+
+<h2 id="RHSA-2019-2197-低危-elfutils-security-bug-fix-和-enhancement-update"><a href="#RHSA-2019-2197-低危-elfutils-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update"></a>RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-20"><a href="#漏洞详情-20" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th align="left">影响分</th>
+<th align="left">漏洞公告</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CVE-2018-16402</td>
+<td align="left">9.8</td>
+<td align="left">elfutils拒绝服务漏洞</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-16403</td>
+<td align="left">5.5</td>
+<td align="left">Libdw&#x2F;dwar_getabbrev.c和libwd&#x2F;dwar_hasattr.c中基于堆的缓冲区读取过度会导致崩溃</td>
+</tr>
+<tr>
+<td align="center">CVE-2018-7665</td>
+<td align="left">5.5</td>
+<td align="left">elf32_elateton.c中函数elf32_xlatetom中基于堆的缓冲区重读</td>
+</tr>
+</tbody></table>
+<h3 id="修复命令-20"><a href="#修复命令-20" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update elfutils-default-yama-scope </span><br><span class="line">yum update elfutils-libelf </span><br><span class="line">yum update elfutils-libs </span><br><span class="line">yum update elfutils </span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>阿里云</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux内核升级</title>
+    <url>/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/</url>
+    <content><![CDATA[<p>Linux内核大版本升级</p>
+<span id="more"></span>
+
+<h1 id="3-10内核升级至4-4"><a href="#3-10内核升级至4-4" class="headerlink" title="3.10内核升级至4.4"></a>3.10内核升级至4.4</h1><h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><p>腾讯云<br>Centos7.8<br>内核版本：3.10.0-1127.19.1.el7.x86_64</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64</p>
+<h2 id="kernel-3-10-gt-4-4升级步骤"><a href="#kernel-3-10-gt-4-4升级步骤" class="headerlink" title="kernel 3.10-&gt;4.4升级步骤"></a>kernel 3.10-&gt;4.4升级步骤</h2><h3 id="yum源修改"><a href="#yum源修改" class="headerlink" title="yum源修改"></a>yum源修改</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入公钥</span></span><br><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">升级安装ELRepo</span></span><br><span class="line">yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">载入elrepo-kernel 元数据</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel repolist</span><br></pre></td></tr></table></figure>
+<h3 id="查看可用rpm包"><a href="#查看可用rpm包" class="headerlink" title="查看可用rpm包"></a>查看可用rpm包</h3><p>yum –disablerepo&#x3D;* –enablerepo&#x3D;elrepo-kernel list kernel*</p>
+<h3 id="安装最新稳定版kernel"><a href="#安装最新稳定版kernel" class="headerlink" title="安装最新稳定版kernel"></a>安装最新稳定版kernel</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">lt：长期支持版本；ml：主线版本</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install  kernel-lt.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h4 id="删除旧版本工具包"><a href="#删除旧版本工具包" class="headerlink" title="删除旧版本工具包"></a>删除旧版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-tools-libs.x86_64 kernel-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h4 id="安装新版本工具包"><a href="#安装新版本工具包" class="headerlink" title="安装新版本工具包"></a>安装新版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install kernel-lt-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h3 id="将内核启动修改为本机最新版本"><a href="#将内核启动修改为本机最新版本" class="headerlink" title="将内核启动修改为本机最新版本"></a>将内核启动修改为本机最新版本</h3><h4 id="查看内核版本"><a href="#查看内核版本" class="headerlink" title="查看内核版本"></a>查看内核版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看内核启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# awk -F \&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">0 : CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">1 : CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">2 : CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">3 : CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">4 : CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br><span class="line">或</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看系统可用内核</span></span><br><span class="line">[root@dev-node-1 ~]# grep &quot;^menuentry&quot; /boot/grub2/grub.cfg | cut -d &quot;&#x27;&quot; -f2</span><br><span class="line">CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前实际启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# grub2-editenv list</span><br><span class="line">saved_entry=CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br></pre></td></tr></table></figure>
+<h4 id="设置默认启动"><a href="#设置默认启动" class="headerlink" title="设置默认启动"></a>设置默认启动</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-set-default &quot;CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)&quot;</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grub2-set-default 0     // 0代表查看内核启动顺序时的序号</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑/etc/default/grub文件</span></span><br><span class="line">vim /etc/default/grub</span><br><span class="line">GRUB_DEFAULT=saved 改为GRUB_DEFAULT=0</span><br></pre></td></tr></table></figure>
+<h4 id="生成grub配置文件"><a href="#生成grub配置文件" class="headerlink" title="生成grub配置文件"></a>生成grub配置文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-mkconfig  -o /boot/grub2/grub.cfg</span><br><span class="line">Generating grub configuration file ...</span><br><span class="line">Found linux image: /boot/vmlinuz-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-4.4.241-1.el7.elrepo.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.19.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.13.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-4acec6de0e4741b6bc249381506fa844</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-4acec6de0e4741b6bc249381506fa844.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-0ea734564f9a4e2881b866b82d679dfc</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-0ea734564f9a4e2881b866b82d679dfc.img</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="重启-amp-验证"><a href="#重启-amp-验证" class="headerlink" title="重启&amp;验证"></a>重启&amp;验证</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# reboot</span><br><span class="line"></span><br><span class="line">[root@dev-node-1 ~]# uname -r</span><br><span class="line">4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除旧内核（可选）"><a href="#删除旧内核（可选）" class="headerlink" title="删除旧内核（可选）"></a>删除旧内核（可选）</h3><h4 id="查看本机内所有内核"><a href="#查看本机内所有内核" class="headerlink" title="查看本机内所有内核"></a>查看本机内所有内核</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# rpm -qa | grep kernel</span><br><span class="line">kernel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-headers-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-lt-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">kernel-lt-tools-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">abrt-addon-kerneloops-2.1.11-57.el7.centos.x86_64</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">kernel-lt-tools-libs-4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+<h4 id="yum-remove"><a href="#yum-remove" class="headerlink" title="yum remove"></a>yum remove</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>或</p>
+<h4 id="yum-utils工具"><a href="#yum-utils工具" class="headerlink" title="yum-utils工具"></a>yum-utils工具</h4><p>如果安装的内核不多于 3 个，yum-utils 工具不会删除任何一个。只有在安装的内核大于 3 个时，才会自动删除旧内核。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装yum-utils</span></span><br><span class="line">[root@dev-node-1 ~]# yum install yum-utils</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除旧版本</span></span><br><span class="line">package-cleanup --oldkernels</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS7</tag>
+        <tag>kernel</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JumpServer添加访问k8s集群</title>
+    <url>/2022/02/22/JumpServer%E6%B7%BB%E5%8A%A0%E8%AE%BF%E9%97%AEk8s%E9%9B%86%E7%BE%A4/</url>
+    <content><![CDATA[<p>Jumpserver中添加k8s，方便直接从Jumpserver管理k8s集群</p>
+<span id="more"></span>
+
+<h3 id="一、k8s准备"><a href="#一、k8s准备" class="headerlink" title="一、k8s准备"></a>一、k8s准备</h3><h4 id="1-创建对象ClusterRole"><a href="#1-创建对象ClusterRole" class="headerlink" title="1.创建对象ClusterRole"></a>1.创建对象ClusterRole</h4><p>此对象定义具体权限</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">create</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">delete</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deletecollection</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">patch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-创建对象ServiceAccount"><a href="#2-创建对象ServiceAccount" class="headerlink" title="2.创建对象ServiceAccount"></a>2.创建对象ServiceAccount</h4><p>此对象为创建用户，并自动生成Secret对象，即token</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
+<h4 id="3-创建对象ClusterRoleBinding"><a href="#3-创建对象ClusterRoleBinding" class="headerlink" title="3.创建对象ClusterRoleBinding"></a>3.创建对象ClusterRoleBinding</h4><p>此对象将ClusterRole定义的权限赋给ServiceAccount</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-bind-jmsClusterRole</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-获取token值"><a href="#4-获取token值" class="headerlink" title="4.获取token值"></a>4.获取token值</h4><p>此步骤也可参考Jumpserver官网：<a href="https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/">https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export</span> <span class="string">POD_NAME=`kubectl</span> <span class="string">get</span> <span class="string">secret</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">jms|awk</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span><span class="string">`</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">describe</span> <span class="string">secret</span> <span class="string">$&#123;POD_NAME&#125;</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">&#x27;token:&#x27;</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="attr">token:</span>      <span class="string">it-is-example-token-pZCI6IlB0MUR2dEdtRW5lN19nQWg1WWdWN2o5U1FicTA2dDYtT2VfMk1ScTd0RG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJqbXMtc2VydmljZWFjY291bnQtdG9rZW4tcnB3d2giLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiam1zLXNlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMGZkYjIwOWUtMTgyYi00M2JmLTgyNDctZTAwN2VkOWI1ZTY4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmptcy1zZXJ2aWNlYWNjb3VudCJ9.o8N_m_QtpLOj5OHxvlnepzqypmx8xfE63_GQnzbSfy4deGR1WY0UElxLZcWrajhzHIOP2cBkzVF-X4K6sZoixV1tI0qevHC-gu2v-VZkzv0h-lwbJfMWNV9fiF2alZ9VCVSIXXUBRJ49Wd6ecn8N5_BAIXZ3rLePYxhJA9t_Vlx8l_8stE-AXn9W5IRRy6bzFCpJqR0Mua8BDvv8UJMPT7PPFp3bmBdTNuFOlwpoUNHNtKERGpN19N9Zg05bNaHZwphABOK2mlHDwERAJ3JDFrC1bztUZCYgxXhDQnCG_EJE54SpoMNVvvRgyTw5BJAZYizEmM2_ljytCgdAEznD5g</span></span><br></pre></td></tr></table></figure>
+<h3 id="二、配置Jumpserver"><a href="#二、配置Jumpserver" class="headerlink" title="二、配置Jumpserver"></a>二、配置Jumpserver</h3><h4 id="1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"><a href="#1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token" class="headerlink" title="1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"></a>1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token</h4><p>![输入token]<img height="60%" src="/images/jumpserver-input_token.png" width="60%"/></p>
+<h4 id="2-应用管理-kubernetes中创建应用"><a href="#2-应用管理-kubernetes中创建应用" class="headerlink" title="2.应用管理-kubernetes中创建应用"></a>2.应用管理-kubernetes中创建应用</h4><p>注：“集群”中填写jms能够访问到的集群地址，此处填写TKE提供的内网ip地址<br>![输入集群地址]<img height="60%" src="/images/jumpserver-input_cluster_addr.png" width="60%"/></p>
+<h4 id="3-赋权后即可访问k8s集群信息，测试"><a href="#3-赋权后即可访问k8s集群信息，测试" class="headerlink" title="3.赋权后即可访问k8s集群信息，测试"></a>3.赋权后即可访问k8s集群信息，测试</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Jumpserver</category>
+      </categories>
+      <tags>
+        <tag>jumpserver</tag>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>OpenSSH Update</title>
+    <url>/2018/02/09/OpenSSH-Update/</url>
+    <content><![CDATA[<p>由于公司安全需要，OpenSSH要加固，需升级至当前最新版本OpenSSH_7.6p1<br>环境：CentOS6.8 x64</p>
+<span id="more"></span>
+
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="下载相关软件包"><a href="#下载相关软件包" class="headerlink" title="下载相关软件包"></a>下载相关软件包</h2><p>OpenSSH需要依赖ZLIB和OpenSSL，因此需要从官网下载三者的源码包。需要注意的是：OpenSSH最新版7.4p1依赖的OpenSSL版本为1.0.2k，而不是其最新版1.1.0e（使用此版会升级失败）,ZLIB可以使用最新版1.2.11。CentOS6.8自带的zlib版本为1.2.3，也可不进行升级。 三者源码下载地址：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http://www.zlib.net/</span><br><span class="line">http://www.openssl.org/</span><br><span class="line">http://www.openssh.org/</span><br></pre></td></tr></table></figure>
+<p>或者使用我准备好的包：<br><a href="https://pan.baidu.com/s/1PzuK3FGVPLZuWvVvqJgaIQ">https://pan.baidu.com/s/1PzuK3FGVPLZuWvVvqJgaIQ</a></p>
+<h2 id="查看系统当前软件版本"><a href="#查看系统当前软件版本" class="headerlink" title="查看系统当前软件版本"></a>查看系统当前软件版本</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -q zlib</span><br><span class="line">openssl version</span><br><span class="line">ssh -V</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装telnet服务并启用"><a href="#安装telnet服务并启用" class="headerlink" title="安装telnet服务并启用"></a>安装telnet服务并启用</h2><p>因升级OpenSSH过程中需要卸载现有OpenSSH, 因此为了保持服务器的远程连接可用，需要启用telnet服务作为替代，如升级出现问题，也可通过telnet登录服务器进行回退。</p>
+<h3 id="A、安装telnet服务"><a href="#A、安装telnet服务" class="headerlink" title="A、安装telnet服务"></a>A、安装telnet服务</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install telnet-server*</span><br></pre></td></tr></table></figure>
+
+<h3 id="B、启用telnet"><a href="#B、启用telnet" class="headerlink" title="B、启用telnet"></a>B、启用telnet</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">先关闭防火墙，否则telnet可能无法连接</span><br><span class="line">service iptables stop</span><br><span class="line">chkconfig iptables off</span><br><span class="line">vi /etc/xinetd.d/telnet                 <span class="comment">#将其中disable字段的yes改为no以启用telnet服务</span></span><br><span class="line"><span class="built_in">mv</span> /etc/securetty /etc/securetty.old    <span class="comment">#允许root用户通过telnet登录</span></span><br><span class="line">service xinetd start                    <span class="comment">#启动telnet服务</span></span><br><span class="line">chkconfig xinetd on                     <span class="comment">#使telnet服务开机启动，避免升级过程中服务器意外重启后无法远程登录系统</span></span><br><span class="line">telnet [ip]                             <span class="comment">#新开启一个远程终端以telnet登录验证是否成功启用</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="安装编译所需工具包"><a href="#安装编译所需工具包" class="headerlink" title="安装编译所需工具包"></a>安装编译所需工具包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc pam-devel zlib-devel</span><br></pre></td></tr></table></figure>
+
+<h1 id="正式升级"><a href="#正式升级" class="headerlink" title="正式升级"></a>正式升级</h1><h2 id="升级ZLIB"><a href="#升级ZLIB" class="headerlink" title="升级ZLIB"></a>升级ZLIB</h2><h3 id="A、解压zlib-1-2-11源码并编译"><a href="#A、解压zlib-1-2-11源码并编译" class="headerlink" title="A、解压zlib_1.2.11源码并编译"></a>A、解压zlib_1.2.11源码并编译</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf zlib-1.2.11.tar.gz</span><br><span class="line"><span class="built_in">cd</span> zlib-1.2.11</span><br><span class="line">CFLAGS=<span class="string">&#x27;-mstackrealign -fPIC -O3&#x27;</span> ./configure --prefix=/usr     //如果不加【CFLAGS=<span class="string">&#x27;-mstackrealign -fPIC -O3&#x27;</span>】这一段配置后面安装OpenSSH时会报错。</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<h3 id="B、卸载当前zlib"><a href="#B、卸载当前zlib" class="headerlink" title="B、卸载当前zlib"></a>B、卸载当前zlib</h3><p>注意：此步骤必须在步骤A执行完毕后再执行，否则先卸载zlib后，&#x2F;lib64&#x2F;目录下的zlib相关库文件会被删除，步骤A编译zlib会失败。（补救措施：从其他相同系统的服务器上复制&#x2F;lib64、&#x2F;usr&#x2F;lib和&#x2F;usr&#x2F;lib64目录下的libcrypto.so.10、libssl.so.10、libz.so.1、libz.so.1.2.3四个文件到相应目录即可。可通过whereis、locate或find命令找到这些文件的位置）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -e --nodeps zlib</span><br></pre></td></tr></table></figure>
+
+<h3 id="C、安装之前编译好的zlib"><a href="#C、安装之前编译好的zlib" class="headerlink" title="C、安装之前编译好的zlib"></a>C、安装之前编译好的zlib</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在zlib编译目录执行如下命令</span></span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<h3 id="D、共享库注册"><a href="#D、共享库注册" class="headerlink" title="D、共享库注册"></a>D、共享库注册</h3><p>zlib安装完成后，会在&#x2F;usr&#x2F;lib目录中生产zlib相关库文件，需要将这些共享库文件注册到系统中。<br><font color="#FF6600">建议用这种方式:</font></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so.1 libz.so.1.2.11</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so libz.so.1.2.11</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so.1 /lib/libz.so.1</span><br><span class="line"><span class="built_in">rm</span> -f /usr/lib64/libz.so                                  //若没有删除,则openssl编译失败.</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so /usr/lib64/libz.so</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib64/libz.so ../../lib64/libz.so.1.2.11   //64位系统必须修改这个</span><br><span class="line">ldconfig</span><br></pre></td></tr></table></figure>
+<p><font color="#FF6600"><strong>或者</strong></font>采用如下方式也可：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/usr/lib&#x27;</span> &gt;&gt; /etc/ld.so.conf</span><br><span class="line">ldconfig                    <span class="comment">#更新共享库cache</span></span><br></pre></td></tr></table></figure>
+<h2 id="升级OpenSSL"><a href="#升级OpenSSL" class="headerlink" title="升级OpenSSL"></a>升级OpenSSL</h2><p>官方升级文档：<a href="http://www.linuxfromscratch.org/blfs/view/cvs/postlfs/openssl.html">http://www.linuxfromscratch.org/blfs/view/cvs/postlfs/openssl.html</a></p>
+<h3 id="A、备份当前openssl"><a href="#A、备份当前openssl" class="headerlink" title="A、备份当前openssl"></a>A、备份当前openssl</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">find / -name openssl</span><br><span class="line">/etc/pki/ca-trust/extracted/openssl</span><br><span class="line">/usr/bin/openssl</span><br><span class="line">/usr/lib64/openssl</span><br><span class="line">/usr/include/openssl</span><br><span class="line"></span><br><span class="line"><span class="built_in">mv</span> /usr/lib64/openssl /usr/lib64/openssl.old</span><br><span class="line"><span class="built_in">mv</span> /usr/bin/openssl  /usr/bin/openssl.old</span><br><span class="line"><span class="built_in">mv</span> /etc/pki/ca-trust/extracted/openssl  /etc/pki/ca-trust/extracted/openssl.old</span><br><span class="line"><span class="built_in">mv</span> /usr/include/openssl /usr/include/openssl.old</span><br></pre></td></tr></table></figure>
+<p>如下两个库文件必须先备份，因系统内部分工具（如yum、wget等）依赖此库，而新版OpenSSL不包含这两个库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /usr/lib64/libcrypto.so.10  /usr/lib64/libcrypto.so.10.old</span><br><span class="line"><span class="built_in">cp</span> /usr/lib64/libssl.so.10  /usr/lib64/libssl.so.10.old</span><br></pre></td></tr></table></figure>
+<h3 id="B、卸载当前openssl"><a href="#B、卸载当前openssl" class="headerlink" title="B、卸载当前openssl"></a>B、卸载当前openssl</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep openssl</span><br><span class="line">openssl-1.0.1e-42.el6.x86_64</span><br><span class="line"></span><br><span class="line">rpm -e --nodeps openssl-1.0.1e-42.el6.x86_64</span><br><span class="line">rpm -qa | grep openssl</span><br><span class="line"><span class="comment">#或者直接执行此命令：</span></span><br><span class="line">rpm -qa |grep openssl|xargs -i rpm -e --nodeps &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="C、解压openssl-1-0-2k源码并编译安装"><a href="#C、解压openssl-1-0-2k源码并编译安装" class="headerlink" title="C、解压openssl_1.0.2k源码并编译安装"></a>C、解压openssl_1.0.2k源码并编译安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf openssl-1.0.2k.tar.gz</span><br><span class="line"><span class="built_in">cd</span> openssl-1.0.2k</span><br><span class="line">./config --prefix=/usr --openssldir=/etc/ssl --shared zlib    <span class="comment">#必须加上--shared，否则编译时会找不到新安装的openssl的库而报错</span></span><br><span class="line">make</span><br><span class="line">make <span class="built_in">test</span>                            <span class="comment">#必须执行这一步结果为pass才能继续，否则即使安装完成，ssh也无法使用</span></span><br><span class="line">make install</span><br><span class="line">openssl version -a                   <span class="comment">#查看是否升级成功</span></span><br></pre></td></tr></table></figure>
+<p>make test正确输出：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">*---- START OF RECORD ----</span><br><span class="line">** Record Content-<span class="built_in">type</span>: 22</span><br><span class="line">** Record Version: fefd</span><br><span class="line">** Record Epoch: 1</span><br><span class="line">** Record Sequence: 000000000000</span><br><span class="line">** Record Length: 64</span><br><span class="line">**---- START OF HANDSHAKE MESSAGE FRAGMENT ----</span><br><span class="line">**---- HANDSHAKE MESSAGE FRAGMENT ENCRYPTED ----</span><br><span class="line">*---- END OF RECORD ----</span><br><span class="line">---- END OF PACKET ----</span><br><span class="line">PASS</span><br><span class="line">test_bad_dtls</span><br><span class="line">../util/shlib_wrap.sh ./bad_dtls_test</span><br><span class="line">make[1]: Leaving directory `/tmp/openssl-1.0.2m/test<span class="string">&#x27;</span></span><br><span class="line"><span class="string">OPENSSL_CONF=apps/openssl.cnf util/opensslwrap.sh version -a</span></span><br><span class="line"><span class="string">OpenSSL 1.0.2m  2 Nov 2017</span></span><br><span class="line"><span class="string">built on: reproducible build, date unspecified</span></span><br><span class="line"><span class="string">platform: linux-x86_64</span></span><br><span class="line"><span class="string">options:  bn(64,64) rc4(16x,int) des(idx,cisc,16,int) idea(int) blowfish(idx)</span></span><br><span class="line"><span class="string">compiler: gcc -I. -I.. -I../include  -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -            </span></span><br><span class="line"><span class="string">DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -    </span></span><br><span class="line"><span class="string">DSHA512_ASM -DMD5_ASM -DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM</span></span><br><span class="line"><span class="string">OPENSSLDIR: &quot;/etc/ssl&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="D、恢复共享库"><a href="#D、恢复共享库" class="headerlink" title="D、恢复共享库"></a>D、恢复共享库</h3><p>由于OpenSSL_1.0.2k不提供libcrypto.so.10和libssl.so.10这两个库，而yum、wget等工具又依赖此库，因此需要将先前备份的这两个库进行恢复，其他的可视情况考虑是否恢复。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /usr/lib64/libcrypto.so.10.old  /usr/lib64/libcrypto.so.10</span><br><span class="line"><span class="built_in">mv</span> /usr/lib64/libssl.so.10.old  /usr/lib64/libssl.so.10</span><br></pre></td></tr></table></figure>
+<p>返回值：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span>  /usr/lib64/libcrypto.so.10.old  /usr/lib64/libcrypto.so.10</span><br><span class="line"><span class="built_in">mv</span>: overwrite `/usr/lib64/libcrypto.so.10<span class="string">&#x27;? y</span></span><br><span class="line"><span class="string">mv  /usr/lib64/libssl.so.10.old  /usr/lib64/libssl.so.10</span></span><br><span class="line"><span class="string">mv: overwrite `/usr/lib64/libssl.so.10&#x27;</span>? y</span><br></pre></td></tr></table></figure>
+<h2 id="升级OpenSSH"><a href="#升级OpenSSH" class="headerlink" title="升级OpenSSH"></a>升级OpenSSH</h2><p>官方升级文档：<a href="http://www.linuxfromscratch.org/blfs/view/svn/postlfs/openssh.html">http://www.linuxfromscratch.org/blfs/view/svn/postlfs/openssh.html</a></p>
+<h3 id="A、备份当前openssh"><a href="#A、备份当前openssh" class="headerlink" title="A、备份当前openssh"></a>A、备份当前openssh</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/ssh /etc/ssh.old</span><br></pre></td></tr></table></figure>
+<h3 id="B、卸载当前openssh"><a href="#B、卸载当前openssh" class="headerlink" title="B、卸载当前openssh"></a>B、卸载当前openssh</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep openssh</span><br><span class="line">openssh-clients-5.3p1-111.el6.x86_64</span><br><span class="line">openssh-server-5.3p1-111.el6.x86_64</span><br><span class="line">openssh-5.3p1-111.el6.x86_64</span><br><span class="line">openssh-askpass-5.3p1-111.el6.x86_64</span><br><span class="line"></span><br><span class="line">rpm -e --nodeps openssh-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -e --nodeps openssh-server-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -e --nodeps openssh-clients-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -e --nodeps openssh-askpass-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -qa | grep openssh</span><br><span class="line"><span class="comment">#或者直接执行此命令：</span></span><br><span class="line">rpm -qa |grep openssh|xargs -i rpm -e --nodeps &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="C、openssh安装前环境配置"><a href="#C、openssh安装前环境配置" class="headerlink" title="C、openssh安装前环境配置"></a>C、openssh安装前环境配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">install  -v -m700 -d /var/lib/sshd</span><br><span class="line"><span class="built_in">chown</span>  -v root:sys /var/lib/sshd</span><br><span class="line">groupadd -g 50 sshd</span><br><span class="line">useradd  -c <span class="string">&#x27;sshd PrivSep&#x27;</span> -d /var/lib/sshd -g sshd -s /bin/false -u 50 sshd</span><br></pre></td></tr></table></figure>
+<h3 id="D、解压openssh-7-4p1源码并编译安装"><a href="#D、解压openssh-7-4p1源码并编译安装" class="headerlink" title="D、解压openssh_7.4p1源码并编译安装"></a>D、解压openssh_7.4p1源码并编译安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf openssh-7.4p1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> openssh-7.4p1</span><br><span class="line">./configure --prefix=/usr  --sysconfdir=/etc/ssh  --with-md5-passwords  --with-pam  --with-zlib --with-openssl-includes=/usr --with-privsep-path=/var/lib/sshd</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<h3 id="E、openssh安装后环境配置"><a href="#E、openssh安装后环境配置" class="headerlink" title="E、openssh安装后环境配置"></a>E、openssh安装后环境配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在openssh编译目录执行如下命令</span></span><br><span class="line">install -v -m755    contrib/ssh-copy-id /usr/bin</span><br><span class="line">install -v -m644    contrib/ssh-copy-id.1 /usr/share/man/man1</span><br><span class="line">install -v -m755 -d /usr/share/doc/openssh-7.4p1</span><br><span class="line">install -v -m644    INSTALL LICENCE OVERVIEW README* /usr/share/doc/openssh-7.4p1</span><br><span class="line">ssh -V              <span class="comment">#验证是否升级成功</span></span><br></pre></td></tr></table></figure>
+<h3 id="F、启用OpenSSH服务"><a href="#F、启用OpenSSH服务" class="headerlink" title="F、启用OpenSSH服务"></a>F、启用OpenSSH服务</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在openssh编译目录执行如下目录</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;X11Forwarding yes&#x27;</span> &gt;&gt; /etc/ssh/sshd_config</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PermitRootLogin yes&quot;</span> &gt;&gt; /etc/ssh/sshd_config   <span class="comment">#允许root用户通过ssh登录</span></span><br><span class="line"><span class="built_in">cp</span> -p contrib/redhat/sshd.init /etc/init.d/sshd</span><br><span class="line"><span class="built_in">chmod</span> +x /etc/init.d/sshd</span><br><span class="line">chkconfig  --add  sshd</span><br><span class="line">chkconfig  sshd  on</span><br><span class="line">chkconfig  --list  sshd</span><br><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<p>注意：如果升级操作一直是在ssh远程会话中进行的，上述sshd服务重启命令可能导致会话断开并无法使用ssh再行登入（即ssh未能成功重启），此时需要通过telnet登入再执行sshd服务重启命令。</p>
+<h3 id="G、修改文件-x2F-etc-x2F-ssh-x2F-sshd-config"><a href="#G、修改文件-x2F-etc-x2F-ssh-x2F-sshd-config" class="headerlink" title="G、修改文件&#x2F;etc&#x2F;ssh&#x2F;sshd_config"></a>G、修改文件&#x2F;etc&#x2F;ssh&#x2F;sshd_config</h3><p>由于加固后的ssh（ssh6.7以上）屏蔽了不安全算法，需要在&#x2F;etc&#x2F;ssh&#x2F;sshd_config最后加上如下信息，不然Python模块paromiko，无法连接加固后的机器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1</span><br></pre></td></tr></table></figure>
+
+<h2 id="善后工作"><a href="#善后工作" class="headerlink" title="善后工作"></a>善后工作</h2><p>新开启远程终端以ssh [ip]登录系统，确认一切正常升级成功后，只需关闭telnet服务以保证系统安全性即可。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/securetty.old /etc/securetty</span><br><span class="line">chkconfig  xinetd off</span><br><span class="line">service xinetd stop</span><br></pre></td></tr></table></figure>
+<p>如有必要，可重新开启防火墙</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service iptables start</span><br><span class="line">chkconfig iptables on</span><br></pre></td></tr></table></figure>
+<p>如需还原之前的ssh配置信息，可直接删除升级后的配置信息，恢复备份。<br>ssh大版本升级尽量不要删除新生成的ssh文件，将原文件与新生成文件都保留一份。<br>原版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -V</span><br><span class="line">OpenSSH_5.3p1, OpenSSL 1.0.1e-fips 11 Feb 2013</span><br></pre></td></tr></table></figure>
+<p>升级至：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">OpenSSH_7.4p1, OpenSSL 1.0.2n  7 Dec 2017</span><br></pre></td></tr></table></figure>
+<p><font color="#FF6600">后如果执行<strong>以下操作</strong>，会导致<strong>无法登陆</strong>。</font><br><font color="#FF6600" size="16"><strong>正确做法：</strong>使用此次安装好的文件&#x2F;etc&#x2F;ssh，不要用原文件覆盖！不然ssh无法使用。</font></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！！！！！！千万不要执行如下命令！！！！！！</span></span><br><span class="line"><span class="comment">#rm -rf /etc/ssh</span></span><br><span class="line"><span class="comment">#mv /etc/ssh.old /etc/ssh</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="遇到的错误-1："><a href="#遇到的错误-1：" class="headerlink" title="遇到的错误-1："></a>遇到的错误-1：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make[2]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">[ -z &quot;&quot; ] || gcc -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM -Iinclude \</span></span><br><span class="line"><span class="string">            -DFINGERPRINT_PREMAIN_DSO_LOAD -o fips_premain_dso  \</span></span><br><span class="line"><span class="string">            fips_premain.c fipscanister.o \</span></span><br><span class="line"><span class="string">            libcrypto.a -ldl -lz</span></span><br><span class="line"><span class="string">make[3]: Entering directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[4]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">/usr/bin/ld: /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/libz.a(deflate.o): relocation R_X86_64_32S against `_length_code&#x27;</span> can not be used when making a shared object; recompile with -fPIC</span><br><span class="line">/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/libz.a: could not <span class="built_in">read</span> symbols: Bad value</span><br><span class="line">collect2: ld returned 1 <span class="built_in">exit</span> status</span><br><span class="line">make[4]: *** [link_a.gnu] Error 1</span><br><span class="line">make[4]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make[3]: *** [do_linux-shared] Error 2</span></span><br><span class="line"><span class="string">make[3]: Leaving directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[2]: *** [libcrypto.so.1.0.0] Error 2</span><br><span class="line">make[2]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make[1]: *** [shared] Error 2</span></span><br><span class="line"><span class="string">make[1]: Leaving directory `/tmp/openssl-1.0.2m/crypto&#x27;</span></span><br><span class="line">make: *** [build_crypto] Error 1</span><br></pre></td></tr></table></figure>
+<p>解决办法：zlib编译时添加configure前面的配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CFLAGS=<span class="string">&#x27;-mstackrealign -fPIC -O3&#x27;</span> ./configure --prefix=/usr</span><br></pre></td></tr></table></figure>
+<h2 id="遇到的报错-2："><a href="#遇到的报错-2：" class="headerlink" title="遇到的报错-2："></a>遇到的报错-2：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make[2]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">[ -z &quot;&quot; ] || gcc -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -        DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -    DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM -Iinclude \</span></span><br><span class="line"><span class="string">            -DFINGERPRINT_PREMAIN_DSO_LOAD -o fips_premain_dso  \</span></span><br><span class="line"><span class="string">            fips_premain.c fipscanister.o \</span></span><br><span class="line"><span class="string">            libcrypto.a -ldl -lz</span></span><br><span class="line"><span class="string">make[3]: Entering directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[4]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">/usr/bin/ld: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory</span></span><br><span class="line"><span class="string">collect2: ld returned 127 exit status</span></span><br><span class="line"><span class="string">make[4]: *** [link_a.gnu] Error 1</span></span><br><span class="line"><span class="string">make[4]: Leaving directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[3]: *** [do_linux-shared] Error 2</span><br><span class="line">make[3]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make[2]: *** [libcrypto.so.1.0.0] Error 2</span></span><br><span class="line"><span class="string">make[2]: Leaving directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[1]: *** [shared] Error 2</span><br><span class="line">make[1]: Leaving directory `/tmp/openssl-1.0.2m/crypto<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make: *** [build_crypto] Error 1</span></span><br></pre></td></tr></table></figure>
+<p>解决办法：<br>仔细检查提示路径下的libz.so文件是否正确。</p>
+<h2 id="遇到的报错-3："><a href="#遇到的报错-3：" class="headerlink" title="遇到的报错-3："></a>遇到的报错-3：</h2><p>现象：<br>用Python写的脚本调用到paramiko模块，模块ssh连接加固后的机器失败，报无法连接，但secureCRT可以连接。<br>运行paromiko连接远程服务器失败：FAIL : SSHException: Incompatible ssh peer (no acceptable kex algorithm)<br>原因：<br>因为ssh6.7以上屏蔽不安全算法导致。<br>解决：<br>在&#x2F;etc&#x2F;ssh&#x2F;sshd_config最后加上：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1</span><br></pre></td></tr></table></figure>
+<p>重启sshd服务，问题解决。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>安全加固</tag>
+        <tag>OpenSSH</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xiaochao</title>
+    <url>/2018/03/25/xiaochao/</url>
+    <content><![CDATA[<p>日常小小抄</p>
+<span id="more"></span>
+<h4 id="2024-8-16"><a href="#2024-8-16" class="headerlink" title="2024.8.16"></a>2024.8.16</h4><p>《题龙阳县青草湖》 元 唐珙<br>西风吹老洞庭波，一夜湘君白发多。<br>醉后不知天在水，满船清梦压星河。</p>
+<h4 id="2022-3-25-17-26"><a href="#2022-3-25-17-26" class="headerlink" title="2022.3.25 17:26"></a>2022.3.25 17:26</h4><p>山清水秀太阳高，好呀么好风飘<br>小小滴船儿撑过来，一路摇呀摇<br>为了那心上的人，起呀么起的早<br>也不管那路遥遥，情愿多辛劳<br>山清水秀太阳高，好呀么好风飘<br>我一心想着他，想的是好心焦</p>
+<h4 id="2021-4-12-12-30"><a href="#2021-4-12-12-30" class="headerlink" title="2021.4.12 12:30"></a>2021.4.12 12:30</h4><p>豫章太守顾劭，是雍之子。邵在军卒。雍盛集僚属自围棋，外启信至，而无儿书，虽神气不变，而心了其故，以爪掐掌，血流沾褥<br>戍卒叫，函谷举，楚人一炬，可怜焦土<br>乘兴踏月，西入酒家，不觉人物两忘，身在世外。夜来月下卧醒，花影零乱，满人衿袖，疑如濯魄于冰壶也</p>
+<h4 id="2021-2-25-00-00"><a href="#2021-2-25-00-00" class="headerlink" title="2021.2.25 00:00"></a>2021.2.25 00:00</h4><p>有钱人喜欢说“钱不是万能的”，长得好看的人喜欢说“长得好看有什么用”，瘦子喜欢说“其实胖一点好，健康”，努力的人喜欢说“努力并非决定性因素”。他们只是虚伪地随口说说，这些都是套路，你却都认真地信了。</p>
+<h4 id="2020-10-23-21-03"><a href="#2020-10-23-21-03" class="headerlink" title="2020.10.23 21:03"></a>2020.10.23 21:03</h4><p>僵卧孤村不自哀，尚思为国戍轮台</p>
+<h4 id="2020-9-21-17-22"><a href="#2020-9-21-17-22" class="headerlink" title="2020.9.21 17:22"></a>2020.9.21 17:22</h4><p>文素：”没有人对我的伤害使我成长了，使我更强大了，我也不会感谢他，他伤害了我只能说明他很差劲，凭什么感谢，是我自己熬过来的，我只感谢我自己。”</p>
+<h4 id="2020-9-12-14-26"><a href="#2020-9-12-14-26" class="headerlink" title="2020.9.12 14:26"></a>2020.9.12 14:26</h4><p>如果把知识点比作砖块，那我们脑海中的知识结构就是一栋楼。有些人的楼且高且大抗震八级防风防火，有些人的楼摇摇欲坠处处安全隐患，有些人厚积薄发，有些人术有专攻——这栋楼的高度决定了一个人的思想的深度。<br>很多青少年会有一个阅读欲望特别强的时期，家长往往在少年读物中“乱花渐欲迷人眼”，不知道该给孩子看什么。此时最好的办法是给一套足够厚实的青少年百科大全，人文地理科技社会应有尽有，不要求孩子全部翻一遍，让孩子自己去挑其中喜欢的看。这种早期的阅读偏好往往来历不明却持续终生。我倾向于认为这是孩子先天的偏好，能标识出孩子的天赋所在。给一个小学四年级的孩子一套百科大全作生日礼物，等他高一的时候再去看看哪一本学科被翻得最破——这些信息可以用来帮助孩子正确地认识自己，为孩子选择高中文理科，或是选择大学的专业，提供非常有力的依据。<br>在这里，百科大全就起到了“初建知识结构”的作用，它是孩子茫茫书海中的导航，是信息储备大厦的设计蓝图。越早构建出这个结构，就能越早让人在接收信息中做到“系统地搬砖”，使信息管理的效率越早提升。<br>根据个人学习内容的不同，成年后每个人的知识结构会长得不太一样。<br>想象力：基于已知信息的截取、拼接、重组信息的能力<br>想象力的重点：1.截取什么样的信息组装，这决定了想象力的广度；2.如何有逻辑地自洽地将信息组装，这决定了想象力的深度。优秀的想象力需要将这二者合为一体。<br>&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;—-《如何成为一个有趣的人》-知识结构的不同类型<br>“人无癖不可与交，以其无深情也。”；“人无疵不可与交，以其无真气也” —-张岱<br>邓布利多说：“决定我们成为什么人的，不是我们的能力，而是我们的选择。”</p>
+<h4 id="2020-9-11-20-34"><a href="#2020-9-11-20-34" class="headerlink" title="2020.9.11 20:34"></a>2020.9.11 20:34</h4><p>微语录精选1015<br>微信朋友圈越来越不能看，都是些三观不正的鸡汤。所谓的努力都是围着钱打转，没半点灵魂的痕迹。这代人大部分都很浅，很浅。活个高兴吧，虽然高兴过后都是一地鸡毛。平静的午后，灵魂的小憩，让刚放下锄把子的城一代理解比较难。</p>
+<h4 id="2020-9-10-12-37"><a href="#2020-9-10-12-37" class="headerlink" title="2020.9.10 12:37"></a>2020.9.10 12:37</h4><p>知识结构的“广度”是一个人“有聊”还是“无聊”的关键，而知识结构的“深度”是一个人“肤浅”还是“深刻”的关键。<br>“深刻”与否正是“有趣”和“逗比”的核心差别。<br>一个深刻的人不仅仅需要知道这是什么，还要知道“这为什么是”“这和其他信息有什么关联”“这个知识点在我的知识结构中处于什么位置”。<br>这个知识体系纵深的程度，就是我们所说的一个人的“深度”。</p>
+<h4 id="2019-6-26-14-26"><a href="#2019-6-26-14-26" class="headerlink" title="2019.6.26 14:26"></a>2019.6.26 14:26</h4><p>天地有大美，美的是自然；流水不争先，争的是滔滔不绝</p>
+<h4 id="2019-6-25-14-48"><a href="#2019-6-25-14-48" class="headerlink" title="2019.6.25 14:48"></a>2019.6.25 14:48</h4><p>我本无意穿堂风， 偏偏孤倨引山洪</p>
+<h4 id="2019-06-18-09-02"><a href="#2019-06-18-09-02" class="headerlink" title="2019.06.18 09:02"></a>2019.06.18 09:02</h4><p>倾听：倾听与听不同，倾听是解读别人所说信息的过程，包含听到、专注、理解、回应、记忆五大元素。可以获得更多信息，对对方有更多了解。倾听能让对方感觉到自己被尊重，所以才会跟你分享更多的信息。<br>倾听不仅仅只是听，还要思考，要思考更深层的原因，不要被表象所迷惑。</p>
+<h4 id="2019-06-13-17-55"><a href="#2019-06-13-17-55" class="headerlink" title="2019.06.13 17:55"></a>2019.06.13 17:55</h4><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzNzM5MTI0Nw==&mid=2247491492&idx=5&sn=ff89fda8279741c86f61d51da7a972c9&chksm=e8c80344dfbf8a52ec81d2ab216290d11ecf00c3255761a676b54bd75a837f4683cfdf77a219&scene=0&xtrack=1&key=b0ebf1a5d52c1bb69fb06bc850c8f16b7a8b31c4c30dac1069cdbb9cbd7800680df64e4c487dd11c13db023f62a056d326ec185cf22da40f5b95cc43632442c15ee018aa2a07fff516c585dbefacda81&ascene=1&uin=MTQxMDYwNzEwMg==&devicetype=Windows+10&version=62060833&lang=zh_CN&pass_ticket=o8+DH7X5izJrv5TEIiQCIHVApW8nc54nKIqNJF19l7IXFi8tp06NWD5Puk9fg6PU">摘抄地址</a><br>上兵伐谋，不战而胜，冷静的把问题解决掉，才是解决争执的最高境界。<br>2：上兵伐谋<br>但是，为什么大多数人都做不到这一步呢？<br>吵架时真正的敌人不是吵架的对手，而是自己的情绪，藏在我们身体里的“情绪”，才是我们每个人最大的敌人。<br>也就是说我们是被自己的情绪牵着走的，吵架最后往往变成了同自己情绪斗争的过程。<br>人生最大的敌人是自己，战胜别人容易，战胜自己太难。<br>人一旦被情绪左右，心魔就会趁机而出，很多冲动行为就是这样导致的，一时的冲动造成终身后悔的事情比比皆是。<br>所以，在被激怒的时刻，千万不要当即回击，不妨先在内心里从1数到10，然后再去交流和沟通，这是个很好的办法。</p>
+<p>3：收益最大化<br>和别人吵架过程中，最需要防范的一点是什么呢？<br>中国人斗争的哲学里最狠的一招是这样的：先站在道德制高点上打倒一个人，给她扣上一顶道德败坏的帽子，从人品上否定一个人，这样她所说的一切，做的一切辩驳都是苍白的。<br>这其实是兵法的上上策：诛人先诛心。<br>这一招用好了，可以直接把对方逼崩溃，有理说不清，越说越乱。<br>更有甚者，是先给对方扣上一顶帽子，然后尽情往对方身上泼脏水……<br>要是照这个节奏下去，对方就只剩下一个出路，那就是和你同归于尽。<br>因此，我们千万不要做这种泼妇式的人身攻击，但是当遇到这种攻击的时候，我们应该怎么做呢？<br>三十六计，走为上计。置之不理的最好的方式，就好像一条疯狗咬了你，你不能用嘴去咬它，你应该避开对方的纠缠，寻求对你利益最大化的解决方案，<br>能屈能伸是条龙，暂时的隐忍不代表认输，而是寻求可以一招制敌的最佳时机！<br>4：弱者易怒如虎，强者平静如水<br>真正的高手，从来不会和人吵架，因为他们太善于沟通。<br>沟通，是解决吵架的最好方案。<br>很多人会说，在那样的时刻已经无法做到沟通了。<br>首先，我们不能要求别人冷静又理性，我们要做的是让自己时刻保持镇定，我们说每一句话都要先在大脑里过滤一遍，想想这句话是否超出了事情本身，不要可只顾自己说出来痛快，就忽略他人的感受。</p>
+<p>场景分析：当对方开始说：“你真自私！”。你如果直接反击：“那你呢？你又好到那边去？！”，这样会马上升级到人格斗争的节奏<br>应该静下心来问一下对方：“为什么你这么觉得，我做了什么事情让你感觉这样子？”然后仔细倾听对方发出的有效信息。<br>一个真正厉害的人，非常善于筛选出对方发出的有效信息，过滤并忽略掉对方情绪化的语言！<br>弱者易怒如虎，强者平静如水。对着别人大吼，是最无能的表现。<br>如果对方提出的事实，你觉得是错误的。你也应该要讲出真正的事实，当对方表示不满意，你一定要让对方提出具体不满意的地方，总之一切围绕矛盾本身去探讨，而不是给矛盾升级。<br>尊重对手是大格局表现其中之一<br>尊重你的对手，聆听对方的难处，站在对方角度考虑问题，当你做到了这一步，你就没有了对手，五湖四海皆朋友。<br>无敌，不是打败了所有人，而是没有一个人与你为敌。</p>
+<h4 id="2019-05-29-13-39"><a href="#2019-05-29-13-39" class="headerlink" title="2019.05.29 13:39"></a>2019.05.29 13:39</h4><p>来都来了，多大点事，别太计较，都是亲戚，看我面子，大过节的，吃亏是福，为了你好</p>
+<h4 id="2018-09-26-16-17"><a href="#2018-09-26-16-17" class="headerlink" title="2018.09.26 16:17"></a>2018.09.26 16:17</h4><p>人生没有白走的路，每一步都算数。</p>
+<h4 id="2018-09-21-21-31"><a href="#2018-09-21-21-31" class="headerlink" title="2018.09.21 21:31"></a>2018.09.21 21:31</h4><p>总之，从今天开始努力，哪怕每天比前一天早睡10分钟，珍爱生命，远离熬夜<br>毕竟，有勇气结束今天，才能开启一个更美好的明天。<br>人生的核心问题，就是自律<br>生命是一个不可控的进度表，你永远不会知道，未来和意外哪个先来。<br>身体是每个人的神殿，不管里面供奉的是什么，都应该好好保持它的强韧、美丽和清洁。不要用熬夜来破坏他！<br>没有任何事，值得你用健康换。</p>
+<h4 id="2018-09-12-12-51"><a href="#2018-09-12-12-51" class="headerlink" title="2018.09.12 12:51"></a>2018.09.12 12:51</h4><p>你觉得你在经历一片未知的黑暗领域，很无助很孤独很害怕，但是你要相信，在这片黑暗里有千万人与你同行，而每一个人都在努力想活下去。</p>
+<h4 id="2018-03-25-10-15"><a href="#2018-03-25-10-15" class="headerlink" title="2018.03.25 10:15"></a>2018.03.25 10:15</h4><p>知世故而不世故，才是真正的少年。<br>被伤害过依然能倾心以赴赤诚相待，才是真正的少年。</p>
+<hr>
+<p>网上曾经流传一句话“中年男人不如狗”。<br>说得有理有据：</p>
+<p>1.年龄逐渐增长，身体机能随之下降，多种病症出现。</p>
+<p>2.他们在家中承担起抚养父母妻儿的责任，在社会上如果没有体面的工作就要忍气吞声。天能塌，他们不能。</p>
+<p>3.男人年轻的时候都想着仗剑走天涯，惦记着诗和远方，后来工作太忙钱不够就没去。</p>
+<p>4.生而为人，无法避免被“比较”。从小到大向来如此，小时候的敌人是别人家的孩子，长大之后是别人家的丈夫，再往后是别人家的父亲。</p>
+<hr>
+<p>知乎上也有这样一个问题：</p>
+<p>“为什么那么多男人开车回家，到了楼下还要在车里坐好久？”</p>
+<p>有一个回答获得了高分点赞：</p>
+<p>“很多时候我也不想下车，因为那是一个分界点。在车上，一个人静一静，抽根烟，发会呆这个躯体属于自己；但推开车门，你就是柴米油盐，是父亲、是儿子、是老公，唯独不是你自己。我们把真实的自己藏在车里；打开车门出去，哪怕是哭着爬着，也只能把被人寄予厚望的身份扮演下去。”</p>
+<hr>
+<p>张泉灵 教育孩子，两件事优先级要靠前：<br>   原文地址：<a href="https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0">https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0</a><br>1.孩子有没有情商，也就是孩子有没有认知自己的情绪和行为、认知周围人的情绪和行为，以及和别人相处的能力。<br>2.孩子能不能培养起属于自己的学习方法论，是否有一个知识框架。</p>
+]]></content>
+  </entry>
+  <entry>
     <title>booklist</title>
     <url>/2018/11/10/booklist/</url>
     <content><![CDATA[<p>一日不读书、不思考便觉自己在堕落</p>
@@ -17,6 +742,13 @@
 </tr>
 </thead>
 <tbody><tr>
+<td align="center">11</td>
+<td align="left"><a href="https://book.douban.com/subject/30850627/">雍正大传：朕就是这样的汉子</a></td>
+<td align="left">作者: 关河五十州</td>
+<td align="left">2024.8.27</td>
+<td align="center">100%</td>
+</tr>
+<tr>
 <td align="center">10</td>
 <td align="left"><a href="https://book.douban.com/subject/26695192/">李鸿章传</a></td>
 <td align="left">作者: 梁启超</td>
@@ -798,6 +1530,13 @@
 </tr>
 </thead>
 <tbody><tr>
+<td align="center">42</td>
+<td align="left"><a href="https://d.dedao.cn/FotqG9q7SwbTlI5t">边水往事</a></td>
+<td align="left">沈星星</td>
+<td align="left">2024.8.30</td>
+<td align="center">100%</td>
+</tr>
+<tr>
 <td align="center">41</td>
 <td align="left"><a href="https://book.douban.com/subject/36314525/">安·兰德的小说写作课</a></td>
 <td align="left">[美] 安·兰德</td>
@@ -1098,730 +1837,5 @@
     <url>/2024/08/16/Sentry%E6%90%AD%E5%BB%BA/</url>
     <content><![CDATA[<p>概要</p>
 <span id="more"></span>]]></content>
-  </entry>
-  <entry>
-    <title>xiaochao</title>
-    <url>/2018/03/25/xiaochao/</url>
-    <content><![CDATA[<p>日常小小抄</p>
-<span id="more"></span>
-<h4 id="2024-8-16"><a href="#2024-8-16" class="headerlink" title="2024.8.16"></a>2024.8.16</h4><p>《题龙阳县青草湖》 元 唐珙<br>西风吹老洞庭波，一夜湘君白发多。<br>醉后不知天在水，满船清梦压星河。</p>
-<h4 id="2022-3-25-17-26"><a href="#2022-3-25-17-26" class="headerlink" title="2022.3.25 17:26"></a>2022.3.25 17:26</h4><p>山清水秀太阳高，好呀么好风飘<br>小小滴船儿撑过来，一路摇呀摇<br>为了那心上的人，起呀么起的早<br>也不管那路遥遥，情愿多辛劳<br>山清水秀太阳高，好呀么好风飘<br>我一心想着他，想的是好心焦</p>
-<h4 id="2021-4-12-12-30"><a href="#2021-4-12-12-30" class="headerlink" title="2021.4.12 12:30"></a>2021.4.12 12:30</h4><p>豫章太守顾劭，是雍之子。邵在军卒。雍盛集僚属自围棋，外启信至，而无儿书，虽神气不变，而心了其故，以爪掐掌，血流沾褥<br>戍卒叫，函谷举，楚人一炬，可怜焦土<br>乘兴踏月，西入酒家，不觉人物两忘，身在世外。夜来月下卧醒，花影零乱，满人衿袖，疑如濯魄于冰壶也</p>
-<h4 id="2021-2-25-00-00"><a href="#2021-2-25-00-00" class="headerlink" title="2021.2.25 00:00"></a>2021.2.25 00:00</h4><p>有钱人喜欢说“钱不是万能的”，长得好看的人喜欢说“长得好看有什么用”，瘦子喜欢说“其实胖一点好，健康”，努力的人喜欢说“努力并非决定性因素”。他们只是虚伪地随口说说，这些都是套路，你却都认真地信了。</p>
-<h4 id="2020-10-23-21-03"><a href="#2020-10-23-21-03" class="headerlink" title="2020.10.23 21:03"></a>2020.10.23 21:03</h4><p>僵卧孤村不自哀，尚思为国戍轮台</p>
-<h4 id="2020-9-21-17-22"><a href="#2020-9-21-17-22" class="headerlink" title="2020.9.21 17:22"></a>2020.9.21 17:22</h4><p>文素：”没有人对我的伤害使我成长了，使我更强大了，我也不会感谢他，他伤害了我只能说明他很差劲，凭什么感谢，是我自己熬过来的，我只感谢我自己。”</p>
-<h4 id="2020-9-12-14-26"><a href="#2020-9-12-14-26" class="headerlink" title="2020.9.12 14:26"></a>2020.9.12 14:26</h4><p>如果把知识点比作砖块，那我们脑海中的知识结构就是一栋楼。有些人的楼且高且大抗震八级防风防火，有些人的楼摇摇欲坠处处安全隐患，有些人厚积薄发，有些人术有专攻——这栋楼的高度决定了一个人的思想的深度。<br>很多青少年会有一个阅读欲望特别强的时期，家长往往在少年读物中“乱花渐欲迷人眼”，不知道该给孩子看什么。此时最好的办法是给一套足够厚实的青少年百科大全，人文地理科技社会应有尽有，不要求孩子全部翻一遍，让孩子自己去挑其中喜欢的看。这种早期的阅读偏好往往来历不明却持续终生。我倾向于认为这是孩子先天的偏好，能标识出孩子的天赋所在。给一个小学四年级的孩子一套百科大全作生日礼物，等他高一的时候再去看看哪一本学科被翻得最破——这些信息可以用来帮助孩子正确地认识自己，为孩子选择高中文理科，或是选择大学的专业，提供非常有力的依据。<br>在这里，百科大全就起到了“初建知识结构”的作用，它是孩子茫茫书海中的导航，是信息储备大厦的设计蓝图。越早构建出这个结构，就能越早让人在接收信息中做到“系统地搬砖”，使信息管理的效率越早提升。<br>根据个人学习内容的不同，成年后每个人的知识结构会长得不太一样。<br>想象力：基于已知信息的截取、拼接、重组信息的能力<br>想象力的重点：1.截取什么样的信息组装，这决定了想象力的广度；2.如何有逻辑地自洽地将信息组装，这决定了想象力的深度。优秀的想象力需要将这二者合为一体。<br>&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;—-《如何成为一个有趣的人》-知识结构的不同类型<br>“人无癖不可与交，以其无深情也。”；“人无疵不可与交，以其无真气也” —-张岱<br>邓布利多说：“决定我们成为什么人的，不是我们的能力，而是我们的选择。”</p>
-<h4 id="2020-9-11-20-34"><a href="#2020-9-11-20-34" class="headerlink" title="2020.9.11 20:34"></a>2020.9.11 20:34</h4><p>微语录精选1015<br>微信朋友圈越来越不能看，都是些三观不正的鸡汤。所谓的努力都是围着钱打转，没半点灵魂的痕迹。这代人大部分都很浅，很浅。活个高兴吧，虽然高兴过后都是一地鸡毛。平静的午后，灵魂的小憩，让刚放下锄把子的城一代理解比较难。</p>
-<h4 id="2020-9-10-12-37"><a href="#2020-9-10-12-37" class="headerlink" title="2020.9.10 12:37"></a>2020.9.10 12:37</h4><p>知识结构的“广度”是一个人“有聊”还是“无聊”的关键，而知识结构的“深度”是一个人“肤浅”还是“深刻”的关键。<br>“深刻”与否正是“有趣”和“逗比”的核心差别。<br>一个深刻的人不仅仅需要知道这是什么，还要知道“这为什么是”“这和其他信息有什么关联”“这个知识点在我的知识结构中处于什么位置”。<br>这个知识体系纵深的程度，就是我们所说的一个人的“深度”。</p>
-<h4 id="2019-6-26-14-26"><a href="#2019-6-26-14-26" class="headerlink" title="2019.6.26 14:26"></a>2019.6.26 14:26</h4><p>天地有大美，美的是自然；流水不争先，争的是滔滔不绝</p>
-<h4 id="2019-6-25-14-48"><a href="#2019-6-25-14-48" class="headerlink" title="2019.6.25 14:48"></a>2019.6.25 14:48</h4><p>我本无意穿堂风， 偏偏孤倨引山洪</p>
-<h4 id="2019-06-18-09-02"><a href="#2019-06-18-09-02" class="headerlink" title="2019.06.18 09:02"></a>2019.06.18 09:02</h4><p>倾听：倾听与听不同，倾听是解读别人所说信息的过程，包含听到、专注、理解、回应、记忆五大元素。可以获得更多信息，对对方有更多了解。倾听能让对方感觉到自己被尊重，所以才会跟你分享更多的信息。<br>倾听不仅仅只是听，还要思考，要思考更深层的原因，不要被表象所迷惑。</p>
-<h4 id="2019-06-13-17-55"><a href="#2019-06-13-17-55" class="headerlink" title="2019.06.13 17:55"></a>2019.06.13 17:55</h4><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzNzM5MTI0Nw==&mid=2247491492&idx=5&sn=ff89fda8279741c86f61d51da7a972c9&chksm=e8c80344dfbf8a52ec81d2ab216290d11ecf00c3255761a676b54bd75a837f4683cfdf77a219&scene=0&xtrack=1&key=b0ebf1a5d52c1bb69fb06bc850c8f16b7a8b31c4c30dac1069cdbb9cbd7800680df64e4c487dd11c13db023f62a056d326ec185cf22da40f5b95cc43632442c15ee018aa2a07fff516c585dbefacda81&ascene=1&uin=MTQxMDYwNzEwMg==&devicetype=Windows+10&version=62060833&lang=zh_CN&pass_ticket=o8+DH7X5izJrv5TEIiQCIHVApW8nc54nKIqNJF19l7IXFi8tp06NWD5Puk9fg6PU">摘抄地址</a><br>上兵伐谋，不战而胜，冷静的把问题解决掉，才是解决争执的最高境界。<br>2：上兵伐谋<br>但是，为什么大多数人都做不到这一步呢？<br>吵架时真正的敌人不是吵架的对手，而是自己的情绪，藏在我们身体里的“情绪”，才是我们每个人最大的敌人。<br>也就是说我们是被自己的情绪牵着走的，吵架最后往往变成了同自己情绪斗争的过程。<br>人生最大的敌人是自己，战胜别人容易，战胜自己太难。<br>人一旦被情绪左右，心魔就会趁机而出，很多冲动行为就是这样导致的，一时的冲动造成终身后悔的事情比比皆是。<br>所以，在被激怒的时刻，千万不要当即回击，不妨先在内心里从1数到10，然后再去交流和沟通，这是个很好的办法。</p>
-<p>3：收益最大化<br>和别人吵架过程中，最需要防范的一点是什么呢？<br>中国人斗争的哲学里最狠的一招是这样的：先站在道德制高点上打倒一个人，给她扣上一顶道德败坏的帽子，从人品上否定一个人，这样她所说的一切，做的一切辩驳都是苍白的。<br>这其实是兵法的上上策：诛人先诛心。<br>这一招用好了，可以直接把对方逼崩溃，有理说不清，越说越乱。<br>更有甚者，是先给对方扣上一顶帽子，然后尽情往对方身上泼脏水……<br>要是照这个节奏下去，对方就只剩下一个出路，那就是和你同归于尽。<br>因此，我们千万不要做这种泼妇式的人身攻击，但是当遇到这种攻击的时候，我们应该怎么做呢？<br>三十六计，走为上计。置之不理的最好的方式，就好像一条疯狗咬了你，你不能用嘴去咬它，你应该避开对方的纠缠，寻求对你利益最大化的解决方案，<br>能屈能伸是条龙，暂时的隐忍不代表认输，而是寻求可以一招制敌的最佳时机！<br>4：弱者易怒如虎，强者平静如水<br>真正的高手，从来不会和人吵架，因为他们太善于沟通。<br>沟通，是解决吵架的最好方案。<br>很多人会说，在那样的时刻已经无法做到沟通了。<br>首先，我们不能要求别人冷静又理性，我们要做的是让自己时刻保持镇定，我们说每一句话都要先在大脑里过滤一遍，想想这句话是否超出了事情本身，不要可只顾自己说出来痛快，就忽略他人的感受。</p>
-<p>场景分析：当对方开始说：“你真自私！”。你如果直接反击：“那你呢？你又好到那边去？！”，这样会马上升级到人格斗争的节奏<br>应该静下心来问一下对方：“为什么你这么觉得，我做了什么事情让你感觉这样子？”然后仔细倾听对方发出的有效信息。<br>一个真正厉害的人，非常善于筛选出对方发出的有效信息，过滤并忽略掉对方情绪化的语言！<br>弱者易怒如虎，强者平静如水。对着别人大吼，是最无能的表现。<br>如果对方提出的事实，你觉得是错误的。你也应该要讲出真正的事实，当对方表示不满意，你一定要让对方提出具体不满意的地方，总之一切围绕矛盾本身去探讨，而不是给矛盾升级。<br>尊重对手是大格局表现其中之一<br>尊重你的对手，聆听对方的难处，站在对方角度考虑问题，当你做到了这一步，你就没有了对手，五湖四海皆朋友。<br>无敌，不是打败了所有人，而是没有一个人与你为敌。</p>
-<h4 id="2019-05-29-13-39"><a href="#2019-05-29-13-39" class="headerlink" title="2019.05.29 13:39"></a>2019.05.29 13:39</h4><p>来都来了，多大点事，别太计较，都是亲戚，看我面子，大过节的，吃亏是福，为了你好</p>
-<h4 id="2018-09-26-16-17"><a href="#2018-09-26-16-17" class="headerlink" title="2018.09.26 16:17"></a>2018.09.26 16:17</h4><p>人生没有白走的路，每一步都算数。</p>
-<h4 id="2018-09-21-21-31"><a href="#2018-09-21-21-31" class="headerlink" title="2018.09.21 21:31"></a>2018.09.21 21:31</h4><p>总之，从今天开始努力，哪怕每天比前一天早睡10分钟，珍爱生命，远离熬夜<br>毕竟，有勇气结束今天，才能开启一个更美好的明天。<br>人生的核心问题，就是自律<br>生命是一个不可控的进度表，你永远不会知道，未来和意外哪个先来。<br>身体是每个人的神殿，不管里面供奉的是什么，都应该好好保持它的强韧、美丽和清洁。不要用熬夜来破坏他！<br>没有任何事，值得你用健康换。</p>
-<h4 id="2018-09-12-12-51"><a href="#2018-09-12-12-51" class="headerlink" title="2018.09.12 12:51"></a>2018.09.12 12:51</h4><p>你觉得你在经历一片未知的黑暗领域，很无助很孤独很害怕，但是你要相信，在这片黑暗里有千万人与你同行，而每一个人都在努力想活下去。</p>
-<h4 id="2018-03-25-10-15"><a href="#2018-03-25-10-15" class="headerlink" title="2018.03.25 10:15"></a>2018.03.25 10:15</h4><p>知世故而不世故，才是真正的少年。<br>被伤害过依然能倾心以赴赤诚相待，才是真正的少年。</p>
-<hr>
-<p>网上曾经流传一句话“中年男人不如狗”。<br>说得有理有据：</p>
-<p>1.年龄逐渐增长，身体机能随之下降，多种病症出现。</p>
-<p>2.他们在家中承担起抚养父母妻儿的责任，在社会上如果没有体面的工作就要忍气吞声。天能塌，他们不能。</p>
-<p>3.男人年轻的时候都想着仗剑走天涯，惦记着诗和远方，后来工作太忙钱不够就没去。</p>
-<p>4.生而为人，无法避免被“比较”。从小到大向来如此，小时候的敌人是别人家的孩子，长大之后是别人家的丈夫，再往后是别人家的父亲。</p>
-<hr>
-<p>知乎上也有这样一个问题：</p>
-<p>“为什么那么多男人开车回家，到了楼下还要在车里坐好久？”</p>
-<p>有一个回答获得了高分点赞：</p>
-<p>“很多时候我也不想下车，因为那是一个分界点。在车上，一个人静一静，抽根烟，发会呆这个躯体属于自己；但推开车门，你就是柴米油盐，是父亲、是儿子、是老公，唯独不是你自己。我们把真实的自己藏在车里；打开车门出去，哪怕是哭着爬着，也只能把被人寄予厚望的身份扮演下去。”</p>
-<hr>
-<p>张泉灵 教育孩子，两件事优先级要靠前：<br>   原文地址：<a href="https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0">https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0</a><br>1.孩子有没有情商，也就是孩子有没有认知自己的情绪和行为、认知周围人的情绪和行为，以及和别人相处的能力。<br>2.孩子能不能培养起属于自己的学习方法论，是否有一个知识框架。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>aliyunbugfix</title>
-    <url>/2020/10/26/aliyunbugfix/</url>
-    <content><![CDATA[<p>阿里云漏洞修复记录</p>
-<span id="more"></span>
-<h2 id="RHSA-2019-0368-高危-systemd-安全更新"><a href="#RHSA-2019-0368-高危-systemd-安全更新" class="headerlink" title="RHSA-2019:0368-高危: systemd 安全更新"></a>RHSA-2019:0368-高危: systemd 安全更新</h2><h3 id="漏洞详情"><a href="#漏洞详情" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-6454</td>
-<td align="left">7</td>
-<td align="left">bus_process_object()中的输入验证不足导致PID1崩溃</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令"><a href="#修复命令" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update systemd </span><br><span class="line">yum update systemd-libs </span><br><span class="line">yum update systemd-sysv </span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2019-1228-高危-wget-安全更新"><a href="#RHSA-2019-1228-高危-wget-安全更新" class="headerlink" title="RHSA-2019:1228-高危: wget 安全更新"></a>RHSA-2019:1228-高危: wget 安全更新</h2><h3 id="漏洞详情-1"><a href="#漏洞详情-1" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-5953</td>
-<td align="left">8.8</td>
-<td align="left">缓冲区溢出漏洞</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-1"><a href="#修复命令-1" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update wget</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-2894-重要-dbus-安全更新"><a href="#RHSA-2020-2894-重要-dbus-安全更新" class="headerlink" title="RHSA-2020:2894-重要: dbus 安全更新"></a>RHSA-2020:2894-重要: dbus 安全更新</h2><h3 id="漏洞详情-2"><a href="#漏洞详情-2" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2020-12049</td>
-<td align="left">5.5</td>
-<td align="left">D-BUS安全漏洞</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-2"><a href="#修复命令-2" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update dbus </span><br><span class="line">yum update dbus-libs </span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-2337-重要-git-安全更新"><a href="#RHSA-2020-2337-重要-git-安全更新" class="headerlink" title="RHSA-2020:2337-重要: git 安全更新"></a>RHSA-2020:2337-重要: git 安全更新</h2><h3 id="漏洞详情-3"><a href="#漏洞详情-3" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2020-11008</td>
-<td align="left">7.5</td>
-<td align="left">受影响的Git版本存在一个漏洞，可以诱骗Git向攻击者控制的主机发送私有凭据</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-3"><a href="#修复命令-3" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update git </span><br><span class="line">yum update perl-Git </span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update"><a href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update"></a>RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-4"><a href="#漏洞详情-4" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-3820</td>
-<td align="left">4.8</td>
-<td align="left">部分锁屏旁路</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-4"><a href="#修复命令-4" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update shared-mime-info </span><br><span class="line">yum update gtk-update-icon-cache </span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-1050-中危-cups-安全和BUG修复更新"><a href="#RHSA-2020-1050-中危-cups-安全和BUG修复更新" class="headerlink" title="RHSA-2020:1050-中危: cups 安全和BUG修复更新"></a>RHSA-2020:1050-中危: cups 安全和BUG修复更新</h2><h3 id="漏洞详情-5"><a href="#漏洞详情-5" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2018-4180</td>
-<td align="left">6.7</td>
-<td align="left">由于不安全的环境变量处理，本地权限升级到root</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-4181</td>
-<td align="left">5.5</td>
-<td align="left">本地攻击者对cupsd.conf的操作导致以root身份读取任意文件的次数有限</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-4700</td>
-<td align="left">–</td>
-<td align="left">可预测的会话cookie打破CSRF保护</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-5"><a href="#修复命令-5" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update cups-client </span><br><span class="line">yum update cups-libs </span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-0540-重要-sudo-安全更新"><a href="#RHSA-2020-0540-重要-sudo-安全更新" class="headerlink" title="RHSA-2020:0540-重要: sudo 安全更新"></a>RHSA-2020:0540-重要: sudo 安全更新</h2><h3 id="漏洞详情-6"><a href="#漏洞详情-6" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-18634</td>
-<td align="left">7.8</td>
-<td align="left">Sudo缓冲区错误漏洞</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-6"><a href="#修复命令-6" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update sudo</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1"><a href="#RHSA-2020-1021-中危-GNOME-security-bug-fix-和-enhancement-update-1" class="headerlink" title="RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update"></a>RHSA-2020:1021-中危: GNOME security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-7"><a href="#漏洞详情-7" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-3820</td>
-<td align="left">4.8</td>
-<td align="left">部分锁屏旁路</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-7"><a href="#修复命令-7" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update gtk-update-icon-cache </span><br><span class="line">yum update shared-mime-info </span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-1131-中危-python-安全更新"><a href="#RHSA-2020-1131-中危-python-安全更新" class="headerlink" title="RHSA-2020:1131-中危: python 安全更新"></a>RHSA-2020:1131-中危: python 安全更新</h2><h3 id="漏洞详情-8"><a href="#漏洞详情-8" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2018-20852</td>
-<td align="left">5.3</td>
-<td align="left">Cookie域检查返回不正确的结果</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-16056</td>
-<td align="left">7.5</td>
-<td align="left">email.utils.parseaddr错误地解析电子邮件地址</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-8"><a href="#修复命令-8" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update python </span><br><span class="line">yum update python-devel </span><br><span class="line">yum update python-libs </span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-0374-重要-内核-安全和BUG修复更新"><a href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新" class="headerlink" title="RHSA-2020:0374-重要: 内核 安全和BUG修复更新"></a>RHSA-2020:0374-重要: 内核 安全和BUG修复更新</h2><h3 id="漏洞详情-9"><a href="#漏洞详情-9" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-11599</td>
-<td align="left">7</td>
-<td align="left">修复mmget_not_zero（）&#x2F; get_task_mm（）和核心转储之间的竞争条件</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-14816</td>
-<td align="left">7.8</td>
-<td align="left">拒绝服务漏洞</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-14895</td>
-<td align="left">9.8</td>
-<td align="left">在drivers&#x2F;net&#x2F;wireless&#x2F; slots &#x2F; mwifiex_process_country_ie()函数中基于堆的缓冲区溢出</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-14898</td>
-<td align="left">7</td>
-<td align="left">CVE-2019-11599中mmget_not_zero()&#x2F;get_task_mm()和核心转储之间的竞争条件的未完成修复</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-14901</td>
-<td align="left">9.8</td>
-<td align="left">marvell&#x2F;mwifiex&#x2F;tdls.c中的堆溢出</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-17133</td>
-<td align="left">9.8</td>
-<td align="left">net&#x2F;wireless&#x2F;wext-sme.c中的cfg80211_mgd_wext_giwessid中的缓冲区溢出</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-9"><a href="#修复命令-9" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update kernel</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-1113-中危-bash-安全更新"><a href="#RHSA-2020-1113-中危-bash-安全更新" class="headerlink" title="RHSA-2020:1113-中危: bash 安全更新"></a>RHSA-2020:1113-中危: bash 安全更新</h2><h3 id="漏洞详情-10"><a href="#漏洞详情-10" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-9924</td>
-<td align="left">7.8</td>
-<td align="left">Bash任意命令执行安全漏洞</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-10"><a href="#修复命令-10" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update bash</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-1011-中危-expat-安全更新"><a href="#RHSA-2020-1011-中危-expat-安全更新" class="headerlink" title="RHSA-2020:1011-中危: expat 安全更新"></a>RHSA-2020:1011-中危: expat 安全更新</h2><h3 id="漏洞详情-11"><a href="#漏洞详情-11" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2015-2716</td>
-<td align="left">7.5</td>
-<td align="left">Mozilla Thunderbird XML内容解析缓冲区溢出漏洞</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-11"><a href="#修复命令-11" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update expat</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-2344-重要-bind-安全更新"><a href="#RHSA-2020-2344-重要-bind-安全更新" class="headerlink" title="RHSA-2020:2344-重要: bind 安全更新"></a>RHSA-2020:2344-重要: bind 安全更新</h2><h3 id="漏洞详情-12"><a href="#漏洞详情-12" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2020-8616</td>
-<td align="left">8.6</td>
-<td align="left">恶意行为者故意利用这种缺乏有效限制执行次数的行为</td>
-</tr>
-<tr>
-<td align="center">CVE-2020-8617</td>
-<td align="left">7.5</td>
-<td align="left">使用特制的消息，攻击者可能会导致BIND服务器进入不一致状态</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-12"><a href="#修复命令-12" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update bind-libs-lite</span><br><span class="line">yum update bind-license</span><br><span class="line">yum update bind-export-libs</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHBA-2019-2599-krb5-bug修复更新"><a href="#RHBA-2019-2599-krb5-bug修复更新" class="headerlink" title="RHBA-2019:2599: krb5 bug修复更新"></a>RHBA-2019:2599: krb5 bug修复更新</h2><h3 id="漏洞详情-13"><a href="#漏洞详情-13" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-</table>
-<h3 id="修复命令-13"><a href="#修复命令-13" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update krb5-devel</span><br><span class="line">yum update krb5-libs</span><br><span class="line">yum update libkadm5</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2018-3157-中危-curl-和-nss-pem-安全和BUG修复更新"><a href="#RHSA-2018-3157-中危-curl-和-nss-pem-安全和BUG修复更新" class="headerlink" title="RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新"></a>RHSA-2018:3157-中危: curl 和 nss-pem 安全和BUG修复更新</h2><h3 id="漏洞详情-14"><a href="#漏洞详情-14" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2018-1000007</td>
-<td align="left">9.8</td>
-<td align="left">libcurl信息泄露漏洞</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-1000120</td>
-<td align="left">9.8</td>
-<td align="left">curl缓冲区错误拒绝服务漏洞</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-1000122</td>
-<td align="left">9.1</td>
-<td align="left">curl缓冲区错误漏洞</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-14"><a href="#修复命令-14" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update curl</span><br><span class="line">yum update libcurl</span><br><span class="line">yum update nss-pem</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2019-2079-中危-Xorg-安全和BUG修复更新"><a href="#RHSA-2019-2079-中危-Xorg-安全和BUG修复更新" class="headerlink" title="RHSA-2019:2079-中危: Xorg 安全和BUG修复更新"></a>RHSA-2019:2079-中危: Xorg 安全和BUG修复更新</h2><h3 id="漏洞详情-15"><a href="#漏洞详情-15" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2018-14599</td>
-<td align="left">9.8</td>
-<td align="left">拒绝服务漏洞</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-14600</td>
-<td align="left">9.8</td>
-<td align="left">越界访问拒绝服务代码执行漏洞</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-15857</td>
-<td align="left">7.8</td>
-<td align="left">ExprAppendMultiKeysymList中的无效释放导致崩溃</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-15"><a href="#修复命令-15" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update libX11</span><br><span class="line">yum update libX11-common</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2018-3092-中危-glibc-安全和BUG修复更新"><a href="#RHSA-2018-3092-中危-glibc-安全和BUG修复更新" class="headerlink" title="RHSA-2018:3092-中危: glibc 安全和BUG修复更新"></a>RHSA-2018:3092-中危: glibc 安全和BUG修复更新</h2><h3 id="漏洞详情-16"><a href="#漏洞详情-16" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2017-16997</td>
-<td align="left">7.8</td>
-<td align="left">GNU C Library’elf&#x2F;dl-load.c’本地权限提升漏洞</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-11236</td>
-<td align="left">7.8</td>
-<td align="left">glibc基于堆的缓冲区溢出导致任意代码执行</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-6485</td>
-<td align="left">9.8</td>
-<td align="left">GNU C Library’memalign’函数整数溢出漏洞</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-16"><a href="#修复命令-16" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update glibc</span><br><span class="line">yum update glibc-common</span><br><span class="line">yum update glibc-devel</span><br><span class="line">yum update glibc-headers</span><br><span class="line">yum update nscd</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-1000-中危-rsyslog-security-bug-fix-和-enhancement-update"><a href="#RHSA-2020-1000-中危-rsyslog-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update"></a>RHSA-2020:1000-中危: rsyslog security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-17"><a href="#漏洞详情-17" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-17041</td>
-<td align="left">9.8</td>
-<td align="left">在contrib&#x2F;pmaixforward from&#x2F;pmaixforward from.c中的基于堆的溢出</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-17042</td>
-<td align="left">9.8</td>
-<td align="left">在contrib&#x2F;pmcisconames&#x2F;pmcisconames.c中基于堆的溢出</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-17"><a href="#修复命令-17" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update rsyslog</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2020-0374-重要-内核-安全和BUG修复更新-1"><a href="#RHSA-2020-0374-重要-内核-安全和BUG修复更新-1" class="headerlink" title="RHSA-2020:0374-重要: 内核 安全和BUG修复更新"></a>RHSA-2020:0374-重要: 内核 安全和BUG修复更新</h2><h3 id="漏洞详情-18"><a href="#漏洞详情-18" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-11599</td>
-<td align="left">7</td>
-<td align="left">修复mmget_not_zero()&#x2F;get_task_mm()和核心转储之间的竞争条件</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-14895</td>
-<td align="left">9.8</td>
-<td align="left">在drivers&#x2F;net&#x2F;wireless&#x2F;slots&#x2F;mwifiex_process_country_le()函数中基于堆的缓冲区溢出</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-14901</td>
-<td align="left">9.8</td>
-<td align="left">marvell&#x2F;mwifiex&#x2F;tdls.c中的堆溢出</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-17133</td>
-<td align="left">9.8</td>
-<td align="left">net&#x2F;wireless&#x2F;wext-sme.c中的cfg80211_mgd_wext_giwessid中的缓冲区溢出</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-18"><a href="#修复命令-18" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update kernel</span><br><span class="line">yum update kernel-devel</span><br><span class="line">yum update kernel-tools</span><br><span class="line">yum update kernel-tools-libs</span><br><span class="line">yum update python-perf</span><br><span class="line">yum update kernel-headers</span><br><span class="line">yum update kernel-debug-devel</span><br><span class="line">yum update perf</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2019-2030-中危-python-安全和BUG修复更新"><a href="#RHSA-2019-2030-中危-python-安全和BUG修复更新" class="headerlink" title="RHSA-2019:2030-中危: python 安全和BUG修复更新"></a>RHSA-2019:2030-中危: python 安全和BUG修复更新</h2><h3 id="漏洞详情-19"><a href="#漏洞详情-19" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2019-9948</td>
-<td align="left">9.1</td>
-<td align="left">local_file允许远程攻击者绕过保护机制</td>
-</tr>
-<tr>
-<td align="center">CVE-2019-5010</td>
-<td align="left">7.5</td>
-<td align="left">使用特制的X509证书进行NULL指针取消引用</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-14647</td>
-<td align="left">5.3</td>
-<td align="left">Python拒绝服务漏洞（CNDV-2018-20081）</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-19"><a href="#修复命令-19" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update python</span><br><span class="line">yum update python-devel</span><br><span class="line">yum update python-libs</span><br></pre></td></tr></table></figure>
-
-<h2 id="RHSA-2019-2197-低危-elfutils-security-bug-fix-和-enhancement-update"><a href="#RHSA-2019-2197-低危-elfutils-security-bug-fix-和-enhancement-update" class="headerlink" title="RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update"></a>RHSA-2019:2197-低危: elfutils security,bug fix,和 enhancement update</h2><h3 id="漏洞详情-20"><a href="#漏洞详情-20" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><table>
-<thead>
-<tr>
-<th align="center">漏洞编号</th>
-<th align="left">影响分</th>
-<th align="left">漏洞公告</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">CVE-2018-16402</td>
-<td align="left">9.8</td>
-<td align="left">elfutils拒绝服务漏洞</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-16403</td>
-<td align="left">5.5</td>
-<td align="left">Libdw&#x2F;dwar_getabbrev.c和libwd&#x2F;dwar_hasattr.c中基于堆的缓冲区读取过度会导致崩溃</td>
-</tr>
-<tr>
-<td align="center">CVE-2018-7665</td>
-<td align="left">5.5</td>
-<td align="left">elf32_elateton.c中函数elf32_xlatetom中基于堆的缓冲区重读</td>
-</tr>
-</tbody></table>
-<h3 id="修复命令-20"><a href="#修复命令-20" class="headerlink" title="修复命令"></a>修复命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum update elfutils-default-yama-scope </span><br><span class="line">yum update elfutils-libelf </span><br><span class="line">yum update elfutils-libs </span><br><span class="line">yum update elfutils </span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>阿里云</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>OpenSSH Update</title>
-    <url>/2018/02/09/OpenSSH-Update/</url>
-    <content><![CDATA[<p>由于公司安全需要，OpenSSH要加固，需升级至当前最新版本OpenSSH_7.6p1<br>环境：CentOS6.8 x64</p>
-<span id="more"></span>
-
-<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="下载相关软件包"><a href="#下载相关软件包" class="headerlink" title="下载相关软件包"></a>下载相关软件包</h2><p>OpenSSH需要依赖ZLIB和OpenSSL，因此需要从官网下载三者的源码包。需要注意的是：OpenSSH最新版7.4p1依赖的OpenSSL版本为1.0.2k，而不是其最新版1.1.0e（使用此版会升级失败）,ZLIB可以使用最新版1.2.11。CentOS6.8自带的zlib版本为1.2.3，也可不进行升级。 三者源码下载地址：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http://www.zlib.net/</span><br><span class="line">http://www.openssl.org/</span><br><span class="line">http://www.openssh.org/</span><br></pre></td></tr></table></figure>
-<p>或者使用我准备好的包：<br><a href="https://pan.baidu.com/s/1PzuK3FGVPLZuWvVvqJgaIQ">https://pan.baidu.com/s/1PzuK3FGVPLZuWvVvqJgaIQ</a></p>
-<h2 id="查看系统当前软件版本"><a href="#查看系统当前软件版本" class="headerlink" title="查看系统当前软件版本"></a>查看系统当前软件版本</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -q zlib</span><br><span class="line">openssl version</span><br><span class="line">ssh -V</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装telnet服务并启用"><a href="#安装telnet服务并启用" class="headerlink" title="安装telnet服务并启用"></a>安装telnet服务并启用</h2><p>因升级OpenSSH过程中需要卸载现有OpenSSH, 因此为了保持服务器的远程连接可用，需要启用telnet服务作为替代，如升级出现问题，也可通过telnet登录服务器进行回退。</p>
-<h3 id="A、安装telnet服务"><a href="#A、安装telnet服务" class="headerlink" title="A、安装telnet服务"></a>A、安装telnet服务</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install telnet-server*</span><br></pre></td></tr></table></figure>
-
-<h3 id="B、启用telnet"><a href="#B、启用telnet" class="headerlink" title="B、启用telnet"></a>B、启用telnet</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">先关闭防火墙，否则telnet可能无法连接</span><br><span class="line">service iptables stop</span><br><span class="line">chkconfig iptables off</span><br><span class="line">vi /etc/xinetd.d/telnet                 <span class="comment">#将其中disable字段的yes改为no以启用telnet服务</span></span><br><span class="line"><span class="built_in">mv</span> /etc/securetty /etc/securetty.old    <span class="comment">#允许root用户通过telnet登录</span></span><br><span class="line">service xinetd start                    <span class="comment">#启动telnet服务</span></span><br><span class="line">chkconfig xinetd on                     <span class="comment">#使telnet服务开机启动，避免升级过程中服务器意外重启后无法远程登录系统</span></span><br><span class="line">telnet [ip]                             <span class="comment">#新开启一个远程终端以telnet登录验证是否成功启用</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="安装编译所需工具包"><a href="#安装编译所需工具包" class="headerlink" title="安装编译所需工具包"></a>安装编译所需工具包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc pam-devel zlib-devel</span><br></pre></td></tr></table></figure>
-
-<h1 id="正式升级"><a href="#正式升级" class="headerlink" title="正式升级"></a>正式升级</h1><h2 id="升级ZLIB"><a href="#升级ZLIB" class="headerlink" title="升级ZLIB"></a>升级ZLIB</h2><h3 id="A、解压zlib-1-2-11源码并编译"><a href="#A、解压zlib-1-2-11源码并编译" class="headerlink" title="A、解压zlib_1.2.11源码并编译"></a>A、解压zlib_1.2.11源码并编译</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf zlib-1.2.11.tar.gz</span><br><span class="line"><span class="built_in">cd</span> zlib-1.2.11</span><br><span class="line">CFLAGS=<span class="string">&#x27;-mstackrealign -fPIC -O3&#x27;</span> ./configure --prefix=/usr     //如果不加【CFLAGS=<span class="string">&#x27;-mstackrealign -fPIC -O3&#x27;</span>】这一段配置后面安装OpenSSH时会报错。</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-
-<h3 id="B、卸载当前zlib"><a href="#B、卸载当前zlib" class="headerlink" title="B、卸载当前zlib"></a>B、卸载当前zlib</h3><p>注意：此步骤必须在步骤A执行完毕后再执行，否则先卸载zlib后，&#x2F;lib64&#x2F;目录下的zlib相关库文件会被删除，步骤A编译zlib会失败。（补救措施：从其他相同系统的服务器上复制&#x2F;lib64、&#x2F;usr&#x2F;lib和&#x2F;usr&#x2F;lib64目录下的libcrypto.so.10、libssl.so.10、libz.so.1、libz.so.1.2.3四个文件到相应目录即可。可通过whereis、locate或find命令找到这些文件的位置）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -e --nodeps zlib</span><br></pre></td></tr></table></figure>
-
-<h3 id="C、安装之前编译好的zlib"><a href="#C、安装之前编译好的zlib" class="headerlink" title="C、安装之前编译好的zlib"></a>C、安装之前编译好的zlib</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在zlib编译目录执行如下命令</span></span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<h3 id="D、共享库注册"><a href="#D、共享库注册" class="headerlink" title="D、共享库注册"></a>D、共享库注册</h3><p>zlib安装完成后，会在&#x2F;usr&#x2F;lib目录中生产zlib相关库文件，需要将这些共享库文件注册到系统中。<br><font color="#FF6600">建议用这种方式:</font></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so.1 libz.so.1.2.11</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so libz.so.1.2.11</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so.1 /lib/libz.so.1</span><br><span class="line"><span class="built_in">rm</span> -f /usr/lib64/libz.so                                  //若没有删除,则openssl编译失败.</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib/libz.so /usr/lib64/libz.so</span><br><span class="line"><span class="built_in">ln</span> -s  /usr/lib64/libz.so ../../lib64/libz.so.1.2.11   //64位系统必须修改这个</span><br><span class="line">ldconfig</span><br></pre></td></tr></table></figure>
-<p><font color="#FF6600"><strong>或者</strong></font>采用如下方式也可：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/usr/lib&#x27;</span> &gt;&gt; /etc/ld.so.conf</span><br><span class="line">ldconfig                    <span class="comment">#更新共享库cache</span></span><br></pre></td></tr></table></figure>
-<h2 id="升级OpenSSL"><a href="#升级OpenSSL" class="headerlink" title="升级OpenSSL"></a>升级OpenSSL</h2><p>官方升级文档：<a href="http://www.linuxfromscratch.org/blfs/view/cvs/postlfs/openssl.html">http://www.linuxfromscratch.org/blfs/view/cvs/postlfs/openssl.html</a></p>
-<h3 id="A、备份当前openssl"><a href="#A、备份当前openssl" class="headerlink" title="A、备份当前openssl"></a>A、备份当前openssl</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">find / -name openssl</span><br><span class="line">/etc/pki/ca-trust/extracted/openssl</span><br><span class="line">/usr/bin/openssl</span><br><span class="line">/usr/lib64/openssl</span><br><span class="line">/usr/include/openssl</span><br><span class="line"></span><br><span class="line"><span class="built_in">mv</span> /usr/lib64/openssl /usr/lib64/openssl.old</span><br><span class="line"><span class="built_in">mv</span> /usr/bin/openssl  /usr/bin/openssl.old</span><br><span class="line"><span class="built_in">mv</span> /etc/pki/ca-trust/extracted/openssl  /etc/pki/ca-trust/extracted/openssl.old</span><br><span class="line"><span class="built_in">mv</span> /usr/include/openssl /usr/include/openssl.old</span><br></pre></td></tr></table></figure>
-<p>如下两个库文件必须先备份，因系统内部分工具（如yum、wget等）依赖此库，而新版OpenSSL不包含这两个库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /usr/lib64/libcrypto.so.10  /usr/lib64/libcrypto.so.10.old</span><br><span class="line"><span class="built_in">cp</span> /usr/lib64/libssl.so.10  /usr/lib64/libssl.so.10.old</span><br></pre></td></tr></table></figure>
-<h3 id="B、卸载当前openssl"><a href="#B、卸载当前openssl" class="headerlink" title="B、卸载当前openssl"></a>B、卸载当前openssl</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep openssl</span><br><span class="line">openssl-1.0.1e-42.el6.x86_64</span><br><span class="line"></span><br><span class="line">rpm -e --nodeps openssl-1.0.1e-42.el6.x86_64</span><br><span class="line">rpm -qa | grep openssl</span><br><span class="line"><span class="comment">#或者直接执行此命令：</span></span><br><span class="line">rpm -qa |grep openssl|xargs -i rpm -e --nodeps &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="C、解压openssl-1-0-2k源码并编译安装"><a href="#C、解压openssl-1-0-2k源码并编译安装" class="headerlink" title="C、解压openssl_1.0.2k源码并编译安装"></a>C、解压openssl_1.0.2k源码并编译安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf openssl-1.0.2k.tar.gz</span><br><span class="line"><span class="built_in">cd</span> openssl-1.0.2k</span><br><span class="line">./config --prefix=/usr --openssldir=/etc/ssl --shared zlib    <span class="comment">#必须加上--shared，否则编译时会找不到新安装的openssl的库而报错</span></span><br><span class="line">make</span><br><span class="line">make <span class="built_in">test</span>                            <span class="comment">#必须执行这一步结果为pass才能继续，否则即使安装完成，ssh也无法使用</span></span><br><span class="line">make install</span><br><span class="line">openssl version -a                   <span class="comment">#查看是否升级成功</span></span><br></pre></td></tr></table></figure>
-<p>make test正确输出：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">*---- START OF RECORD ----</span><br><span class="line">** Record Content-<span class="built_in">type</span>: 22</span><br><span class="line">** Record Version: fefd</span><br><span class="line">** Record Epoch: 1</span><br><span class="line">** Record Sequence: 000000000000</span><br><span class="line">** Record Length: 64</span><br><span class="line">**---- START OF HANDSHAKE MESSAGE FRAGMENT ----</span><br><span class="line">**---- HANDSHAKE MESSAGE FRAGMENT ENCRYPTED ----</span><br><span class="line">*---- END OF RECORD ----</span><br><span class="line">---- END OF PACKET ----</span><br><span class="line">PASS</span><br><span class="line">test_bad_dtls</span><br><span class="line">../util/shlib_wrap.sh ./bad_dtls_test</span><br><span class="line">make[1]: Leaving directory `/tmp/openssl-1.0.2m/test<span class="string">&#x27;</span></span><br><span class="line"><span class="string">OPENSSL_CONF=apps/openssl.cnf util/opensslwrap.sh version -a</span></span><br><span class="line"><span class="string">OpenSSL 1.0.2m  2 Nov 2017</span></span><br><span class="line"><span class="string">built on: reproducible build, date unspecified</span></span><br><span class="line"><span class="string">platform: linux-x86_64</span></span><br><span class="line"><span class="string">options:  bn(64,64) rc4(16x,int) des(idx,cisc,16,int) idea(int) blowfish(idx)</span></span><br><span class="line"><span class="string">compiler: gcc -I. -I.. -I../include  -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -            </span></span><br><span class="line"><span class="string">DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -    </span></span><br><span class="line"><span class="string">DSHA512_ASM -DMD5_ASM -DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM</span></span><br><span class="line"><span class="string">OPENSSLDIR: &quot;/etc/ssl&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="D、恢复共享库"><a href="#D、恢复共享库" class="headerlink" title="D、恢复共享库"></a>D、恢复共享库</h3><p>由于OpenSSL_1.0.2k不提供libcrypto.so.10和libssl.so.10这两个库，而yum、wget等工具又依赖此库，因此需要将先前备份的这两个库进行恢复，其他的可视情况考虑是否恢复。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /usr/lib64/libcrypto.so.10.old  /usr/lib64/libcrypto.so.10</span><br><span class="line"><span class="built_in">mv</span> /usr/lib64/libssl.so.10.old  /usr/lib64/libssl.so.10</span><br></pre></td></tr></table></figure>
-<p>返回值：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span>  /usr/lib64/libcrypto.so.10.old  /usr/lib64/libcrypto.so.10</span><br><span class="line"><span class="built_in">mv</span>: overwrite `/usr/lib64/libcrypto.so.10<span class="string">&#x27;? y</span></span><br><span class="line"><span class="string">mv  /usr/lib64/libssl.so.10.old  /usr/lib64/libssl.so.10</span></span><br><span class="line"><span class="string">mv: overwrite `/usr/lib64/libssl.so.10&#x27;</span>? y</span><br></pre></td></tr></table></figure>
-<h2 id="升级OpenSSH"><a href="#升级OpenSSH" class="headerlink" title="升级OpenSSH"></a>升级OpenSSH</h2><p>官方升级文档：<a href="http://www.linuxfromscratch.org/blfs/view/svn/postlfs/openssh.html">http://www.linuxfromscratch.org/blfs/view/svn/postlfs/openssh.html</a></p>
-<h3 id="A、备份当前openssh"><a href="#A、备份当前openssh" class="headerlink" title="A、备份当前openssh"></a>A、备份当前openssh</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/ssh /etc/ssh.old</span><br></pre></td></tr></table></figure>
-<h3 id="B、卸载当前openssh"><a href="#B、卸载当前openssh" class="headerlink" title="B、卸载当前openssh"></a>B、卸载当前openssh</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep openssh</span><br><span class="line">openssh-clients-5.3p1-111.el6.x86_64</span><br><span class="line">openssh-server-5.3p1-111.el6.x86_64</span><br><span class="line">openssh-5.3p1-111.el6.x86_64</span><br><span class="line">openssh-askpass-5.3p1-111.el6.x86_64</span><br><span class="line"></span><br><span class="line">rpm -e --nodeps openssh-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -e --nodeps openssh-server-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -e --nodeps openssh-clients-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -e --nodeps openssh-askpass-5.3p1-111.el6.x86_64</span><br><span class="line">rpm -qa | grep openssh</span><br><span class="line"><span class="comment">#或者直接执行此命令：</span></span><br><span class="line">rpm -qa |grep openssh|xargs -i rpm -e --nodeps &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="C、openssh安装前环境配置"><a href="#C、openssh安装前环境配置" class="headerlink" title="C、openssh安装前环境配置"></a>C、openssh安装前环境配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">install  -v -m700 -d /var/lib/sshd</span><br><span class="line"><span class="built_in">chown</span>  -v root:sys /var/lib/sshd</span><br><span class="line">groupadd -g 50 sshd</span><br><span class="line">useradd  -c <span class="string">&#x27;sshd PrivSep&#x27;</span> -d /var/lib/sshd -g sshd -s /bin/false -u 50 sshd</span><br></pre></td></tr></table></figure>
-<h3 id="D、解压openssh-7-4p1源码并编译安装"><a href="#D、解压openssh-7-4p1源码并编译安装" class="headerlink" title="D、解压openssh_7.4p1源码并编译安装"></a>D、解压openssh_7.4p1源码并编译安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf openssh-7.4p1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> openssh-7.4p1</span><br><span class="line">./configure --prefix=/usr  --sysconfdir=/etc/ssh  --with-md5-passwords  --with-pam  --with-zlib --with-openssl-includes=/usr --with-privsep-path=/var/lib/sshd</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<h3 id="E、openssh安装后环境配置"><a href="#E、openssh安装后环境配置" class="headerlink" title="E、openssh安装后环境配置"></a>E、openssh安装后环境配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在openssh编译目录执行如下命令</span></span><br><span class="line">install -v -m755    contrib/ssh-copy-id /usr/bin</span><br><span class="line">install -v -m644    contrib/ssh-copy-id.1 /usr/share/man/man1</span><br><span class="line">install -v -m755 -d /usr/share/doc/openssh-7.4p1</span><br><span class="line">install -v -m644    INSTALL LICENCE OVERVIEW README* /usr/share/doc/openssh-7.4p1</span><br><span class="line">ssh -V              <span class="comment">#验证是否升级成功</span></span><br></pre></td></tr></table></figure>
-<h3 id="F、启用OpenSSH服务"><a href="#F、启用OpenSSH服务" class="headerlink" title="F、启用OpenSSH服务"></a>F、启用OpenSSH服务</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在openssh编译目录执行如下目录</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;X11Forwarding yes&#x27;</span> &gt;&gt; /etc/ssh/sshd_config</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PermitRootLogin yes&quot;</span> &gt;&gt; /etc/ssh/sshd_config   <span class="comment">#允许root用户通过ssh登录</span></span><br><span class="line"><span class="built_in">cp</span> -p contrib/redhat/sshd.init /etc/init.d/sshd</span><br><span class="line"><span class="built_in">chmod</span> +x /etc/init.d/sshd</span><br><span class="line">chkconfig  --add  sshd</span><br><span class="line">chkconfig  sshd  on</span><br><span class="line">chkconfig  --list  sshd</span><br><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<p>注意：如果升级操作一直是在ssh远程会话中进行的，上述sshd服务重启命令可能导致会话断开并无法使用ssh再行登入（即ssh未能成功重启），此时需要通过telnet登入再执行sshd服务重启命令。</p>
-<h3 id="G、修改文件-x2F-etc-x2F-ssh-x2F-sshd-config"><a href="#G、修改文件-x2F-etc-x2F-ssh-x2F-sshd-config" class="headerlink" title="G、修改文件&#x2F;etc&#x2F;ssh&#x2F;sshd_config"></a>G、修改文件&#x2F;etc&#x2F;ssh&#x2F;sshd_config</h3><p>由于加固后的ssh（ssh6.7以上）屏蔽了不安全算法，需要在&#x2F;etc&#x2F;ssh&#x2F;sshd_config最后加上如下信息，不然Python模块paromiko，无法连接加固后的机器：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1</span><br></pre></td></tr></table></figure>
-
-<h2 id="善后工作"><a href="#善后工作" class="headerlink" title="善后工作"></a>善后工作</h2><p>新开启远程终端以ssh [ip]登录系统，确认一切正常升级成功后，只需关闭telnet服务以保证系统安全性即可。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/securetty.old /etc/securetty</span><br><span class="line">chkconfig  xinetd off</span><br><span class="line">service xinetd stop</span><br></pre></td></tr></table></figure>
-<p>如有必要，可重新开启防火墙</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service iptables start</span><br><span class="line">chkconfig iptables on</span><br></pre></td></tr></table></figure>
-<p>如需还原之前的ssh配置信息，可直接删除升级后的配置信息，恢复备份。<br>ssh大版本升级尽量不要删除新生成的ssh文件，将原文件与新生成文件都保留一份。<br>原版本：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -V</span><br><span class="line">OpenSSH_5.3p1, OpenSSL 1.0.1e-fips 11 Feb 2013</span><br></pre></td></tr></table></figure>
-<p>升级至：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">OpenSSH_7.4p1, OpenSSL 1.0.2n  7 Dec 2017</span><br></pre></td></tr></table></figure>
-<p><font color="#FF6600">后如果执行<strong>以下操作</strong>，会导致<strong>无法登陆</strong>。</font><br><font color="#FF6600" size="16"><strong>正确做法：</strong>使用此次安装好的文件&#x2F;etc&#x2F;ssh，不要用原文件覆盖！不然ssh无法使用。</font></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！！！！！！千万不要执行如下命令！！！！！！</span></span><br><span class="line"><span class="comment">#rm -rf /etc/ssh</span></span><br><span class="line"><span class="comment">#mv /etc/ssh.old /etc/ssh</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="遇到的错误-1："><a href="#遇到的错误-1：" class="headerlink" title="遇到的错误-1："></a>遇到的错误-1：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make[2]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">[ -z &quot;&quot; ] || gcc -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM -Iinclude \</span></span><br><span class="line"><span class="string">            -DFINGERPRINT_PREMAIN_DSO_LOAD -o fips_premain_dso  \</span></span><br><span class="line"><span class="string">            fips_premain.c fipscanister.o \</span></span><br><span class="line"><span class="string">            libcrypto.a -ldl -lz</span></span><br><span class="line"><span class="string">make[3]: Entering directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[4]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">/usr/bin/ld: /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/libz.a(deflate.o): relocation R_X86_64_32S against `_length_code&#x27;</span> can not be used when making a shared object; recompile with -fPIC</span><br><span class="line">/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/libz.a: could not <span class="built_in">read</span> symbols: Bad value</span><br><span class="line">collect2: ld returned 1 <span class="built_in">exit</span> status</span><br><span class="line">make[4]: *** [link_a.gnu] Error 1</span><br><span class="line">make[4]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make[3]: *** [do_linux-shared] Error 2</span></span><br><span class="line"><span class="string">make[3]: Leaving directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[2]: *** [libcrypto.so.1.0.0] Error 2</span><br><span class="line">make[2]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make[1]: *** [shared] Error 2</span></span><br><span class="line"><span class="string">make[1]: Leaving directory `/tmp/openssl-1.0.2m/crypto&#x27;</span></span><br><span class="line">make: *** [build_crypto] Error 1</span><br></pre></td></tr></table></figure>
-<p>解决办法：zlib编译时添加configure前面的配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CFLAGS=<span class="string">&#x27;-mstackrealign -fPIC -O3&#x27;</span> ./configure --prefix=/usr</span><br></pre></td></tr></table></figure>
-<h2 id="遇到的报错-2："><a href="#遇到的报错-2：" class="headerlink" title="遇到的报错-2："></a>遇到的报错-2：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make[2]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">[ -z &quot;&quot; ] || gcc -fPIC -DOPENSSL_PIC -DZLIB -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -Wa,--noexecstack -m64 -DL_ENDIAN -O3 -Wall -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -        DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DRC4_ASM -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -    DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM -Iinclude \</span></span><br><span class="line"><span class="string">            -DFINGERPRINT_PREMAIN_DSO_LOAD -o fips_premain_dso  \</span></span><br><span class="line"><span class="string">            fips_premain.c fipscanister.o \</span></span><br><span class="line"><span class="string">            libcrypto.a -ldl -lz</span></span><br><span class="line"><span class="string">make[3]: Entering directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[4]: Entering directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">/usr/bin/ld: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory</span></span><br><span class="line"><span class="string">collect2: ld returned 127 exit status</span></span><br><span class="line"><span class="string">make[4]: *** [link_a.gnu] Error 1</span></span><br><span class="line"><span class="string">make[4]: Leaving directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[3]: *** [do_linux-shared] Error 2</span><br><span class="line">make[3]: Leaving directory `/tmp/openssl-1.0.2m<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make[2]: *** [libcrypto.so.1.0.0] Error 2</span></span><br><span class="line"><span class="string">make[2]: Leaving directory `/tmp/openssl-1.0.2m&#x27;</span></span><br><span class="line">make[1]: *** [shared] Error 2</span><br><span class="line">make[1]: Leaving directory `/tmp/openssl-1.0.2m/crypto<span class="string">&#x27;</span></span><br><span class="line"><span class="string">make: *** [build_crypto] Error 1</span></span><br></pre></td></tr></table></figure>
-<p>解决办法：<br>仔细检查提示路径下的libz.so文件是否正确。</p>
-<h2 id="遇到的报错-3："><a href="#遇到的报错-3：" class="headerlink" title="遇到的报错-3："></a>遇到的报错-3：</h2><p>现象：<br>用Python写的脚本调用到paramiko模块，模块ssh连接加固后的机器失败，报无法连接，但secureCRT可以连接。<br>运行paromiko连接远程服务器失败：FAIL : SSHException: Incompatible ssh peer (no acceptable kex algorithm)<br>原因：<br>因为ssh6.7以上屏蔽不安全算法导致。<br>解决：<br>在&#x2F;etc&#x2F;ssh&#x2F;sshd_config最后加上：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1</span><br></pre></td></tr></table></figure>
-<p>重启sshd服务，问题解决。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>安全加固</tag>
-        <tag>OpenSSH</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CentOS7.4 install vsftp</title>
-    <url>/2018/02/09/CentOS7-4-install-vsftp/</url>
-    <content><![CDATA[<p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64</p>
-<span id="more"></span>
-
-<h1 id="安装vsftpd"><a href="#安装vsftpd" class="headerlink" title="安装vsftpd"></a>安装vsftpd</h1><p>查看是否已经安装vsftpd</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure>
-<p>如果没有，就安装，并设置开机启动</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure>
-<p>当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_64</p>
-<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><p>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开&#x2F;etc&#x2F;vsftpd&#x2F;vsftpd.conf，做如下配置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/log/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure>
-<p>经验证，FTP3.0.2版本必须加参数：allow_writeable_chroot&#x3D;YES，6.8默认安装vsftpd-2.2.2-13.el6_6.1.x86_64不加也能生效，如果3.0.2不加此参数会报如下错误：<br>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>根本原因在于，从vsftpd_2.3.5版开始，取消了根目录的可写权限。因此，网上的普遍解决方案是以下两种：</p>
-<h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a-w /vaf/ftp</span><br></pre></td></tr></table></figure>
-<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>vim &#x2F;etc&#x2F;vsftpd.conf add the following</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure>
-<p>经验证，如果加上参数allow_writeable_chroot，即使去掉参数chroot_local_user&#x3D;YES，也可正常访问。<br>进行认证：<br>首先，安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install db4 db4-utils</span><br></pre></td></tr></table></figure>
-<p>然后，创建用户密码文本&#x2F;etc&#x2F;vsftpd&#x2F;vuser_passwd.txt ，注意奇行是用户名，偶行是密码</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">test</span></span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
-<p>接着，生成虚拟用户认证的db文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">db_load -T -t <span class="built_in">hash</span> -f /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br></pre></td></tr></table></figure>
-<p>随后，编辑认证文件&#x2F;etc&#x2F;pam.d&#x2F;vsftpd，全部注释掉原来语句，再增加以下两句：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br></pre></td></tr></table></figure>
-<p>mkdir &#x2F;etc&#x2F;vsftpd&#x2F;vuser_conf&#x2F;</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/vsftpd/vuser_conf/test //文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span><br><span class="line"></span><br><span class="line">write_enable=YES //可写</span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_enable=YES</span><br><span class="line">anon_mkdir_write_enable=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line">local_root=/httx/run/appdown/paasftpuser /虚拟用户根目录,根据实际情况修改</span><br></pre></td></tr></table></figure>
-<h4 id="设置Selinux"><a href="#设置Selinux" class="headerlink" title="设置Selinux"></a>设置Selinux</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setsebool -P ftp_home_dir=1   //设置ftp可以使用home目录</span><br><span class="line">sersebool -P allow_ftpd_full_access=1 //设置ftp用户可以有所有权限</span><br></pre></td></tr></table></figure>
-<p>设置FTP根目录权限</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /ftp/www   //创建目录</span><br><span class="line"><span class="built_in">chmod</span> R 755 /ftp</span><br><span class="line"><span class="built_in">chmod</span> R 750 /ftp/www</span><br></pre></td></tr></table></figure>
-<p>ftp访问目录权限尽量最小</p>
-<h4 id="设置防火墙"><a href="#设置防火墙" class="headerlink" title="设置防火墙"></a>设置防火墙</h4><p>打开&#x2F;etc&#x2F;sysconfig&#x2F;iptables<br>在“-A INPUT –m state –state NEW –m tcp –p –dport 22 –j ACCEPT”，下添加：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport 21 -j ACCEPT</span><br></pre></td></tr></table></figure>
-<p>然后保存，并关闭该文件，在终端内运行下面的命令，刷新防火墙配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service iptables restart</span><br></pre></td></tr></table></figure>
-<p>OK，FTP搭建完成！</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS7.4</tag>
-        <tag>vsftp</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CentOS7.4 update ntp</title>
-    <url>/2018/02/13/CentOS7-4-update-ntp/</url>
-    <content><![CDATA[<p>CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz</p>
-<span id="more"></span>
-
-<p>#准备工作</p>
-<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure>
-<h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> -ar /etc/ntp /etc/ntp.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure>
-<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y erase ntp ntpdate</span><br></pre></td></tr></table></figure>
-<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="x2F-configure"><a href="#x2F-configure" class="headerlink" title=".&#x2F;configure"></a>.&#x2F;configure</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf ntp-4.2.8p10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ntp-4.2.8p10</span><br><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --enable-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --enable-all-clocks --enable-parse-clocks --enable-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-<h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line"><span class="built_in">mv</span> /etc/ntp.bak /etc/ntp</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure>
-<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure>
-<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS7</tag>
-        <tag>ntp</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Django-route</title>
-    <url>/2018/03/10/Django-route/</url>
-    <content><![CDATA[<p>Django路由系统:动态路由、指定参数名、默认参数</p>
-<span id="more"></span>
-<h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, <span class="built_in">list</span></span><br><span class="line">urlpatterns = patterns(<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>, &#123;<span class="string">&#x27;id&#x27;</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>views.py</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, id1, id2</span>):</span><br><span class="line">    <span class="built_in">print</span> <span class="built_in">id</span></span><br><span class="line">    <span class="built_in">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
-<p>指定参数名：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, <span class="built_in">id</span>, name</span>):</span><br><span class="line">    <span class="built_in">print</span> name, <span class="built_in">id</span></span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
-<p>请求链接：<a href="http://localhost:9000/list/100">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加&#x2F;,如果不加，urls配置中必须要加上终止符：&#x2F;$,这样请求时会自动加上&#x2F;</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Django</tag>
-        <tag>路由系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux内核升级</title>
-    <url>/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/</url>
-    <content><![CDATA[<p>Linux内核大版本升级</p>
-<span id="more"></span>
-
-<h1 id="3-10内核升级至4-4"><a href="#3-10内核升级至4-4" class="headerlink" title="3.10内核升级至4.4"></a>3.10内核升级至4.4</h1><h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><p>腾讯云<br>Centos7.8<br>内核版本：3.10.0-1127.19.1.el7.x86_64</p>
-<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64</p>
-<h2 id="kernel-3-10-gt-4-4升级步骤"><a href="#kernel-3-10-gt-4-4升级步骤" class="headerlink" title="kernel 3.10-&gt;4.4升级步骤"></a>kernel 3.10-&gt;4.4升级步骤</h2><h3 id="yum源修改"><a href="#yum源修改" class="headerlink" title="yum源修改"></a>yum源修改</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入公钥</span></span><br><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">升级安装ELRepo</span></span><br><span class="line">yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">载入elrepo-kernel 元数据</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel repolist</span><br></pre></td></tr></table></figure>
-<h3 id="查看可用rpm包"><a href="#查看可用rpm包" class="headerlink" title="查看可用rpm包"></a>查看可用rpm包</h3><p>yum –disablerepo&#x3D;* –enablerepo&#x3D;elrepo-kernel list kernel*</p>
-<h3 id="安装最新稳定版kernel"><a href="#安装最新稳定版kernel" class="headerlink" title="安装最新稳定版kernel"></a>安装最新稳定版kernel</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">lt：长期支持版本；ml：主线版本</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install  kernel-lt.x86_64  -y</span><br></pre></td></tr></table></figure>
-<h4 id="删除旧版本工具包"><a href="#删除旧版本工具包" class="headerlink" title="删除旧版本工具包"></a>删除旧版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-tools-libs.x86_64 kernel-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
-<h4 id="安装新版本工具包"><a href="#安装新版本工具包" class="headerlink" title="安装新版本工具包"></a>安装新版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install kernel-lt-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
-<h3 id="将内核启动修改为本机最新版本"><a href="#将内核启动修改为本机最新版本" class="headerlink" title="将内核启动修改为本机最新版本"></a>将内核启动修改为本机最新版本</h3><h4 id="查看内核版本"><a href="#查看内核版本" class="headerlink" title="查看内核版本"></a>查看内核版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看内核启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# awk -F \&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">0 : CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">1 : CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">2 : CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">3 : CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">4 : CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br><span class="line">或</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看系统可用内核</span></span><br><span class="line">[root@dev-node-1 ~]# grep &quot;^menuentry&quot; /boot/grub2/grub.cfg | cut -d &quot;&#x27;&quot; -f2</span><br><span class="line">CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前实际启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# grub2-editenv list</span><br><span class="line">saved_entry=CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br></pre></td></tr></table></figure>
-<h4 id="设置默认启动"><a href="#设置默认启动" class="headerlink" title="设置默认启动"></a>设置默认启动</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-set-default &quot;CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)&quot;</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grub2-set-default 0     // 0代表查看内核启动顺序时的序号</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑/etc/default/grub文件</span></span><br><span class="line">vim /etc/default/grub</span><br><span class="line">GRUB_DEFAULT=saved 改为GRUB_DEFAULT=0</span><br></pre></td></tr></table></figure>
-<h4 id="生成grub配置文件"><a href="#生成grub配置文件" class="headerlink" title="生成grub配置文件"></a>生成grub配置文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-mkconfig  -o /boot/grub2/grub.cfg</span><br><span class="line">Generating grub configuration file ...</span><br><span class="line">Found linux image: /boot/vmlinuz-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-4.4.241-1.el7.elrepo.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.19.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.13.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-4acec6de0e4741b6bc249381506fa844</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-4acec6de0e4741b6bc249381506fa844.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-0ea734564f9a4e2881b866b82d679dfc</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-0ea734564f9a4e2881b866b82d679dfc.img</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-<h3 id="重启-amp-验证"><a href="#重启-amp-验证" class="headerlink" title="重启&amp;验证"></a>重启&amp;验证</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# reboot</span><br><span class="line"></span><br><span class="line">[root@dev-node-1 ~]# uname -r</span><br><span class="line">4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除旧内核（可选）"><a href="#删除旧内核（可选）" class="headerlink" title="删除旧内核（可选）"></a>删除旧内核（可选）</h3><h4 id="查看本机内所有内核"><a href="#查看本机内所有内核" class="headerlink" title="查看本机内所有内核"></a>查看本机内所有内核</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# rpm -qa | grep kernel</span><br><span class="line">kernel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-headers-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-lt-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">kernel-lt-tools-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">abrt-addon-kerneloops-2.1.11-57.el7.centos.x86_64</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">kernel-lt-tools-libs-4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
-<h4 id="yum-remove"><a href="#yum-remove" class="headerlink" title="yum remove"></a>yum remove</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>或</p>
-<h4 id="yum-utils工具"><a href="#yum-utils工具" class="headerlink" title="yum-utils工具"></a>yum-utils工具</h4><p>如果安装的内核不多于 3 个，yum-utils 工具不会删除任何一个。只有在安装的内核大于 3 个时，才会自动删除旧内核。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装yum-utils</span></span><br><span class="line">[root@dev-node-1 ~]# yum install yum-utils</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除旧版本</span></span><br><span class="line">package-cleanup --oldkernels</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS7</tag>
-        <tag>kernel</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JumpServer添加访问k8s集群</title>
-    <url>/2022/02/22/JumpServer%E6%B7%BB%E5%8A%A0%E8%AE%BF%E9%97%AEk8s%E9%9B%86%E7%BE%A4/</url>
-    <content><![CDATA[<p>Jumpserver中添加k8s，方便直接从Jumpserver管理k8s集群</p>
-<span id="more"></span>
-
-<h3 id="一、k8s准备"><a href="#一、k8s准备" class="headerlink" title="一、k8s准备"></a>一、k8s准备</h3><h4 id="1-创建对象ClusterRole"><a href="#1-创建对象ClusterRole" class="headerlink" title="1.创建对象ClusterRole"></a>1.创建对象ClusterRole</h4><p>此对象定义具体权限</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">create</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">delete</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deletecollection</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">patch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-创建对象ServiceAccount"><a href="#2-创建对象ServiceAccount" class="headerlink" title="2.创建对象ServiceAccount"></a>2.创建对象ServiceAccount</h4><p>此对象为创建用户，并自动生成Secret对象，即token</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
-<h4 id="3-创建对象ClusterRoleBinding"><a href="#3-创建对象ClusterRoleBinding" class="headerlink" title="3.创建对象ClusterRoleBinding"></a>3.创建对象ClusterRoleBinding</h4><p>此对象将ClusterRole定义的权限赋给ServiceAccount</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-bind-jmsClusterRole</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
-<h4 id="4-获取token值"><a href="#4-获取token值" class="headerlink" title="4.获取token值"></a>4.获取token值</h4><p>此步骤也可参考Jumpserver官网：<a href="https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/">https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/</a></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export</span> <span class="string">POD_NAME=`kubectl</span> <span class="string">get</span> <span class="string">secret</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">jms|awk</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span><span class="string">`</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">describe</span> <span class="string">secret</span> <span class="string">$&#123;POD_NAME&#125;</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">&#x27;token:&#x27;</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="attr">token:</span>      <span class="string">it-is-example-token-pZCI6IlB0MUR2dEdtRW5lN19nQWg1WWdWN2o5U1FicTA2dDYtT2VfMk1ScTd0RG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJqbXMtc2VydmljZWFjY291bnQtdG9rZW4tcnB3d2giLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiam1zLXNlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMGZkYjIwOWUtMTgyYi00M2JmLTgyNDctZTAwN2VkOWI1ZTY4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmptcy1zZXJ2aWNlYWNjb3VudCJ9.o8N_m_QtpLOj5OHxvlnepzqypmx8xfE63_GQnzbSfy4deGR1WY0UElxLZcWrajhzHIOP2cBkzVF-X4K6sZoixV1tI0qevHC-gu2v-VZkzv0h-lwbJfMWNV9fiF2alZ9VCVSIXXUBRJ49Wd6ecn8N5_BAIXZ3rLePYxhJA9t_Vlx8l_8stE-AXn9W5IRRy6bzFCpJqR0Mua8BDvv8UJMPT7PPFp3bmBdTNuFOlwpoUNHNtKERGpN19N9Zg05bNaHZwphABOK2mlHDwERAJ3JDFrC1bztUZCYgxXhDQnCG_EJE54SpoMNVvvRgyTw5BJAZYizEmM2_ljytCgdAEznD5g</span></span><br></pre></td></tr></table></figure>
-<h3 id="二、配置Jumpserver"><a href="#二、配置Jumpserver" class="headerlink" title="二、配置Jumpserver"></a>二、配置Jumpserver</h3><h4 id="1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"><a href="#1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token" class="headerlink" title="1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"></a>1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token</h4><p>![输入token]<img height="60%" src="/images/jumpserver-input_token.png" width="60%"/></p>
-<h4 id="2-应用管理-kubernetes中创建应用"><a href="#2-应用管理-kubernetes中创建应用" class="headerlink" title="2.应用管理-kubernetes中创建应用"></a>2.应用管理-kubernetes中创建应用</h4><p>注：“集群”中填写jms能够访问到的集群地址，此处填写TKE提供的内网ip地址<br>![输入集群地址]<img height="60%" src="/images/jumpserver-input_cluster_addr.png" width="60%"/></p>
-<h4 id="3-赋权后即可访问k8s集群信息，测试"><a href="#3-赋权后即可访问k8s集群信息，测试" class="headerlink" title="3.赋权后即可访问k8s集群信息，测试"></a>3.赋权后即可访问k8s集群信息，测试</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Jumpserver</category>
-      </categories>
-      <tags>
-        <tag>jumpserver</tag>
-        <tag>k8s</tag>
-      </tags>
   </entry>
 </search>
