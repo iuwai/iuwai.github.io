@@ -1,93 +1,1213 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CentOS7.4 install vsftp</title>
-    <url>/2018/02/09/CentOS7-4-install-vsftp/</url>
-    <content><![CDATA[<p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64</p>
+    <title>booklist</title>
+    <url>/2018/11/10/booklist/</url>
+    <content><![CDATA[<p>一日不读书、不思考便觉自己在堕落</p>
 <span id="more"></span>
-
-<h1 id="安装vsftpd"><a href="#安装vsftpd" class="headerlink" title="安装vsftpd"></a>安装vsftpd</h1><p>查看是否已经安装vsftpd</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure>
-<p>如果没有，就安装，并设置开机启动</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure>
-<p>当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_64</p>
-<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><p>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开&#x2F;etc&#x2F;vsftpd&#x2F;vsftpd.conf，做如下配置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/log/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure>
-<p>经验证，FTP3.0.2版本必须加参数：allow_writeable_chroot&#x3D;YES，6.8默认安装vsftpd-2.2.2-13.el6_6.1.x86_64不加也能生效，如果3.0.2不加此参数会报如下错误：<br>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>根本原因在于，从vsftpd_2.3.5版开始，取消了根目录的可写权限。因此，网上的普遍解决方案是以下两种：</p>
-<h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a-w /vaf/ftp</span><br></pre></td></tr></table></figure>
-<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>vim &#x2F;etc&#x2F;vsftpd.conf add the following</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure>
-<p>经验证，如果加上参数allow_writeable_chroot，即使去掉参数chroot_local_user&#x3D;YES，也可正常访问。<br>进行认证：<br>首先，安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install db4 db4-utils</span><br></pre></td></tr></table></figure>
-<p>然后，创建用户密码文本&#x2F;etc&#x2F;vsftpd&#x2F;vuser_passwd.txt ，注意奇行是用户名，偶行是密码</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">test</span></span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
-<p>接着，生成虚拟用户认证的db文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">db_load -T -t <span class="built_in">hash</span> -f /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br></pre></td></tr></table></figure>
-<p>随后，编辑认证文件&#x2F;etc&#x2F;pam.d&#x2F;vsftpd，全部注释掉原来语句，再增加以下两句：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br></pre></td></tr></table></figure>
-<p>mkdir &#x2F;etc&#x2F;vsftpd&#x2F;vuser_conf&#x2F;</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/vsftpd/vuser_conf/test //文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span><br><span class="line"></span><br><span class="line">write_enable=YES //可写</span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_enable=YES</span><br><span class="line">anon_mkdir_write_enable=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line">local_root=/httx/run/appdown/paasftpuser /虚拟用户根目录,根据实际情况修改</span><br></pre></td></tr></table></figure>
-<h4 id="设置Selinux"><a href="#设置Selinux" class="headerlink" title="设置Selinux"></a>设置Selinux</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setsebool -P ftp_home_dir=1   //设置ftp可以使用home目录</span><br><span class="line">sersebool -P allow_ftpd_full_access=1 //设置ftp用户可以有所有权限</span><br></pre></td></tr></table></figure>
-<p>设置FTP根目录权限</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /ftp/www   //创建目录</span><br><span class="line"><span class="built_in">chmod</span> R 755 /ftp</span><br><span class="line"><span class="built_in">chmod</span> R 750 /ftp/www</span><br></pre></td></tr></table></figure>
-<p>ftp访问目录权限尽量最小</p>
-<h4 id="设置防火墙"><a href="#设置防火墙" class="headerlink" title="设置防火墙"></a>设置防火墙</h4><p>打开&#x2F;etc&#x2F;sysconfig&#x2F;iptables<br>在“-A INPUT –m state –state NEW –m tcp –p –dport 22 –j ACCEPT”，下添加：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport 21 -j ACCEPT</span><br></pre></td></tr></table></figure>
-<p>然后保存，并关闭该文件，在终端内运行下面的命令，刷新防火墙配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service iptables restart</span><br></pre></td></tr></table></figure>
-<p>OK，FTP搭建完成！</p>
+<p>1.每年看至少一部人物传记</p>
+<h3 id="传记"><a href="#传记" class="headerlink" title="传记"></a>传记</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">11</td>
+<td align="left"><a href="https://book.douban.com/subject/30850627/">雍正大传：朕就是这样的汉子</a></td>
+<td align="left">作者: 关河五十州</td>
+<td align="left">2024.8.27</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="left"><a href="https://book.douban.com/subject/26695192/">李鸿章传</a></td>
+<td align="left">作者: 梁启超</td>
+<td align="left">2022.2.16~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="left"><a href="https://book.douban.com/subject/30377678/">曾国藩传</a></td>
+<td align="left">作者: 张宏杰</td>
+<td align="left">2022.2.16~2022.3.8</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="left"><a href="https://book.douban.com/subject/1037602/">别闹了，费曼先生</a></td>
+<td align="left">作者: [美] 理查德·费曼 译者: 吴程远</td>
+<td align="left">2022.2.13~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="left"><a href="https://book.douban.com/subject/26939269/">只是孩子</a></td>
+<td align="left">作者: [美] 帕蒂·史密斯 译者: 刘奕</td>
+<td align="left">2022.2.13~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="left"><a href="https://book.douban.com/subject/3054821/">渴望生活：梵高传</a></td>
+<td align="left">作者: [美] 欧文·斯通 译者: 常涛</td>
+<td align="left">2022.2.13~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="left"><a href="https://book.douban.com/subject/35183968/">达·芬奇传：自由的心灵</a></td>
+<td align="left">作者: [英] 查尔斯·尼科尔 译者: 李昕宇</td>
+<td align="left">2022.2.13~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left"><a href="https://book.douban.com/subject/6152040/">维特根斯坦传</a></td>
+<td align="left">作者: [英] 瑞·蒙克 译者: 王宇光</td>
+<td align="left">2022.2.13~</td>
+<td align="center">2%</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="left"><a href="https://book.douban.com/subject/4925193/">从文自传</a></td>
+<td align="left">作者: 沈从文 &#x2F; 卓雅 选编、摄影</td>
+<td align="left">2022.2.13~2022.2.21</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left"><a href="https://book.douban.com/subject/26664352/">褚时健传</a></td>
+<td align="left">周桦</td>
+<td align="left">2019.11.9~2019.12</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left"><a href="https://book.douban.com/subject/20427187/">看见</a></td>
+<td align="left">柴静</td>
+<td align="left">2019.4</td>
+<td align="center">100%</td>
+</tr>
+</tbody></table>
+<h3 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">9</td>
+<td align="left"><a href="https://book.douban.com/subject/26704403/">二手时间</a></td>
+<td align="left">作者: [白俄] S. A. 阿列克谢耶维奇 译者: 吕宁思</td>
+<td align="left">2022.2.26~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="left"><a href="https://book.douban.com/subject/33446823/">民族的重建: 波兰、乌克兰、立陶宛、白俄罗斯：1569-1999</a></td>
+<td align="left">作者: [美]蒂莫西·斯奈德 译者: 潘梦琦</td>
+<td align="left">2022.2.26~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="left"><a href="https://book.douban.com/subject/1456105/">乌克兰: 沉重的历史脚步</a></td>
+<td align="left">作者: 赵云中</td>
+<td align="left">2022.2.26~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="left"><a href="https://book.douban.com/subject/26983915/">欧洲之门: 乌克兰2000年史</a></td>
+<td align="left">作者: [美] 浦洛基 译者: 曾毅</td>
+<td align="left">2022.2.26~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="left"><a href="https://book.douban.com/subject/26305373/">慈禧全传</a></td>
+<td align="left">高阳</td>
+<td align="left">2021.4.8~</td>
+<td align="center">29%</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left"><a href="https://book.douban.com/subject/30248326/">罗马帝国衰亡史</a></td>
+<td align="left">作者: [英]爱德华·吉本 译者: 席代岳</td>
+<td align="left">2022.2.13~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="left"><a href="https://book.douban.com/subject/27093233/">历史的温度</a></td>
+<td align="left">张玮</td>
+<td align="left">2022.1.17~2022.2.13</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left"><a href="https://book.douban.com/subject/26851890/">虚构的犹太民族</a></td>
+<td align="left">作者: [以色列] 施罗默·桑德 译者: 王岽兴 &#x2F; 张蓉</td>
+<td align="left">2021</td>
+<td align="center">3%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">明朝那些事儿</td>
+<td align="left">当年明月</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+</tbody></table>
+<h3 id="自然科学"><a href="#自然科学" class="headerlink" title="自然科学"></a>自然科学</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">5</td>
+<td align="left"><a href="https://book.douban.com/subject/35200726/">跑步治愈</a></td>
+<td align="left">张展晖</td>
+<td align="left">2024.8~</td>
+<td align="center">43%</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left"><a href="https://book.douban.com/subject/35033507/">数学之美(第三版)</a></td>
+<td align="left">吴军</td>
+<td align="left">2020.11.08~</td>
+<td align="center">15%</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="left"><a href="https://book.douban.com/subject/33944838/">考试脑科学:脑科学中的高效记忆法</a></td>
+<td align="left">作者: [日]池谷裕二 译者: 高宇涵</td>
+<td align="left">2021.7.15~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left"><a href="https://book.douban.com/subject/10779597/">思考的乐趣:Matrix67数学笔记</a></td>
+<td align="left">顾森</td>
+<td align="left">2021.5.25~</td>
+<td align="center">2%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left"><a href="https://book.douban.com/subject/34842793/">薄世宁医学通识讲义</a></td>
+<td align="left">薄世宁</td>
+<td align="left">2021.2.22~</td>
+<td align="center">1%</td>
+</tr>
+</tbody></table>
+<h3 id="艺术"><a href="#艺术" class="headerlink" title="艺术"></a>艺术</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">7</td>
+<td align="left"><a href="https://book.douban.com/subject/33159342/">托林寺壁画&#x2F;典藏中国·中国古代壁画精粹</a></td>
+<td align="left">何鸿 王谦 谢斌</td>
+<td align="left">2024.4.05</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="left"><a href="https://book.douban.com/subject/36029725/">手艺里的中国：指尖上的华夏文明之美</a></td>
+<td align="left">李武望</td>
+<td align="left">2022.8.29~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="left"><a href="https://book.douban.com/subject/26808220/">与古为徒和娟娟发屋</a></td>
+<td align="left">白谦慎</td>
+<td align="left">2021.6.29~2021.7.11</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="left"><a href="https://book.douban.com/subject/35396166/">中国这100年（《黑镜头》20周年纪念版）</a></td>
+<td align="left">顾仲彝</td>
+<td align="left">2021.5.22~2021.6.1</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left"><a href="https://book.douban.com/subject/30427425/">牛津通识读本：电影</a></td>
+<td align="left">作者: [英]迈克尔·伍德 译者: 康建兵 &#x2F; 张烨颖</td>
+<td align="left">2021.4.2~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="left"><a href="https://book.douban.com/subject/26895292/">编剧自我修养</a></td>
+<td align="left">顾仲彝</td>
+<td align="left">2021.4.7~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left"><a href="https://book.douban.com/subject/26602858/">摄影笔记</a></td>
+<td align="left">宁思潇潇</td>
+<td align="left">2021.4.18~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left"><a href="https://book.douban.com/subject/35164843/">手机摄影笔记：一场脑洞大开的视觉之旅</a></td>
+<td align="left">李硕</td>
+<td align="left">2021.4.12~</td>
+<td align="center">2%</td>
+</tr>
+</tbody></table>
+<h3 id="金融理财"><a href="#金融理财" class="headerlink" title="金融理财"></a>金融理财</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">2</td>
+<td align="left"><a href="https://book.douban.com/subject/35295592/">小狗钱钱</a></td>
+<td align="left">[德]博多·舍费尔 译者: 文燚</td>
+<td align="left">2021.3.17~2021.3.21</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left"><a href="https://book.douban.com/subject/34925762/">钱从哪里来-中国家庭的财富方案</a></td>
+<td align="left">唐涯</td>
+<td align="left">2021.1.12-2021.1.19</td>
+<td align="center">100%</td>
+</tr>
+</tbody></table>
+<h3 id="心理学"><a href="#心理学" class="headerlink" title="心理学"></a>心理学</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">2</td>
+<td align="left"><a href="https://book.douban.com/subject/26286031/">心理学与生活</a></td>
+<td align="left">作者: [美] 理查德·格里格 &#x2F; [美] 菲利普·津巴多 译者: 王垒 &#x2F; 等</td>
+<td align="left">2021.5.31~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left"><a href="https://book.douban.com/subject/35023259/">这才是心理学（第11版）-看穿伪科学的批判性思维</a></td>
+<td align="left">[加拿大] 基思·斯坦诺维奇</td>
+<td align="left">2021.2.22~</td>
+<td align="center">1%</td>
+</tr>
+</tbody></table>
+<h3 id="IT技术"><a href="#IT技术" class="headerlink" title="IT技术"></a>IT技术</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th>作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">10</td>
+<td align="left"><a href="https://book.douban.com/subject/33474750/">浪潮之巅（第四版）（上下册）</a></td>
+<td>吴军</td>
+<td align="left">2021.1.25~</td>
+<td align="center">50%</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="left"><a href="https://book.douban.com/subject/24737674/">图解TCP&#x2F;IP</a></td>
+<td>[日]竹下隆史 &#x2F; [日]村山公保 &#x2F; [日]荒井透 &#x2F; [日]苅田幸雄 &#x2F; 【乌尼日其其格译】</td>
+<td align="left">2019</td>
+<td align="center">20%</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="left">深入浅出Prometheus：原理、应用、源码与拓展详解</td>
+<td>陈晓宇 &#x2F; 杨川胡 &#x2F; 陈啸</td>
+<td align="left">2019</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="left">Kubernetes权威指南——企业级容器云实战</td>
+<td>闫健勇 &#x2F; 龚正 &#x2F; 吴治辉 &#x2F; 刘晓红 &#x2F; 崔秀龙</td>
+<td align="left">2019</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="left"><a href="https://book.douban.com/subject/26644070/">凤凰项目</a></td>
+<td>基恩·金 (Gene Kim) &#x2F; 凯文·贝尔 (Kevin Behr) &#x2F; 乔治·斯帕福德 (George Spafford) 【成小留】</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="left">每天5分钟玩转Docker</td>
+<td>CloudMan</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left">每天5分钟玩转Kubernetes</td>
+<td>CloudMan</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="left"><a href="https://book.douban.com/subject/4843567/">深入Linux内核架构</a></td>
+<td>［德］Wolfgang Mauerer【郭旭译】</td>
+<td align="left">2015~</td>
+<td align="center">10%</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left">DevOps</td>
+<td>［美］Sanjeev Sharma【万金译】</td>
+<td align="left">2018.10</td>
+<td align="center">30%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left"><a href="https://book.douban.com/subject/27028517/">流畅的Python</a></td>
+<td>［巴西］Luciano Ramalho【安道、吴珂译】</td>
+<td align="left">2017~</td>
+<td align="center">80%</td>
+</tr>
+</tbody></table>
+<h3 id="小说"><a href="#小说" class="headerlink" title="小说"></a>小说</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">60</td>
+<td align="left"><a href="https://book.douban.com/subject/36727285/">十八岁出门远行</a></td>
+<td align="left">作者：余华</td>
+<td align="left">2024.10~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">59</td>
+<td align="left"><a href="https://book.douban.com/subject/34662028/">罪与罚</a></td>
+<td align="left">作者：[俄] 陀思妥耶夫斯基 译者: 曾思艺</td>
+<td align="left">2024.10~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">58</td>
+<td align="left"><a href="https://book.douban.com/subject/26543204/">堂吉诃德</a></td>
+<td align="left">作者：[西班牙] 塞万提斯 译者: 杨绛</td>
+<td align="left">2024.10~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">57</td>
+<td align="left"><a href="https://book.douban.com/subject/36698282/">孤独鸽</a></td>
+<td align="left">作者：[美]拉里·麦克默特里 译者: 王约西 &#x2F; 袁凤珠</td>
+<td align="left">2024.09~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">56</td>
+<td align="left"><a href="https://book.douban.com/subject/35724852/">一个人的村庄</a></td>
+<td align="left">作者：刘亮程</td>
+<td align="left">2024.10~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">55</td>
+<td align="left"><a href="https://book.douban.com/subject/36062390/">一句顶一万句</a></td>
+<td align="left">作者：刘震云</td>
+<td align="left">2024.08~2024.10</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">54</td>
+<td align="left"><a href="https://book.douban.com/subject/30414743/">显微镜下的大明</a></td>
+<td align="left">作者：马伯庸</td>
+<td align="left">2024.09.02~2024.09.0</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">53</td>
+<td align="left"><a href="https://book.douban.com/subject/36104107/">长安的荔枝</a></td>
+<td align="left">作者：马伯庸</td>
+<td align="left">2024.08</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">52</td>
+<td align="left"><a href="https://book.douban.com/subject/36328704/">太白金星有点烦</a></td>
+<td align="left">作者：马伯庸</td>
+<td align="left">2024.08</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">51</td>
+<td align="left"><a href="https://book.douban.com/subject/36710597/">食南之徒</a></td>
+<td align="left">作者：马伯庸</td>
+<td align="left">2024.07.24~2024.07.27</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">50</td>
+<td align="left"><a href="https://book.douban.com/subject/25842260/">新选组血风录</a></td>
+<td align="left">作者：[日] 司马辽太郎 译者：张博</td>
+<td align="left">2023.09.14~</td>
+<td align="center">3%</td>
+</tr>
+<tr>
+<td align="center">49</td>
+<td align="left"><a href="https://book.douban.com/subject/27167519/">哈利波特全集</a></td>
+<td align="left">作者：J.K.罗琳 (J.K.Rowling) 译者：苏农 &#x2F; 马爱农 &#x2F; 马爱新</td>
+<td align="left">2023.06~2023.10.16</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">48</td>
+<td align="left"><a href="">彩绘古典四大名著</a></td>
+<td align="left">作者：林遥 成长 王典弋</td>
+<td align="left">2022.08.29~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">47</td>
+<td align="left"><a href="https://book.douban.com/subject/4007008/">城的灯</a></td>
+<td align="left">李佩甫</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">46</td>
+<td align="left"><a href="https://book.douban.com/subject/1322455/">遥远的救世主</a></td>
+<td align="left">作者: 豆豆</td>
+<td align="left">2022.6.12~2022.6.12</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">45</td>
+<td align="left"><a href="https://book.douban.com/subject/35623209/">张医生与王医生</a></td>
+<td align="left">作者: 伊险峰 &#x2F; 杨樱</td>
+<td align="left">2021.12~</td>
+<td align="center">3%</td>
+</tr>
+<tr>
+<td align="center">44</td>
+<td align="left"><a href="https://book.douban.com/subject/25714176/">雪中悍刀行</a></td>
+<td align="left">烽火戏诸侯</td>
+<td align="left">2022.1~</td>
+<td align="center">10%</td>
+</tr>
+<tr>
+<td align="center">43</td>
+<td align="left"><a href="https://book.douban.com/subject/27074861/">东京一年</a></td>
+<td align="left">蒋方舟</td>
+<td align="left">2021.11.8~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">42</td>
+<td align="left"><a href="https://book.douban.com/subject/25769810/">最寒冷的冬天·血战长津湖</a></td>
+<td align="left">何楚舞 &#x2F; 凤鸣 &#x2F; 陆宏宇</td>
+<td align="left">2021.10.9~2021.11</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">41</td>
+<td align="left"><a href="https://book.douban.com/subject/32568108/">阿西莫夫科幻圣经：银河帝国(1-15大全集)</a></td>
+<td align="left">作者: 艾萨克·阿西莫夫</td>
+<td align="left">2021.7.15~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">40</td>
+<td align="left"><a href="https://book.douban.com/subject/21979017/">魔戒</a></td>
+<td align="left">作者:  [英国] J·R·R·托尔金 译者: 邓嘉宛 &#x2F; 石中歌 &#x2F; 杜蕴慈</td>
+<td align="left">2021.7.15~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">39</td>
+<td align="left"><a href="https://book.douban.com/subject/25853918/">红楼梦断</a></td>
+<td align="left">高阳</td>
+<td align="left">2021.5.30~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">38</td>
+<td align="left"><a href="https://book.douban.com/subject/33446904/">烧火工</a></td>
+<td align="left">刘慈欣 著 &#x2F; BUTU 绘</td>
+<td align="left">2021.4.9~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">37</td>
+<td align="left"><a href="https://book.douban.com/subject/6313496/">卡拉马佐夫兄弟</a></td>
+<td align="left">作者:  [俄] 费奥多尔·陀思妥耶夫斯基 译者: 荣如德</td>
+<td align="left">2021.3.13~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="left"><a href="https://book.douban.com/subject/35014816/">双城记</a></td>
+<td align="left">[英] 查尔斯·狄更斯 译者: 宋兆霖</td>
+<td align="left">2021.3.13~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">35</td>
+<td align="left"><a href="https://book.douban.com/subject/23858369/">十日谈</a></td>
+<td align="left">[意] 卜伽丘 译者: 方平 &#x2F; 王科一</td>
+<td align="left">2021.3.10~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">34</td>
+<td align="left"><a href="https://book.douban.com/subject/35080870/">两京十五日</a></td>
+<td align="left">马伯庸</td>
+<td align="left">2021.2.22-2021.3.4</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">33</td>
+<td align="left"><a href="https://book.douban.com/subject/30190228/">年羹尧之死</a></td>
+<td align="left">郑小悠</td>
+<td align="left">2021.1.23-2021.1.25</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">32</td>
+<td align="left"><a href="https://book.douban.com/subject/27104286/">寂寞的游戏</a></td>
+<td align="left">袁哲生</td>
+<td align="left">2021.1.23-2021.1</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">31</td>
+<td align="left"><a href="https://book.douban.com/subject/35005045/">夜晚的潜水艇</a></td>
+<td align="left">陈春成</td>
+<td align="left">2021.1.19-2021.1.23</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">30</td>
+<td align="left"><a href="https://book.douban.com/subject/35277887/">弃猫-当我谈起父亲时</a></td>
+<td align="left">村上春树</td>
+<td align="left">2021.1.10-2021.1.12</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">29</td>
+<td align="left"><a href="https://book.douban.com/subject/25852235/">查泰莱夫人的情人</a></td>
+<td align="left">[英] D. H. 劳伦斯</td>
+<td align="left">2020.12.8~2021.3.24</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">28</td>
+<td align="left"><a href="https://book.douban.com/subject/30163844/">镖人</a></td>
+<td align="left">许先哲</td>
+<td align="left">2021.1.6-2021.1.10</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">27</td>
+<td align="left"><a href="https://book.douban.com/subject/30297123/">基督山伯爵</a></td>
+<td align="left">[法]大仲马</td>
+<td align="left">2020.10.25-2020.11.8</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">26</td>
+<td align="left">西游记</td>
+<td align="left">吴承恩</td>
+<td align="left">2020.5</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">25</td>
+<td align="left"><a href="https://book.douban.com/subject/25900802/">我在底层的生活</a></td>
+<td align="left">[美] 芭芭拉·艾伦瑞克</td>
+<td align="left">2019.10</td>
+<td align="center">80%</td>
+</tr>
+<tr>
+<td align="center">24</td>
+<td align="left"><a href="https://book.qidian.com/info/3333529">道门法则</a></td>
+<td align="left">八宝饭</td>
+<td align="left">2019.11</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">23</td>
+<td align="left"><a href="https://book.douban.com/subject/33379779/">美国陷阱</a></td>
+<td align="left">[法] 弗雷德里克·皮耶鲁齐 &#x2F; [法] 马修·阿伦</td>
+<td align="left">2019.7</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">22</td>
+<td align="left"><a href="https://book.douban.com/subject/30306452/">极速写作</a></td>
+<td align="left">剑飞</td>
+<td align="left">2019.7</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">21</td>
+<td align="left"><a href="https://book.douban.com/subject/26899537/">长安十二时辰</a></td>
+<td align="left">马伯庸</td>
+<td align="left">2019.7</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">20</td>
+<td align="left"><a href="https://book.douban.com/subject/30475767/">人生海海</a></td>
+<td align="left">麦家</td>
+<td align="left">2019.6</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">19</td>
+<td align="left"><a href="https://book.douban.com/subject/25862578/">解忧杂货店</a></td>
+<td align="left">［日］东野圭吾</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">18</td>
+<td align="left"><a href="https://book.douban.com/subject/27115970/">秘密</a></td>
+<td align="left">［日］东野圭吾</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">17</td>
+<td align="left"><a href="https://book.douban.com/subject/11612936/">古董局中局</a></td>
+<td align="left">马伯庸</td>
+<td align="left">2018</td>
+<td align="center">10%</td>
+</tr>
+<tr>
+<td align="center">16</td>
+<td align="left"><a href="https://book.douban.com/subject/4071842/">路西法效应</a></td>
+<td align="left">［美］菲利普·津巴多【译】</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">15</td>
+<td align="left">趣味生活简史</td>
+<td align="left">［英］比尔·布莱森【严维明译】</td>
+<td align="left">2018</td>
+<td align="center">76%</td>
+</tr>
+<tr>
+<td align="center">14</td>
+<td align="left">天长地久</td>
+<td align="left">龙应台</td>
+<td align="left">2018.11</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="left">荆州杀</td>
+<td align="left">朱苏进、李蔷薇</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="left"><a href="https://book.douban.com/subject/6518605/">三体</a></td>
+<td align="left">刘慈欣</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td align="left">老人与海</td>
+<td align="left">海明威</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="left"><a href="https://book.douban.com/subject/26765928/">屠夫十字镇</a></td>
+<td align="left">［美］约翰·威廉斯【李广荣译】</td>
+<td align="left">2018</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="left">战天京</td>
+<td align="left">谭伯牛</td>
+<td align="left">2018</td>
+<td align="center">2%</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="left">琅琊榜</td>
+<td align="left">海晏</td>
+<td align="left">2017</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="left">藏地密码</td>
+<td align="left">何马</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="left">无尾狗</td>
+<td align="left">阿丁</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="left">水浒传</td>
+<td align="left">施耐庵</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left">康熙大帝、雍正皇帝、乾隆皇帝</td>
+<td align="left">二月河</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="left">金瓶梅</td>
+<td align="left">兰陵笑笑生</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left">杜月笙全传</td>
+<td align="left">【忘记】</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">三国演义</td>
+<td align="left">罗贯中</td>
+<td align="left">&lt;2016</td>
+<td align="center">100%</td>
+</tr>
+</tbody></table>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="left">书名</th>
+<th align="left">作者</th>
+<th align="left">时间</th>
+<th align="center">阅读状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">43</td>
+<td align="left"><a href="https://book.douban.com/subject/36838036/">父母会聊天，孩子更优秀</a></td>
+<td align="left">王纪琼</td>
+<td align="left">2024.10.14~</td>
+<td align="center">3%</td>
+</tr>
+<tr>
+<td align="center">42</td>
+<td align="left"><a href="https://d.dedao.cn/FotqG9q7SwbTlI5t">边水往事</a></td>
+<td align="left">沈星星</td>
+<td align="left">2024.8.30</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">41</td>
+<td align="left"><a href="https://book.douban.com/subject/36314525/">安·兰德的小说写作课</a></td>
+<td align="left">[美] 安·兰德</td>
+<td align="left">2024.8~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">40</td>
+<td align="left"><a href="https://book.douban.com/subject/36392914/">安·兰德的非虚构写作课</a></td>
+<td align="left">[美] 安·兰德</td>
+<td align="left">2024.7~</td>
+<td align="center">32%</td>
+</tr>
+<tr>
+<td align="center">39</td>
+<td align="left"><a href="https://book.douban.com/subject/6811366/">禅与摩托车维修艺术</a></td>
+<td align="left">罗伯特•M.波西格 (Robert M.Pirsig) 译者: 张国辰</td>
+<td align="left">2024.8~</td>
+<td align="center">12%</td>
+</tr>
+<tr>
+<td align="center">38</td>
+<td align="left"><a href="https://book.douban.com/subject/35960123/">复盘工作法</a></td>
+<td align="left">王建和、宋晓亮</td>
+<td align="left">2022.8.19~</td>
+<td align="center">30%</td>
+</tr>
+<tr>
+<td align="center">37</td>
+<td align="left"><a href="https://book.douban.com/subject/35870746/">阅读的方法</a></td>
+<td align="left">罗振宇</td>
+<td align="left">2022.4.28~2022.6.9</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="left"><a href="https://book.douban.com/subject/35754843/">精进3 : 找到你的潜在生态位</a></td>
+<td align="left">作者: 采铜</td>
+<td align="left">2022.2.21~2022.2.24</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">35</td>
+<td align="left"><a href="https://book.douban.com/subject/35178772/">如何高质量睡眠：修复并保持最佳身体和精神状态的操作系统</a></td>
+<td align="left">作者: 英）迈克尔·阿克顿·史密斯 译者: 白洁</td>
+<td align="left">2022.1~</td>
+<td align="center">20%</td>
+</tr>
+<tr>
+<td align="center">34</td>
+<td align="left"><a href="https://book.douban.com/subject/30367990/">写作这回事：创作生涯回忆录</a></td>
+<td align="left">作者: [美] 斯蒂芬·金 译者: 张坤</td>
+<td align="left">2022.1~</td>
+<td align="center">20%</td>
+</tr>
+<tr>
+<td align="center">33</td>
+<td align="left"><a href="https://book.douban.com/subject/35082304/">博弈论究竟是什么</a></td>
+<td align="left">万维钢</td>
+<td align="left">2021.9.1~2021.9.7</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">32</td>
+<td align="left"><a href="https://book.douban.com/subject/27167267/">人性的因素:毛姆短篇小说全集2</a></td>
+<td align="left">作者: [英] 毛姆 译者: 陈以侃</td>
+<td align="left">2021.7.15~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">31</td>
+<td align="left"><a href="https://book.douban.com/subject/35496147/">有本事</a></td>
+<td align="left">冯唐</td>
+<td align="left">2021.7.11~2021.7.15</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">30</td>
+<td align="left"><a href="https://book.douban.com/subject/27111185/">女性贫困</a></td>
+<td align="left">[日] NHK特别节目录制组 译者: 李颖</td>
+<td align="left">2021.4.18~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">29</td>
+<td align="left"><a href="https://book.douban.com/subject/27086926/">活着活着就老了</a></td>
+<td align="left">冯唐</td>
+<td align="left">2021.4.18~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">28</td>
+<td align="left"><a href="https://book.douban.com/subject/35303843/">中国话</a></td>
+<td align="left">郑子宁</td>
+<td align="left">2021.4.9~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">27</td>
+<td align="left"><a href="https://book.douban.com/subject/35143751/">写作是门手艺</a></td>
+<td align="left">刘军强</td>
+<td align="left">2021.4.13~</td>
+<td align="center">6%</td>
+</tr>
+<tr>
+<td align="center">26</td>
+<td align="left"><a href="https://book.douban.com/subject/6794016/">如何成为一个怪物</a></td>
+<td align="left">冯唐</td>
+<td align="left">2021.3.21~2021.4.18</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">25</td>
+<td align="left"><a href="https://book.douban.com/subject/3369600/">当我谈跑步时我谈些什么</a></td>
+<td align="left">[日] 村上春树 译者:  施小炜</td>
+<td align="left">2021.4.10~2021.4.11</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">24</td>
+<td align="left"><a href="https://book.douban.com/subject/33459665/">高效写作</a></td>
+<td align="left">刘主编</td>
+<td align="left">2021.3.4~</td>
+<td align="center">3%</td>
+</tr>
+<tr>
+<td align="center">23</td>
+<td align="left"><a href="https://book.douban.com/subject/30314033/">无所畏</a></td>
+<td align="left">冯唐</td>
+<td align="left">2021.3.15~2021.3.21</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">22</td>
+<td align="left"><a href="https://book.douban.com/subject/34995224/">36岁，人生半熟</a></td>
+<td align="left">宽宽</td>
+<td align="left">2021.3.9~2021.3.17</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">21</td>
+<td align="left">桃花源记（绘本）</td>
+<td align="left">陶渊明 著；鞠占圃 绘</td>
+<td align="left">2021.2.21~2021.2.21</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">20</td>
+<td align="left"><a href="https://book.douban.com/subject/35171309/">味道的传承：影响中国菜的那些人</a></td>
+<td align="left">王硕 董克平 兰明路 屈浩 周晓燕</td>
+<td align="left">2021.2.18~</td>
+<td align="center">3%</td>
+</tr>
+<tr>
+<td align="center">19</td>
+<td align="left"><a href="https://book.douban.com/subject/25749845/">把时间当做朋友(第三版)</a></td>
+<td align="left">李笑来</td>
+<td align="left">2021.2.04~2021.2.22</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">18</td>
+<td align="left"><a href="https://book.douban.com/subject/30377427/">陆羽茶经：经典本</a></td>
+<td align="left">王建荣</td>
+<td align="left">2020.9~</td>
+<td align="center">1%</td>
+</tr>
+<tr>
+<td align="center">17</td>
+<td align="left"><a href="https://book.douban.com/subject/30346218/">态度-吴军家书</a></td>
+<td align="left">吴军</td>
+<td align="left">2020.9~</td>
+<td align="center">34%</td>
+</tr>
+<tr>
+<td align="center">16</td>
+<td align="left"><a href="https://book.douban.com/subject/27055728/">如何成为一个有趣的人</a></td>
+<td align="left">王小圈</td>
+<td align="left">2020.9~2020.9.29</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">15</td>
+<td align="left"><a href="https://book.douban.com/subject/34464343/">学会呼吸-重新掌握天生本能</a></td>
+<td align="left">[爱尔兰] 帕特里克·麦基翁 &#x2F; Patrick McKeown</td>
+<td align="left">2020.8~</td>
+<td align="center">13%</td>
+</tr>
+<tr>
+<td align="center">14</td>
+<td align="left"><a href="https://book.douban.com/subject/35082292/">学习究竟是什么</a></td>
+<td align="left">万维钢</td>
+<td align="left">2020.6~2020.9.6</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="left"><a href="https://book.douban.com/subject/24257229/">鼠疫</a></td>
+<td align="left">(法)阿尔贝·加缪</td>
+<td align="left">2020.5~</td>
+<td align="center">50%</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="left"><a href="https://book.douban.com/subject/26761696/">精进-如何成为一个很厉害的人</a></td>
+<td align="left">采铜</td>
+<td align="left">2019.4</td>
+<td align="center">15%</td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td align="left">冥想</td>
+<td align="left">斯瓦米·拉玛 (Swami Rama)</td>
+<td align="left">2019.4</td>
+<td align="center">10%</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="left">技术：如何用一年时间获得十年经验</td>
+<td align="left">郝培强</td>
+<td align="left">2018.11</td>
+<td align="center">100%</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="left">习惯的力量</td>
+<td align="left">［美］查尔斯·都希格【吴奕俊、陈丽丽、曹烨译】</td>
+<td align="left">2018</td>
+<td align="center">20%</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="left">深度工作</td>
+<td align="left">［美］卡尔·纽波特【宋伟、后浪】</td>
+<td align="left">2018</td>
+<td align="center">70%</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="left">秒懂力</td>
+<td align="left">唐文</td>
+<td align="left">2018</td>
+<td align="center">67%</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="left">微习惯</td>
+<td align="left">［美］斯蒂芬·盖斯【桂君译】</td>
+<td align="left">2018</td>
+<td align="center">76%</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="left">刻意练习</td>
+<td align="left">［美］安德森·艾利克森、罗伯特普尔【王正林译】</td>
+<td align="left">2018</td>
+<td align="center">22%</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left">人类简史-从动物到上帝</td>
+<td align="left">［以色列］尤瓦尔·赫拉利【林俊宏译】</td>
+<td align="left">2018</td>
+<td align="center">54%</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="left">如何高效学习</td>
+<td align="left">［加］斯科特·扬【程冕译】</td>
+<td align="left">2018</td>
+<td align="center">54%</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left">如何阅读一本书</td>
+<td align="left">［加］莫提默·J. 艾德勒、查尔斯·范多伦【 郝明义、朱衣译】</td>
+<td align="left">2018</td>
+<td align="center">50%</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">好孩子：三分天注定，七分靠教育</td>
+<td align="left">洪兰、尹建莉</td>
+<td align="left">&lt;2016</td>
+<td align="center">82%</td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
-        <category>Linux</category>
+        <category>dayDayUp</category>
       </categories>
       <tags>
-        <tag>CentOS7.4</tag>
-        <tag>vsftp</tag>
+        <tag>书单</tag>
       </tags>
   </entry>
   <entry>
-    <title>CentOS7.4 update ntp</title>
-    <url>/2018/02/13/CentOS7-4-update-ntp/</url>
-    <content><![CDATA[<p>CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz</p>
-<span id="more"></span>
-
-<p>#准备工作</p>
-<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure>
-<h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> -ar /etc/ntp /etc/ntp.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure>
-<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y erase ntp ntpdate</span><br></pre></td></tr></table></figure>
-<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="x2F-configure"><a href="#x2F-configure" class="headerlink" title=".&#x2F;configure"></a>.&#x2F;configure</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf ntp-4.2.8p10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ntp-4.2.8p10</span><br><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --enable-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --enable-all-clocks --enable-parse-clocks --enable-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-<h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line"><span class="built_in">mv</span> /etc/ntp.bak /etc/ntp</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure>
-<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure>
-<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS7</tag>
-        <tag>ntp</tag>
-      </tags>
+    <title>Sentry搭建</title>
+    <url>/2024/08/16/Sentry%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<p>概要</p>
+<span id="more"></span>]]></content>
   </entry>
   <entry>
-    <title>Django-route</title>
-    <url>/2018/03/10/Django-route/</url>
-    <content><![CDATA[<p>Django路由系统:动态路由、指定参数名、默认参数</p>
+    <title>xiaochao</title>
+    <url>/2018/03/25/xiaochao/</url>
+    <content><![CDATA[<p>日常小小抄</p>
 <span id="more"></span>
-<h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, <span class="built_in">list</span></span><br><span class="line">urlpatterns = patterns(<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>, &#123;<span class="string">&#x27;id&#x27;</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>views.py</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, id1, id2</span>):</span><br><span class="line">    <span class="built_in">print</span> <span class="built_in">id</span></span><br><span class="line">    <span class="built_in">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
-<p>指定参数名：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, <span class="built_in">id</span>, name</span>):</span><br><span class="line">    <span class="built_in">print</span> name, <span class="built_in">id</span></span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
-<p>请求链接：<a href="http://localhost:9000/list/100">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加&#x2F;,如果不加，urls配置中必须要加上终止符：&#x2F;$,这样请求时会自动加上&#x2F;</p>
+<h4 id="2024-8-16"><a href="#2024-8-16" class="headerlink" title="2024.8.16"></a>2024.8.16</h4><p>《题龙阳县青草湖》 元 唐珙<br>西风吹老洞庭波，一夜湘君白发多。<br>醉后不知天在水，满船清梦压星河。</p>
+<h4 id="2022-3-25-17-26"><a href="#2022-3-25-17-26" class="headerlink" title="2022.3.25 17:26"></a>2022.3.25 17:26</h4><p>山清水秀太阳高，好呀么好风飘<br>小小滴船儿撑过来，一路摇呀摇<br>为了那心上的人，起呀么起的早<br>也不管那路遥遥，情愿多辛劳<br>山清水秀太阳高，好呀么好风飘<br>我一心想着他，想的是好心焦</p>
+<h4 id="2021-4-12-12-30"><a href="#2021-4-12-12-30" class="headerlink" title="2021.4.12 12:30"></a>2021.4.12 12:30</h4><p>豫章太守顾劭，是雍之子。邵在军卒。雍盛集僚属自围棋，外启信至，而无儿书，虽神气不变，而心了其故，以爪掐掌，血流沾褥<br>戍卒叫，函谷举，楚人一炬，可怜焦土<br>乘兴踏月，西入酒家，不觉人物两忘，身在世外。夜来月下卧醒，花影零乱，满人衿袖，疑如濯魄于冰壶也</p>
+<h4 id="2021-2-25-00-00"><a href="#2021-2-25-00-00" class="headerlink" title="2021.2.25 00:00"></a>2021.2.25 00:00</h4><p>有钱人喜欢说“钱不是万能的”，长得好看的人喜欢说“长得好看有什么用”，瘦子喜欢说“其实胖一点好，健康”，努力的人喜欢说“努力并非决定性因素”。他们只是虚伪地随口说说，这些都是套路，你却都认真地信了。</p>
+<h4 id="2020-10-23-21-03"><a href="#2020-10-23-21-03" class="headerlink" title="2020.10.23 21:03"></a>2020.10.23 21:03</h4><p>僵卧孤村不自哀，尚思为国戍轮台</p>
+<h4 id="2020-9-21-17-22"><a href="#2020-9-21-17-22" class="headerlink" title="2020.9.21 17:22"></a>2020.9.21 17:22</h4><p>文素：”没有人对我的伤害使我成长了，使我更强大了，我也不会感谢他，他伤害了我只能说明他很差劲，凭什么感谢，是我自己熬过来的，我只感谢我自己。”</p>
+<h4 id="2020-9-12-14-26"><a href="#2020-9-12-14-26" class="headerlink" title="2020.9.12 14:26"></a>2020.9.12 14:26</h4><p>如果把知识点比作砖块，那我们脑海中的知识结构就是一栋楼。有些人的楼且高且大抗震八级防风防火，有些人的楼摇摇欲坠处处安全隐患，有些人厚积薄发，有些人术有专攻——这栋楼的高度决定了一个人的思想的深度。<br>很多青少年会有一个阅读欲望特别强的时期，家长往往在少年读物中“乱花渐欲迷人眼”，不知道该给孩子看什么。此时最好的办法是给一套足够厚实的青少年百科大全，人文地理科技社会应有尽有，不要求孩子全部翻一遍，让孩子自己去挑其中喜欢的看。这种早期的阅读偏好往往来历不明却持续终生。我倾向于认为这是孩子先天的偏好，能标识出孩子的天赋所在。给一个小学四年级的孩子一套百科大全作生日礼物，等他高一的时候再去看看哪一本学科被翻得最破——这些信息可以用来帮助孩子正确地认识自己，为孩子选择高中文理科，或是选择大学的专业，提供非常有力的依据。<br>在这里，百科大全就起到了“初建知识结构”的作用，它是孩子茫茫书海中的导航，是信息储备大厦的设计蓝图。越早构建出这个结构，就能越早让人在接收信息中做到“系统地搬砖”，使信息管理的效率越早提升。<br>根据个人学习内容的不同，成年后每个人的知识结构会长得不太一样。<br>想象力：基于已知信息的截取、拼接、重组信息的能力<br>想象力的重点：1.截取什么样的信息组装，这决定了想象力的广度；2.如何有逻辑地自洽地将信息组装，这决定了想象力的深度。优秀的想象力需要将这二者合为一体。<br>&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;—-《如何成为一个有趣的人》-知识结构的不同类型<br>“人无癖不可与交，以其无深情也。”；“人无疵不可与交，以其无真气也” —-张岱<br>邓布利多说：“决定我们成为什么人的，不是我们的能力，而是我们的选择。”</p>
+<h4 id="2020-9-11-20-34"><a href="#2020-9-11-20-34" class="headerlink" title="2020.9.11 20:34"></a>2020.9.11 20:34</h4><p>微语录精选1015<br>微信朋友圈越来越不能看，都是些三观不正的鸡汤。所谓的努力都是围着钱打转，没半点灵魂的痕迹。这代人大部分都很浅，很浅。活个高兴吧，虽然高兴过后都是一地鸡毛。平静的午后，灵魂的小憩，让刚放下锄把子的城一代理解比较难。</p>
+<h4 id="2020-9-10-12-37"><a href="#2020-9-10-12-37" class="headerlink" title="2020.9.10 12:37"></a>2020.9.10 12:37</h4><p>知识结构的“广度”是一个人“有聊”还是“无聊”的关键，而知识结构的“深度”是一个人“肤浅”还是“深刻”的关键。<br>“深刻”与否正是“有趣”和“逗比”的核心差别。<br>一个深刻的人不仅仅需要知道这是什么，还要知道“这为什么是”“这和其他信息有什么关联”“这个知识点在我的知识结构中处于什么位置”。<br>这个知识体系纵深的程度，就是我们所说的一个人的“深度”。</p>
+<h4 id="2019-6-26-14-26"><a href="#2019-6-26-14-26" class="headerlink" title="2019.6.26 14:26"></a>2019.6.26 14:26</h4><p>天地有大美，美的是自然；流水不争先，争的是滔滔不绝</p>
+<h4 id="2019-6-25-14-48"><a href="#2019-6-25-14-48" class="headerlink" title="2019.6.25 14:48"></a>2019.6.25 14:48</h4><p>我本无意穿堂风， 偏偏孤倨引山洪</p>
+<h4 id="2019-06-18-09-02"><a href="#2019-06-18-09-02" class="headerlink" title="2019.06.18 09:02"></a>2019.06.18 09:02</h4><p>倾听：倾听与听不同，倾听是解读别人所说信息的过程，包含听到、专注、理解、回应、记忆五大元素。可以获得更多信息，对对方有更多了解。倾听能让对方感觉到自己被尊重，所以才会跟你分享更多的信息。<br>倾听不仅仅只是听，还要思考，要思考更深层的原因，不要被表象所迷惑。</p>
+<h4 id="2019-06-13-17-55"><a href="#2019-06-13-17-55" class="headerlink" title="2019.06.13 17:55"></a>2019.06.13 17:55</h4><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzNzM5MTI0Nw==&mid=2247491492&idx=5&sn=ff89fda8279741c86f61d51da7a972c9&chksm=e8c80344dfbf8a52ec81d2ab216290d11ecf00c3255761a676b54bd75a837f4683cfdf77a219&scene=0&xtrack=1&key=b0ebf1a5d52c1bb69fb06bc850c8f16b7a8b31c4c30dac1069cdbb9cbd7800680df64e4c487dd11c13db023f62a056d326ec185cf22da40f5b95cc43632442c15ee018aa2a07fff516c585dbefacda81&ascene=1&uin=MTQxMDYwNzEwMg==&devicetype=Windows+10&version=62060833&lang=zh_CN&pass_ticket=o8+DH7X5izJrv5TEIiQCIHVApW8nc54nKIqNJF19l7IXFi8tp06NWD5Puk9fg6PU">摘抄地址</a><br>上兵伐谋，不战而胜，冷静的把问题解决掉，才是解决争执的最高境界。<br>2：上兵伐谋<br>但是，为什么大多数人都做不到这一步呢？<br>吵架时真正的敌人不是吵架的对手，而是自己的情绪，藏在我们身体里的“情绪”，才是我们每个人最大的敌人。<br>也就是说我们是被自己的情绪牵着走的，吵架最后往往变成了同自己情绪斗争的过程。<br>人生最大的敌人是自己，战胜别人容易，战胜自己太难。<br>人一旦被情绪左右，心魔就会趁机而出，很多冲动行为就是这样导致的，一时的冲动造成终身后悔的事情比比皆是。<br>所以，在被激怒的时刻，千万不要当即回击，不妨先在内心里从1数到10，然后再去交流和沟通，这是个很好的办法。</p>
+<p>3：收益最大化<br>和别人吵架过程中，最需要防范的一点是什么呢？<br>中国人斗争的哲学里最狠的一招是这样的：先站在道德制高点上打倒一个人，给她扣上一顶道德败坏的帽子，从人品上否定一个人，这样她所说的一切，做的一切辩驳都是苍白的。<br>这其实是兵法的上上策：诛人先诛心。<br>这一招用好了，可以直接把对方逼崩溃，有理说不清，越说越乱。<br>更有甚者，是先给对方扣上一顶帽子，然后尽情往对方身上泼脏水……<br>要是照这个节奏下去，对方就只剩下一个出路，那就是和你同归于尽。<br>因此，我们千万不要做这种泼妇式的人身攻击，但是当遇到这种攻击的时候，我们应该怎么做呢？<br>三十六计，走为上计。置之不理的最好的方式，就好像一条疯狗咬了你，你不能用嘴去咬它，你应该避开对方的纠缠，寻求对你利益最大化的解决方案，<br>能屈能伸是条龙，暂时的隐忍不代表认输，而是寻求可以一招制敌的最佳时机！<br>4：弱者易怒如虎，强者平静如水<br>真正的高手，从来不会和人吵架，因为他们太善于沟通。<br>沟通，是解决吵架的最好方案。<br>很多人会说，在那样的时刻已经无法做到沟通了。<br>首先，我们不能要求别人冷静又理性，我们要做的是让自己时刻保持镇定，我们说每一句话都要先在大脑里过滤一遍，想想这句话是否超出了事情本身，不要可只顾自己说出来痛快，就忽略他人的感受。</p>
+<p>场景分析：当对方开始说：“你真自私！”。你如果直接反击：“那你呢？你又好到那边去？！”，这样会马上升级到人格斗争的节奏<br>应该静下心来问一下对方：“为什么你这么觉得，我做了什么事情让你感觉这样子？”然后仔细倾听对方发出的有效信息。<br>一个真正厉害的人，非常善于筛选出对方发出的有效信息，过滤并忽略掉对方情绪化的语言！<br>弱者易怒如虎，强者平静如水。对着别人大吼，是最无能的表现。<br>如果对方提出的事实，你觉得是错误的。你也应该要讲出真正的事实，当对方表示不满意，你一定要让对方提出具体不满意的地方，总之一切围绕矛盾本身去探讨，而不是给矛盾升级。<br>尊重对手是大格局表现其中之一<br>尊重你的对手，聆听对方的难处，站在对方角度考虑问题，当你做到了这一步，你就没有了对手，五湖四海皆朋友。<br>无敌，不是打败了所有人，而是没有一个人与你为敌。</p>
+<h4 id="2019-05-29-13-39"><a href="#2019-05-29-13-39" class="headerlink" title="2019.05.29 13:39"></a>2019.05.29 13:39</h4><p>来都来了，多大点事，别太计较，都是亲戚，看我面子，大过节的，吃亏是福，为了你好</p>
+<h4 id="2018-09-26-16-17"><a href="#2018-09-26-16-17" class="headerlink" title="2018.09.26 16:17"></a>2018.09.26 16:17</h4><p>人生没有白走的路，每一步都算数。</p>
+<h4 id="2018-09-21-21-31"><a href="#2018-09-21-21-31" class="headerlink" title="2018.09.21 21:31"></a>2018.09.21 21:31</h4><p>总之，从今天开始努力，哪怕每天比前一天早睡10分钟，珍爱生命，远离熬夜<br>毕竟，有勇气结束今天，才能开启一个更美好的明天。<br>人生的核心问题，就是自律<br>生命是一个不可控的进度表，你永远不会知道，未来和意外哪个先来。<br>身体是每个人的神殿，不管里面供奉的是什么，都应该好好保持它的强韧、美丽和清洁。不要用熬夜来破坏他！<br>没有任何事，值得你用健康换。</p>
+<h4 id="2018-09-12-12-51"><a href="#2018-09-12-12-51" class="headerlink" title="2018.09.12 12:51"></a>2018.09.12 12:51</h4><p>你觉得你在经历一片未知的黑暗领域，很无助很孤独很害怕，但是你要相信，在这片黑暗里有千万人与你同行，而每一个人都在努力想活下去。</p>
+<h4 id="2018-03-25-10-15"><a href="#2018-03-25-10-15" class="headerlink" title="2018.03.25 10:15"></a>2018.03.25 10:15</h4><p>知世故而不世故，才是真正的少年。<br>被伤害过依然能倾心以赴赤诚相待，才是真正的少年。</p>
+<hr>
+<p>网上曾经流传一句话“中年男人不如狗”。<br>说得有理有据：</p>
+<p>1.年龄逐渐增长，身体机能随之下降，多种病症出现。</p>
+<p>2.他们在家中承担起抚养父母妻儿的责任，在社会上如果没有体面的工作就要忍气吞声。天能塌，他们不能。</p>
+<p>3.男人年轻的时候都想着仗剑走天涯，惦记着诗和远方，后来工作太忙钱不够就没去。</p>
+<p>4.生而为人，无法避免被“比较”。从小到大向来如此，小时候的敌人是别人家的孩子，长大之后是别人家的丈夫，再往后是别人家的父亲。</p>
+<hr>
+<p>知乎上也有这样一个问题：</p>
+<p>“为什么那么多男人开车回家，到了楼下还要在车里坐好久？”</p>
+<p>有一个回答获得了高分点赞：</p>
+<p>“很多时候我也不想下车，因为那是一个分界点。在车上，一个人静一静，抽根烟，发会呆这个躯体属于自己；但推开车门，你就是柴米油盐，是父亲、是儿子、是老公，唯独不是你自己。我们把真实的自己藏在车里；打开车门出去，哪怕是哭着爬着，也只能把被人寄予厚望的身份扮演下去。”</p>
+<hr>
+<p>张泉灵 教育孩子，两件事优先级要靠前：<br>   原文地址：<a href="https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0">https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0</a><br>1.孩子有没有情商，也就是孩子有没有认知自己的情绪和行为、认知周围人的情绪和行为，以及和别人相处的能力。<br>2.孩子能不能培养起属于自己的学习方法论，是否有一个知识框架。</p>
 ]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Django</tag>
-        <tag>路由系统</tag>
-      </tags>
   </entry>
   <entry>
     <title>aliyunbugfix</title>
@@ -545,68 +1665,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux内核升级</title>
-    <url>/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/</url>
-    <content><![CDATA[<p>Linux内核大版本升级</p>
-<span id="more"></span>
-
-<h1 id="3-10内核升级至4-4"><a href="#3-10内核升级至4-4" class="headerlink" title="3.10内核升级至4.4"></a>3.10内核升级至4.4</h1><h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><p>腾讯云<br>Centos7.8<br>内核版本：3.10.0-1127.19.1.el7.x86_64</p>
-<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64</p>
-<h2 id="kernel-3-10-gt-4-4升级步骤"><a href="#kernel-3-10-gt-4-4升级步骤" class="headerlink" title="kernel 3.10-&gt;4.4升级步骤"></a>kernel 3.10-&gt;4.4升级步骤</h2><h3 id="yum源修改"><a href="#yum源修改" class="headerlink" title="yum源修改"></a>yum源修改</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入公钥</span></span><br><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">升级安装ELRepo</span></span><br><span class="line">yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">载入elrepo-kernel 元数据</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel repolist</span><br></pre></td></tr></table></figure>
-<h3 id="查看可用rpm包"><a href="#查看可用rpm包" class="headerlink" title="查看可用rpm包"></a>查看可用rpm包</h3><p>yum –disablerepo&#x3D;* –enablerepo&#x3D;elrepo-kernel list kernel*</p>
-<h3 id="安装最新稳定版kernel"><a href="#安装最新稳定版kernel" class="headerlink" title="安装最新稳定版kernel"></a>安装最新稳定版kernel</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">lt：长期支持版本；ml：主线版本</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install  kernel-lt.x86_64  -y</span><br></pre></td></tr></table></figure>
-<h4 id="删除旧版本工具包"><a href="#删除旧版本工具包" class="headerlink" title="删除旧版本工具包"></a>删除旧版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-tools-libs.x86_64 kernel-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
-<h4 id="安装新版本工具包"><a href="#安装新版本工具包" class="headerlink" title="安装新版本工具包"></a>安装新版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install kernel-lt-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
-<h3 id="将内核启动修改为本机最新版本"><a href="#将内核启动修改为本机最新版本" class="headerlink" title="将内核启动修改为本机最新版本"></a>将内核启动修改为本机最新版本</h3><h4 id="查看内核版本"><a href="#查看内核版本" class="headerlink" title="查看内核版本"></a>查看内核版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看内核启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# awk -F \&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">0 : CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">1 : CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">2 : CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">3 : CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">4 : CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br><span class="line">或</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看系统可用内核</span></span><br><span class="line">[root@dev-node-1 ~]# grep &quot;^menuentry&quot; /boot/grub2/grub.cfg | cut -d &quot;&#x27;&quot; -f2</span><br><span class="line">CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前实际启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# grub2-editenv list</span><br><span class="line">saved_entry=CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br></pre></td></tr></table></figure>
-<h4 id="设置默认启动"><a href="#设置默认启动" class="headerlink" title="设置默认启动"></a>设置默认启动</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-set-default &quot;CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)&quot;</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grub2-set-default 0     // 0代表查看内核启动顺序时的序号</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑/etc/default/grub文件</span></span><br><span class="line">vim /etc/default/grub</span><br><span class="line">GRUB_DEFAULT=saved 改为GRUB_DEFAULT=0</span><br></pre></td></tr></table></figure>
-<h4 id="生成grub配置文件"><a href="#生成grub配置文件" class="headerlink" title="生成grub配置文件"></a>生成grub配置文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-mkconfig  -o /boot/grub2/grub.cfg</span><br><span class="line">Generating grub configuration file ...</span><br><span class="line">Found linux image: /boot/vmlinuz-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-4.4.241-1.el7.elrepo.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.19.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.13.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-4acec6de0e4741b6bc249381506fa844</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-4acec6de0e4741b6bc249381506fa844.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-0ea734564f9a4e2881b866b82d679dfc</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-0ea734564f9a4e2881b866b82d679dfc.img</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-<h3 id="重启-amp-验证"><a href="#重启-amp-验证" class="headerlink" title="重启&amp;验证"></a>重启&amp;验证</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# reboot</span><br><span class="line"></span><br><span class="line">[root@dev-node-1 ~]# uname -r</span><br><span class="line">4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除旧内核（可选）"><a href="#删除旧内核（可选）" class="headerlink" title="删除旧内核（可选）"></a>删除旧内核（可选）</h3><h4 id="查看本机内所有内核"><a href="#查看本机内所有内核" class="headerlink" title="查看本机内所有内核"></a>查看本机内所有内核</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# rpm -qa | grep kernel</span><br><span class="line">kernel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-headers-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-lt-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">kernel-lt-tools-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">abrt-addon-kerneloops-2.1.11-57.el7.centos.x86_64</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">kernel-lt-tools-libs-4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
-<h4 id="yum-remove"><a href="#yum-remove" class="headerlink" title="yum remove"></a>yum remove</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>或</p>
-<h4 id="yum-utils工具"><a href="#yum-utils工具" class="headerlink" title="yum-utils工具"></a>yum-utils工具</h4><p>如果安装的内核不多于 3 个，yum-utils 工具不会删除任何一个。只有在安装的内核大于 3 个时，才会自动删除旧内核。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装yum-utils</span></span><br><span class="line">[root@dev-node-1 ~]# yum install yum-utils</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除旧版本</span></span><br><span class="line">package-cleanup --oldkernels</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS7</tag>
-        <tag>kernel</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JumpServer添加访问k8s集群</title>
-    <url>/2022/02/22/JumpServer%E6%B7%BB%E5%8A%A0%E8%AE%BF%E9%97%AEk8s%E9%9B%86%E7%BE%A4/</url>
-    <content><![CDATA[<p>Jumpserver中添加k8s，方便直接从Jumpserver管理k8s集群</p>
-<span id="more"></span>
-
-<h3 id="一、k8s准备"><a href="#一、k8s准备" class="headerlink" title="一、k8s准备"></a>一、k8s准备</h3><h4 id="1-创建对象ClusterRole"><a href="#1-创建对象ClusterRole" class="headerlink" title="1.创建对象ClusterRole"></a>1.创建对象ClusterRole</h4><p>此对象定义具体权限</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">create</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">delete</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deletecollection</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">patch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-创建对象ServiceAccount"><a href="#2-创建对象ServiceAccount" class="headerlink" title="2.创建对象ServiceAccount"></a>2.创建对象ServiceAccount</h4><p>此对象为创建用户，并自动生成Secret对象，即token</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
-<h4 id="3-创建对象ClusterRoleBinding"><a href="#3-创建对象ClusterRoleBinding" class="headerlink" title="3.创建对象ClusterRoleBinding"></a>3.创建对象ClusterRoleBinding</h4><p>此对象将ClusterRole定义的权限赋给ServiceAccount</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-bind-jmsClusterRole</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
-<h4 id="4-获取token值"><a href="#4-获取token值" class="headerlink" title="4.获取token值"></a>4.获取token值</h4><p>此步骤也可参考Jumpserver官网：<a href="https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/">https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/</a></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export</span> <span class="string">POD_NAME=`kubectl</span> <span class="string">get</span> <span class="string">secret</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">jms|awk</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span><span class="string">`</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">describe</span> <span class="string">secret</span> <span class="string">$&#123;POD_NAME&#125;</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">&#x27;token:&#x27;</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="attr">token:</span>      <span class="string">it-is-example-token-pZCI6IlB0MUR2dEdtRW5lN19nQWg1WWdWN2o5U1FicTA2dDYtT2VfMk1ScTd0RG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJqbXMtc2VydmljZWFjY291bnQtdG9rZW4tcnB3d2giLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiam1zLXNlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMGZkYjIwOWUtMTgyYi00M2JmLTgyNDctZTAwN2VkOWI1ZTY4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmptcy1zZXJ2aWNlYWNjb3VudCJ9.o8N_m_QtpLOj5OHxvlnepzqypmx8xfE63_GQnzbSfy4deGR1WY0UElxLZcWrajhzHIOP2cBkzVF-X4K6sZoixV1tI0qevHC-gu2v-VZkzv0h-lwbJfMWNV9fiF2alZ9VCVSIXXUBRJ49Wd6ecn8N5_BAIXZ3rLePYxhJA9t_Vlx8l_8stE-AXn9W5IRRy6bzFCpJqR0Mua8BDvv8UJMPT7PPFp3bmBdTNuFOlwpoUNHNtKERGpN19N9Zg05bNaHZwphABOK2mlHDwERAJ3JDFrC1bztUZCYgxXhDQnCG_EJE54SpoMNVvvRgyTw5BJAZYizEmM2_ljytCgdAEznD5g</span></span><br></pre></td></tr></table></figure>
-<h3 id="二、配置Jumpserver"><a href="#二、配置Jumpserver" class="headerlink" title="二、配置Jumpserver"></a>二、配置Jumpserver</h3><h4 id="1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"><a href="#1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token" class="headerlink" title="1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"></a>1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token</h4><p>![输入token]<img height="60%" src="/images/jumpserver-input_token.png" width="60%"/></p>
-<h4 id="2-应用管理-kubernetes中创建应用"><a href="#2-应用管理-kubernetes中创建应用" class="headerlink" title="2.应用管理-kubernetes中创建应用"></a>2.应用管理-kubernetes中创建应用</h4><p>注：“集群”中填写jms能够访问到的集群地址，此处填写TKE提供的内网ip地址<br>![输入集群地址]<img height="60%" src="/images/jumpserver-input_cluster_addr.png" width="60%"/></p>
-<h4 id="3-赋权后即可访问k8s集群信息，测试"><a href="#3-赋权后即可访问k8s集群信息，测试" class="headerlink" title="3.赋权后即可访问k8s集群信息，测试"></a>3.赋权后即可访问k8s集群信息，测试</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Jumpserver</category>
-      </categories>
-      <tags>
-        <tag>jumpserver</tag>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>OpenSSH Update</title>
     <url>/2018/02/09/OpenSSH-Update/</url>
     <content><![CDATA[<p>由于公司安全需要，OpenSSH要加固，需升级至当前最新版本OpenSSH_7.6p1<br>环境：CentOS6.8 x64</p>
@@ -686,1156 +1744,154 @@
       </tags>
   </entry>
   <entry>
-    <title>xiaochao</title>
-    <url>/2018/03/25/xiaochao/</url>
-    <content><![CDATA[<p>日常小小抄</p>
+    <title>CentOS7.4 install vsftp</title>
+    <url>/2018/02/09/CentOS7-4-install-vsftp/</url>
+    <content><![CDATA[<p>CentOS7.4安装vsftp及配置<br>vsftp版本：vsftpd-3.0.2-22.el7.x86_64</p>
 <span id="more"></span>
-<h4 id="2024-8-16"><a href="#2024-8-16" class="headerlink" title="2024.8.16"></a>2024.8.16</h4><p>《题龙阳县青草湖》 元 唐珙<br>西风吹老洞庭波，一夜湘君白发多。<br>醉后不知天在水，满船清梦压星河。</p>
-<h4 id="2022-3-25-17-26"><a href="#2022-3-25-17-26" class="headerlink" title="2022.3.25 17:26"></a>2022.3.25 17:26</h4><p>山清水秀太阳高，好呀么好风飘<br>小小滴船儿撑过来，一路摇呀摇<br>为了那心上的人，起呀么起的早<br>也不管那路遥遥，情愿多辛劳<br>山清水秀太阳高，好呀么好风飘<br>我一心想着他，想的是好心焦</p>
-<h4 id="2021-4-12-12-30"><a href="#2021-4-12-12-30" class="headerlink" title="2021.4.12 12:30"></a>2021.4.12 12:30</h4><p>豫章太守顾劭，是雍之子。邵在军卒。雍盛集僚属自围棋，外启信至，而无儿书，虽神气不变，而心了其故，以爪掐掌，血流沾褥<br>戍卒叫，函谷举，楚人一炬，可怜焦土<br>乘兴踏月，西入酒家，不觉人物两忘，身在世外。夜来月下卧醒，花影零乱，满人衿袖，疑如濯魄于冰壶也</p>
-<h4 id="2021-2-25-00-00"><a href="#2021-2-25-00-00" class="headerlink" title="2021.2.25 00:00"></a>2021.2.25 00:00</h4><p>有钱人喜欢说“钱不是万能的”，长得好看的人喜欢说“长得好看有什么用”，瘦子喜欢说“其实胖一点好，健康”，努力的人喜欢说“努力并非决定性因素”。他们只是虚伪地随口说说，这些都是套路，你却都认真地信了。</p>
-<h4 id="2020-10-23-21-03"><a href="#2020-10-23-21-03" class="headerlink" title="2020.10.23 21:03"></a>2020.10.23 21:03</h4><p>僵卧孤村不自哀，尚思为国戍轮台</p>
-<h4 id="2020-9-21-17-22"><a href="#2020-9-21-17-22" class="headerlink" title="2020.9.21 17:22"></a>2020.9.21 17:22</h4><p>文素：”没有人对我的伤害使我成长了，使我更强大了，我也不会感谢他，他伤害了我只能说明他很差劲，凭什么感谢，是我自己熬过来的，我只感谢我自己。”</p>
-<h4 id="2020-9-12-14-26"><a href="#2020-9-12-14-26" class="headerlink" title="2020.9.12 14:26"></a>2020.9.12 14:26</h4><p>如果把知识点比作砖块，那我们脑海中的知识结构就是一栋楼。有些人的楼且高且大抗震八级防风防火，有些人的楼摇摇欲坠处处安全隐患，有些人厚积薄发，有些人术有专攻——这栋楼的高度决定了一个人的思想的深度。<br>很多青少年会有一个阅读欲望特别强的时期，家长往往在少年读物中“乱花渐欲迷人眼”，不知道该给孩子看什么。此时最好的办法是给一套足够厚实的青少年百科大全，人文地理科技社会应有尽有，不要求孩子全部翻一遍，让孩子自己去挑其中喜欢的看。这种早期的阅读偏好往往来历不明却持续终生。我倾向于认为这是孩子先天的偏好，能标识出孩子的天赋所在。给一个小学四年级的孩子一套百科大全作生日礼物，等他高一的时候再去看看哪一本学科被翻得最破——这些信息可以用来帮助孩子正确地认识自己，为孩子选择高中文理科，或是选择大学的专业，提供非常有力的依据。<br>在这里，百科大全就起到了“初建知识结构”的作用，它是孩子茫茫书海中的导航，是信息储备大厦的设计蓝图。越早构建出这个结构，就能越早让人在接收信息中做到“系统地搬砖”，使信息管理的效率越早提升。<br>根据个人学习内容的不同，成年后每个人的知识结构会长得不太一样。<br>想象力：基于已知信息的截取、拼接、重组信息的能力<br>想象力的重点：1.截取什么样的信息组装，这决定了想象力的广度；2.如何有逻辑地自洽地将信息组装，这决定了想象力的深度。优秀的想象力需要将这二者合为一体。<br>&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;—-《如何成为一个有趣的人》-知识结构的不同类型<br>“人无癖不可与交，以其无深情也。”；“人无疵不可与交，以其无真气也” —-张岱<br>邓布利多说：“决定我们成为什么人的，不是我们的能力，而是我们的选择。”</p>
-<h4 id="2020-9-11-20-34"><a href="#2020-9-11-20-34" class="headerlink" title="2020.9.11 20:34"></a>2020.9.11 20:34</h4><p>微语录精选1015<br>微信朋友圈越来越不能看，都是些三观不正的鸡汤。所谓的努力都是围着钱打转，没半点灵魂的痕迹。这代人大部分都很浅，很浅。活个高兴吧，虽然高兴过后都是一地鸡毛。平静的午后，灵魂的小憩，让刚放下锄把子的城一代理解比较难。</p>
-<h4 id="2020-9-10-12-37"><a href="#2020-9-10-12-37" class="headerlink" title="2020.9.10 12:37"></a>2020.9.10 12:37</h4><p>知识结构的“广度”是一个人“有聊”还是“无聊”的关键，而知识结构的“深度”是一个人“肤浅”还是“深刻”的关键。<br>“深刻”与否正是“有趣”和“逗比”的核心差别。<br>一个深刻的人不仅仅需要知道这是什么，还要知道“这为什么是”“这和其他信息有什么关联”“这个知识点在我的知识结构中处于什么位置”。<br>这个知识体系纵深的程度，就是我们所说的一个人的“深度”。</p>
-<h4 id="2019-6-26-14-26"><a href="#2019-6-26-14-26" class="headerlink" title="2019.6.26 14:26"></a>2019.6.26 14:26</h4><p>天地有大美，美的是自然；流水不争先，争的是滔滔不绝</p>
-<h4 id="2019-6-25-14-48"><a href="#2019-6-25-14-48" class="headerlink" title="2019.6.25 14:48"></a>2019.6.25 14:48</h4><p>我本无意穿堂风， 偏偏孤倨引山洪</p>
-<h4 id="2019-06-18-09-02"><a href="#2019-06-18-09-02" class="headerlink" title="2019.06.18 09:02"></a>2019.06.18 09:02</h4><p>倾听：倾听与听不同，倾听是解读别人所说信息的过程，包含听到、专注、理解、回应、记忆五大元素。可以获得更多信息，对对方有更多了解。倾听能让对方感觉到自己被尊重，所以才会跟你分享更多的信息。<br>倾听不仅仅只是听，还要思考，要思考更深层的原因，不要被表象所迷惑。</p>
-<h4 id="2019-06-13-17-55"><a href="#2019-06-13-17-55" class="headerlink" title="2019.06.13 17:55"></a>2019.06.13 17:55</h4><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzNzM5MTI0Nw==&mid=2247491492&idx=5&sn=ff89fda8279741c86f61d51da7a972c9&chksm=e8c80344dfbf8a52ec81d2ab216290d11ecf00c3255761a676b54bd75a837f4683cfdf77a219&scene=0&xtrack=1&key=b0ebf1a5d52c1bb69fb06bc850c8f16b7a8b31c4c30dac1069cdbb9cbd7800680df64e4c487dd11c13db023f62a056d326ec185cf22da40f5b95cc43632442c15ee018aa2a07fff516c585dbefacda81&ascene=1&uin=MTQxMDYwNzEwMg==&devicetype=Windows+10&version=62060833&lang=zh_CN&pass_ticket=o8+DH7X5izJrv5TEIiQCIHVApW8nc54nKIqNJF19l7IXFi8tp06NWD5Puk9fg6PU">摘抄地址</a><br>上兵伐谋，不战而胜，冷静的把问题解决掉，才是解决争执的最高境界。<br>2：上兵伐谋<br>但是，为什么大多数人都做不到这一步呢？<br>吵架时真正的敌人不是吵架的对手，而是自己的情绪，藏在我们身体里的“情绪”，才是我们每个人最大的敌人。<br>也就是说我们是被自己的情绪牵着走的，吵架最后往往变成了同自己情绪斗争的过程。<br>人生最大的敌人是自己，战胜别人容易，战胜自己太难。<br>人一旦被情绪左右，心魔就会趁机而出，很多冲动行为就是这样导致的，一时的冲动造成终身后悔的事情比比皆是。<br>所以，在被激怒的时刻，千万不要当即回击，不妨先在内心里从1数到10，然后再去交流和沟通，这是个很好的办法。</p>
-<p>3：收益最大化<br>和别人吵架过程中，最需要防范的一点是什么呢？<br>中国人斗争的哲学里最狠的一招是这样的：先站在道德制高点上打倒一个人，给她扣上一顶道德败坏的帽子，从人品上否定一个人，这样她所说的一切，做的一切辩驳都是苍白的。<br>这其实是兵法的上上策：诛人先诛心。<br>这一招用好了，可以直接把对方逼崩溃，有理说不清，越说越乱。<br>更有甚者，是先给对方扣上一顶帽子，然后尽情往对方身上泼脏水……<br>要是照这个节奏下去，对方就只剩下一个出路，那就是和你同归于尽。<br>因此，我们千万不要做这种泼妇式的人身攻击，但是当遇到这种攻击的时候，我们应该怎么做呢？<br>三十六计，走为上计。置之不理的最好的方式，就好像一条疯狗咬了你，你不能用嘴去咬它，你应该避开对方的纠缠，寻求对你利益最大化的解决方案，<br>能屈能伸是条龙，暂时的隐忍不代表认输，而是寻求可以一招制敌的最佳时机！<br>4：弱者易怒如虎，强者平静如水<br>真正的高手，从来不会和人吵架，因为他们太善于沟通。<br>沟通，是解决吵架的最好方案。<br>很多人会说，在那样的时刻已经无法做到沟通了。<br>首先，我们不能要求别人冷静又理性，我们要做的是让自己时刻保持镇定，我们说每一句话都要先在大脑里过滤一遍，想想这句话是否超出了事情本身，不要可只顾自己说出来痛快，就忽略他人的感受。</p>
-<p>场景分析：当对方开始说：“你真自私！”。你如果直接反击：“那你呢？你又好到那边去？！”，这样会马上升级到人格斗争的节奏<br>应该静下心来问一下对方：“为什么你这么觉得，我做了什么事情让你感觉这样子？”然后仔细倾听对方发出的有效信息。<br>一个真正厉害的人，非常善于筛选出对方发出的有效信息，过滤并忽略掉对方情绪化的语言！<br>弱者易怒如虎，强者平静如水。对着别人大吼，是最无能的表现。<br>如果对方提出的事实，你觉得是错误的。你也应该要讲出真正的事实，当对方表示不满意，你一定要让对方提出具体不满意的地方，总之一切围绕矛盾本身去探讨，而不是给矛盾升级。<br>尊重对手是大格局表现其中之一<br>尊重你的对手，聆听对方的难处，站在对方角度考虑问题，当你做到了这一步，你就没有了对手，五湖四海皆朋友。<br>无敌，不是打败了所有人，而是没有一个人与你为敌。</p>
-<h4 id="2019-05-29-13-39"><a href="#2019-05-29-13-39" class="headerlink" title="2019.05.29 13:39"></a>2019.05.29 13:39</h4><p>来都来了，多大点事，别太计较，都是亲戚，看我面子，大过节的，吃亏是福，为了你好</p>
-<h4 id="2018-09-26-16-17"><a href="#2018-09-26-16-17" class="headerlink" title="2018.09.26 16:17"></a>2018.09.26 16:17</h4><p>人生没有白走的路，每一步都算数。</p>
-<h4 id="2018-09-21-21-31"><a href="#2018-09-21-21-31" class="headerlink" title="2018.09.21 21:31"></a>2018.09.21 21:31</h4><p>总之，从今天开始努力，哪怕每天比前一天早睡10分钟，珍爱生命，远离熬夜<br>毕竟，有勇气结束今天，才能开启一个更美好的明天。<br>人生的核心问题，就是自律<br>生命是一个不可控的进度表，你永远不会知道，未来和意外哪个先来。<br>身体是每个人的神殿，不管里面供奉的是什么，都应该好好保持它的强韧、美丽和清洁。不要用熬夜来破坏他！<br>没有任何事，值得你用健康换。</p>
-<h4 id="2018-09-12-12-51"><a href="#2018-09-12-12-51" class="headerlink" title="2018.09.12 12:51"></a>2018.09.12 12:51</h4><p>你觉得你在经历一片未知的黑暗领域，很无助很孤独很害怕，但是你要相信，在这片黑暗里有千万人与你同行，而每一个人都在努力想活下去。</p>
-<h4 id="2018-03-25-10-15"><a href="#2018-03-25-10-15" class="headerlink" title="2018.03.25 10:15"></a>2018.03.25 10:15</h4><p>知世故而不世故，才是真正的少年。<br>被伤害过依然能倾心以赴赤诚相待，才是真正的少年。</p>
-<hr>
-<p>网上曾经流传一句话“中年男人不如狗”。<br>说得有理有据：</p>
-<p>1.年龄逐渐增长，身体机能随之下降，多种病症出现。</p>
-<p>2.他们在家中承担起抚养父母妻儿的责任，在社会上如果没有体面的工作就要忍气吞声。天能塌，他们不能。</p>
-<p>3.男人年轻的时候都想着仗剑走天涯，惦记着诗和远方，后来工作太忙钱不够就没去。</p>
-<p>4.生而为人，无法避免被“比较”。从小到大向来如此，小时候的敌人是别人家的孩子，长大之后是别人家的丈夫，再往后是别人家的父亲。</p>
-<hr>
-<p>知乎上也有这样一个问题：</p>
-<p>“为什么那么多男人开车回家，到了楼下还要在车里坐好久？”</p>
-<p>有一个回答获得了高分点赞：</p>
-<p>“很多时候我也不想下车，因为那是一个分界点。在车上，一个人静一静，抽根烟，发会呆这个躯体属于自己；但推开车门，你就是柴米油盐，是父亲、是儿子、是老公，唯独不是你自己。我们把真实的自己藏在车里；打开车门出去，哪怕是哭着爬着，也只能把被人寄予厚望的身份扮演下去。”</p>
-<hr>
-<p>张泉灵 教育孩子，两件事优先级要靠前：<br>   原文地址：<a href="https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0">https://m.igetget.com/share/audio/aid/exAnd8uPMN9Zg00pSGg0</a><br>1.孩子有没有情商，也就是孩子有没有认知自己的情绪和行为、认知周围人的情绪和行为，以及和别人相处的能力。<br>2.孩子能不能培养起属于自己的学习方法论，是否有一个知识框架。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>booklist</title>
-    <url>/2018/11/10/booklist/</url>
-    <content><![CDATA[<p>一日不读书、不思考便觉自己在堕落</p>
-<span id="more"></span>
-<p>1.每年看至少一部人物传记</p>
-<h3 id="传记"><a href="#传记" class="headerlink" title="传记"></a>传记</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">11</td>
-<td align="left"><a href="https://book.douban.com/subject/30850627/">雍正大传：朕就是这样的汉子</a></td>
-<td align="left">作者: 关河五十州</td>
-<td align="left">2024.8.27</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">10</td>
-<td align="left"><a href="https://book.douban.com/subject/26695192/">李鸿章传</a></td>
-<td align="left">作者: 梁启超</td>
-<td align="left">2022.2.16~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">9</td>
-<td align="left"><a href="https://book.douban.com/subject/30377678/">曾国藩传</a></td>
-<td align="left">作者: 张宏杰</td>
-<td align="left">2022.2.16~2022.3.8</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">8</td>
-<td align="left"><a href="https://book.douban.com/subject/1037602/">别闹了，费曼先生</a></td>
-<td align="left">作者: [美] 理查德·费曼 译者: 吴程远</td>
-<td align="left">2022.2.13~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="left"><a href="https://book.douban.com/subject/26939269/">只是孩子</a></td>
-<td align="left">作者: [美] 帕蒂·史密斯 译者: 刘奕</td>
-<td align="left">2022.2.13~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="left"><a href="https://book.douban.com/subject/3054821/">渴望生活：梵高传</a></td>
-<td align="left">作者: [美] 欧文·斯通 译者: 常涛</td>
-<td align="left">2022.2.13~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="left"><a href="https://book.douban.com/subject/35183968/">达·芬奇传：自由的心灵</a></td>
-<td align="left">作者: [英] 查尔斯·尼科尔 译者: 李昕宇</td>
-<td align="left">2022.2.13~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="left"><a href="https://book.douban.com/subject/6152040/">维特根斯坦传</a></td>
-<td align="left">作者: [英] 瑞·蒙克 译者: 王宇光</td>
-<td align="left">2022.2.13~</td>
-<td align="center">2%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="left"><a href="https://book.douban.com/subject/4925193/">从文自传</a></td>
-<td align="left">作者: 沈从文 &#x2F; 卓雅 选编、摄影</td>
-<td align="left">2022.2.13~2022.2.21</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="left"><a href="https://book.douban.com/subject/26664352/">褚时健传</a></td>
-<td align="left">周桦</td>
-<td align="left">2019.11.9~2019.12</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left"><a href="https://book.douban.com/subject/20427187/">看见</a></td>
-<td align="left">柴静</td>
-<td align="left">2019.4</td>
-<td align="center">100%</td>
-</tr>
-</tbody></table>
-<h3 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">9</td>
-<td align="left"><a href="https://book.douban.com/subject/26704403/">二手时间</a></td>
-<td align="left">作者: [白俄] S. A. 阿列克谢耶维奇 译者: 吕宁思</td>
-<td align="left">2022.2.26~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">8</td>
-<td align="left"><a href="https://book.douban.com/subject/33446823/">民族的重建: 波兰、乌克兰、立陶宛、白俄罗斯：1569-1999</a></td>
-<td align="left">作者: [美]蒂莫西·斯奈德 译者: 潘梦琦</td>
-<td align="left">2022.2.26~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="left"><a href="https://book.douban.com/subject/1456105/">乌克兰: 沉重的历史脚步</a></td>
-<td align="left">作者: 赵云中</td>
-<td align="left">2022.2.26~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="left"><a href="https://book.douban.com/subject/26983915/">欧洲之门: 乌克兰2000年史</a></td>
-<td align="left">作者: [美] 浦洛基 译者: 曾毅</td>
-<td align="left">2022.2.26~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="left"><a href="https://book.douban.com/subject/26305373/">慈禧全传</a></td>
-<td align="left">高阳</td>
-<td align="left">2021.4.8~</td>
-<td align="center">29%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="left"><a href="https://book.douban.com/subject/30248326/">罗马帝国衰亡史</a></td>
-<td align="left">作者: [英]爱德华·吉本 译者: 席代岳</td>
-<td align="left">2022.2.13~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="left"><a href="https://book.douban.com/subject/27093233/">历史的温度</a></td>
-<td align="left">张玮</td>
-<td align="left">2022.1.17~2022.2.13</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="left"><a href="https://book.douban.com/subject/26851890/">虚构的犹太民族</a></td>
-<td align="left">作者: [以色列] 施罗默·桑德 译者: 王岽兴 &#x2F; 张蓉</td>
-<td align="left">2021</td>
-<td align="center">3%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left">明朝那些事儿</td>
-<td align="left">当年明月</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-</tbody></table>
-<h3 id="自然科学"><a href="#自然科学" class="headerlink" title="自然科学"></a>自然科学</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">5</td>
-<td align="left"><a href="https://book.douban.com/subject/35200726/">跑步治愈</a></td>
-<td align="left">张展晖</td>
-<td align="left">2024.8~</td>
-<td align="center">43%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="left"><a href="https://book.douban.com/subject/35033507/">数学之美(第三版)</a></td>
-<td align="left">吴军</td>
-<td align="left">2020.11.08~</td>
-<td align="center">15%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="left"><a href="https://book.douban.com/subject/33944838/">考试脑科学:脑科学中的高效记忆法</a></td>
-<td align="left">作者: [日]池谷裕二 译者: 高宇涵</td>
-<td align="left">2021.7.15~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="left"><a href="https://book.douban.com/subject/10779597/">思考的乐趣:Matrix67数学笔记</a></td>
-<td align="left">顾森</td>
-<td align="left">2021.5.25~</td>
-<td align="center">2%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left"><a href="https://book.douban.com/subject/34842793/">薄世宁医学通识讲义</a></td>
-<td align="left">薄世宁</td>
-<td align="left">2021.2.22~</td>
-<td align="center">1%</td>
-</tr>
-</tbody></table>
-<h3 id="艺术"><a href="#艺术" class="headerlink" title="艺术"></a>艺术</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">7</td>
-<td align="left"><a href="https://book.douban.com/subject/33159342/">托林寺壁画&#x2F;典藏中国·中国古代壁画精粹</a></td>
-<td align="left">何鸿 王谦 谢斌</td>
-<td align="left">2024.4.05</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="left"><a href="https://book.douban.com/subject/36029725/">手艺里的中国：指尖上的华夏文明之美</a></td>
-<td align="left">李武望</td>
-<td align="left">2022.8.29~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="left"><a href="https://book.douban.com/subject/26808220/">与古为徒和娟娟发屋</a></td>
-<td align="left">白谦慎</td>
-<td align="left">2021.6.29~2021.7.11</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="left"><a href="https://book.douban.com/subject/35396166/">中国这100年（《黑镜头》20周年纪念版）</a></td>
-<td align="left">顾仲彝</td>
-<td align="left">2021.5.22~2021.6.1</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="left"><a href="https://book.douban.com/subject/30427425/">牛津通识读本：电影</a></td>
-<td align="left">作者: [英]迈克尔·伍德 译者: 康建兵 &#x2F; 张烨颖</td>
-<td align="left">2021.4.2~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="left"><a href="https://book.douban.com/subject/26895292/">编剧自我修养</a></td>
-<td align="left">顾仲彝</td>
-<td align="left">2021.4.7~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="left"><a href="https://book.douban.com/subject/26602858/">摄影笔记</a></td>
-<td align="left">宁思潇潇</td>
-<td align="left">2021.4.18~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left"><a href="https://book.douban.com/subject/35164843/">手机摄影笔记：一场脑洞大开的视觉之旅</a></td>
-<td align="left">李硕</td>
-<td align="left">2021.4.12~</td>
-<td align="center">2%</td>
-</tr>
-</tbody></table>
-<h3 id="金融理财"><a href="#金融理财" class="headerlink" title="金融理财"></a>金融理财</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">2</td>
-<td align="left"><a href="https://book.douban.com/subject/35295592/">小狗钱钱</a></td>
-<td align="left">[德]博多·舍费尔 译者: 文燚</td>
-<td align="left">2021.3.17~2021.3.21</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left"><a href="https://book.douban.com/subject/34925762/">钱从哪里来-中国家庭的财富方案</a></td>
-<td align="left">唐涯</td>
-<td align="left">2021.1.12-2021.1.19</td>
-<td align="center">100%</td>
-</tr>
-</tbody></table>
-<h3 id="心理学"><a href="#心理学" class="headerlink" title="心理学"></a>心理学</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">2</td>
-<td align="left"><a href="https://book.douban.com/subject/26286031/">心理学与生活</a></td>
-<td align="left">作者: [美] 理查德·格里格 &#x2F; [美] 菲利普·津巴多 译者: 王垒 &#x2F; 等</td>
-<td align="left">2021.5.31~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left"><a href="https://book.douban.com/subject/35023259/">这才是心理学（第11版）-看穿伪科学的批判性思维</a></td>
-<td align="left">[加拿大] 基思·斯坦诺维奇</td>
-<td align="left">2021.2.22~</td>
-<td align="center">1%</td>
-</tr>
-</tbody></table>
-<h3 id="IT技术"><a href="#IT技术" class="headerlink" title="IT技术"></a>IT技术</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th>作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">10</td>
-<td align="left"><a href="https://book.douban.com/subject/33474750/">浪潮之巅（第四版）（上下册）</a></td>
-<td>吴军</td>
-<td align="left">2021.1.25~</td>
-<td align="center">50%</td>
-</tr>
-<tr>
-<td align="center">9</td>
-<td align="left"><a href="https://book.douban.com/subject/24737674/">图解TCP&#x2F;IP</a></td>
-<td>[日]竹下隆史 &#x2F; [日]村山公保 &#x2F; [日]荒井透 &#x2F; [日]苅田幸雄 &#x2F; 【乌尼日其其格译】</td>
-<td align="left">2019</td>
-<td align="center">20%</td>
-</tr>
-<tr>
-<td align="center">8</td>
-<td align="left">深入浅出Prometheus：原理、应用、源码与拓展详解</td>
-<td>陈晓宇 &#x2F; 杨川胡 &#x2F; 陈啸</td>
-<td align="left">2019</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="left">Kubernetes权威指南——企业级容器云实战</td>
-<td>闫健勇 &#x2F; 龚正 &#x2F; 吴治辉 &#x2F; 刘晓红 &#x2F; 崔秀龙</td>
-<td align="left">2019</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="left"><a href="https://book.douban.com/subject/26644070/">凤凰项目</a></td>
-<td>基恩·金 (Gene Kim) &#x2F; 凯文·贝尔 (Kevin Behr) &#x2F; 乔治·斯帕福德 (George Spafford) 【成小留】</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="left">每天5分钟玩转Docker</td>
-<td>CloudMan</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="left">每天5分钟玩转Kubernetes</td>
-<td>CloudMan</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="left"><a href="https://book.douban.com/subject/4843567/">深入Linux内核架构</a></td>
-<td>［德］Wolfgang Mauerer【郭旭译】</td>
-<td align="left">2015~</td>
-<td align="center">10%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="left">DevOps</td>
-<td>［美］Sanjeev Sharma【万金译】</td>
-<td align="left">2018.10</td>
-<td align="center">30%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left"><a href="https://book.douban.com/subject/27028517/">流畅的Python</a></td>
-<td>［巴西］Luciano Ramalho【安道、吴珂译】</td>
-<td align="left">2017~</td>
-<td align="center">80%</td>
-</tr>
-</tbody></table>
-<h3 id="小说"><a href="#小说" class="headerlink" title="小说"></a>小说</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">53</td>
-<td align="left"><a href="https://book.douban.com/subject/36104107/">长安的荔枝</a></td>
-<td align="left">作者：马伯庸</td>
-<td align="left">2024.08</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">52</td>
-<td align="left"><a href="https://book.douban.com/subject/36328704/">太白金星有点烦</a></td>
-<td align="left">作者：马伯庸</td>
-<td align="left">2024.08</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">51</td>
-<td align="left"><a href="https://book.douban.com/subject/36710597/">食南之徒</a></td>
-<td align="left">作者：马伯庸</td>
-<td align="left">2024.07.24~2024.07.27</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">50</td>
-<td align="left"><a href="https://book.douban.com/subject/25842260/">新选组血风录</a></td>
-<td align="left">作者：[日] 司马辽太郎 译者：张博</td>
-<td align="left">2023.09.14~</td>
-<td align="center">3%</td>
-</tr>
-<tr>
-<td align="center">49</td>
-<td align="left"><a href="https://book.douban.com/subject/27167519/">哈利波特全集</a></td>
-<td align="left">作者：J.K.罗琳 (J.K.Rowling) 译者：苏农 &#x2F; 马爱农 &#x2F; 马爱新</td>
-<td align="left">2023.06~2023.10.16</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">48</td>
-<td align="left"><a href="">彩绘古典四大名著</a></td>
-<td align="left">作者：林遥 成长 王典弋</td>
-<td align="left">2022.08.29~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">47</td>
-<td align="left"><a href="https://book.douban.com/subject/4007008/">城的灯</a></td>
-<td align="left">李佩甫</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">46</td>
-<td align="left"><a href="https://book.douban.com/subject/1322455/">遥远的救世主</a></td>
-<td align="left">作者: 豆豆</td>
-<td align="left">2022.6.12~2022.6.12</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">45</td>
-<td align="left"><a href="https://book.douban.com/subject/35623209/">张医生与王医生</a></td>
-<td align="left">作者: 伊险峰 &#x2F; 杨樱</td>
-<td align="left">2021.12~</td>
-<td align="center">3%</td>
-</tr>
-<tr>
-<td align="center">44</td>
-<td align="left"><a href="https://book.douban.com/subject/25714176/">雪中悍刀行</a></td>
-<td align="left">烽火戏诸侯</td>
-<td align="left">2022.1~</td>
-<td align="center">10%</td>
-</tr>
-<tr>
-<td align="center">43</td>
-<td align="left"><a href="https://book.douban.com/subject/27074861/">东京一年</a></td>
-<td align="left">蒋方舟</td>
-<td align="left">2021.11.8~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">42</td>
-<td align="left"><a href="https://book.douban.com/subject/25769810/">最寒冷的冬天·血战长津湖</a></td>
-<td align="left">何楚舞 &#x2F; 凤鸣 &#x2F; 陆宏宇</td>
-<td align="left">2021.10.9~2021.11</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">41</td>
-<td align="left"><a href="https://book.douban.com/subject/32568108/">阿西莫夫科幻圣经：银河帝国(1-15大全集)</a></td>
-<td align="left">作者: 艾萨克·阿西莫夫</td>
-<td align="left">2021.7.15~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">40</td>
-<td align="left"><a href="https://book.douban.com/subject/21979017/">魔戒</a></td>
-<td align="left">作者:  [英国] J·R·R·托尔金 译者: 邓嘉宛 &#x2F; 石中歌 &#x2F; 杜蕴慈</td>
-<td align="left">2021.7.15~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">39</td>
-<td align="left"><a href="https://book.douban.com/subject/25853918/">红楼梦断</a></td>
-<td align="left">高阳</td>
-<td align="left">2021.5.30~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">38</td>
-<td align="left"><a href="https://book.douban.com/subject/33446904/">烧火工</a></td>
-<td align="left">刘慈欣 著 &#x2F; BUTU 绘</td>
-<td align="left">2021.4.9~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">37</td>
-<td align="left"><a href="https://book.douban.com/subject/6313496/">卡拉马佐夫兄弟</a></td>
-<td align="left">作者:  [俄] 费奥多尔·陀思妥耶夫斯基 译者: 荣如德</td>
-<td align="left">2021.3.13~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">36</td>
-<td align="left"><a href="https://book.douban.com/subject/35014816/">双城记</a></td>
-<td align="left">[英] 查尔斯·狄更斯 译者: 宋兆霖</td>
-<td align="left">2021.3.13~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">35</td>
-<td align="left"><a href="https://book.douban.com/subject/23858369/">十日谈</a></td>
-<td align="left">[意] 卜伽丘 译者: 方平 &#x2F; 王科一</td>
-<td align="left">2021.3.10~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">34</td>
-<td align="left"><a href="https://book.douban.com/subject/35080870/">两京十五日</a></td>
-<td align="left">马伯庸</td>
-<td align="left">2021.2.22-2021.3.4</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">33</td>
-<td align="left"><a href="https://book.douban.com/subject/30190228/">年羹尧之死</a></td>
-<td align="left">郑小悠</td>
-<td align="left">2021.1.23-2021.1.25</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">32</td>
-<td align="left"><a href="https://book.douban.com/subject/27104286/">寂寞的游戏</a></td>
-<td align="left">袁哲生</td>
-<td align="left">2021.1.23-2021.1</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">31</td>
-<td align="left"><a href="https://book.douban.com/subject/35005045/">夜晚的潜水艇</a></td>
-<td align="left">陈春成</td>
-<td align="left">2021.1.19-2021.1.23</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">30</td>
-<td align="left"><a href="https://book.douban.com/subject/35277887/">弃猫-当我谈起父亲时</a></td>
-<td align="left">村上春树</td>
-<td align="left">2021.1.10-2021.1.12</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">29</td>
-<td align="left"><a href="https://book.douban.com/subject/25852235/">查泰莱夫人的情人</a></td>
-<td align="left">[英] D. H. 劳伦斯</td>
-<td align="left">2020.12.8~2021.3.24</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">28</td>
-<td align="left"><a href="https://book.douban.com/subject/30163844/">镖人</a></td>
-<td align="left">许先哲</td>
-<td align="left">2021.1.6-2021.1.10</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">27</td>
-<td align="left"><a href="https://book.douban.com/subject/30297123/">基督山伯爵</a></td>
-<td align="left">[法]大仲马</td>
-<td align="left">2020.10.25-2020.11.8</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">26</td>
-<td align="left">西游记</td>
-<td align="left">吴承恩</td>
-<td align="left">2020.5</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">25</td>
-<td align="left"><a href="https://book.douban.com/subject/25900802/">我在底层的生活</a></td>
-<td align="left">[美] 芭芭拉·艾伦瑞克</td>
-<td align="left">2019.10</td>
-<td align="center">80%</td>
-</tr>
-<tr>
-<td align="center">24</td>
-<td align="left"><a href="https://book.qidian.com/info/3333529">道门法则</a></td>
-<td align="left">八宝饭</td>
-<td align="left">2019.11</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">23</td>
-<td align="left"><a href="https://book.douban.com/subject/33379779/">美国陷阱</a></td>
-<td align="left">[法] 弗雷德里克·皮耶鲁齐 &#x2F; [法] 马修·阿伦</td>
-<td align="left">2019.7</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">22</td>
-<td align="left"><a href="https://book.douban.com/subject/30306452/">极速写作</a></td>
-<td align="left">剑飞</td>
-<td align="left">2019.7</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">21</td>
-<td align="left"><a href="https://book.douban.com/subject/26899537/">长安十二时辰</a></td>
-<td align="left">马伯庸</td>
-<td align="left">2019.7</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">20</td>
-<td align="left"><a href="https://book.douban.com/subject/30475767/">人生海海</a></td>
-<td align="left">麦家</td>
-<td align="left">2019.6</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">19</td>
-<td align="left"><a href="https://book.douban.com/subject/25862578/">解忧杂货店</a></td>
-<td align="left">［日］东野圭吾</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">18</td>
-<td align="left"><a href="https://book.douban.com/subject/27115970/">秘密</a></td>
-<td align="left">［日］东野圭吾</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">17</td>
-<td align="left"><a href="https://book.douban.com/subject/11612936/">古董局中局</a></td>
-<td align="left">马伯庸</td>
-<td align="left">2018</td>
-<td align="center">10%</td>
-</tr>
-<tr>
-<td align="center">16</td>
-<td align="left"><a href="https://book.douban.com/subject/4071842/">路西法效应</a></td>
-<td align="left">［美］菲利普·津巴多【译】</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">15</td>
-<td align="left">趣味生活简史</td>
-<td align="left">［英］比尔·布莱森【严维明译】</td>
-<td align="left">2018</td>
-<td align="center">76%</td>
-</tr>
-<tr>
-<td align="center">14</td>
-<td align="left">天长地久</td>
-<td align="left">龙应台</td>
-<td align="left">2018.11</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">13</td>
-<td align="left">荆州杀</td>
-<td align="left">朱苏进、李蔷薇</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">12</td>
-<td align="left"><a href="https://book.douban.com/subject/6518605/">三体</a></td>
-<td align="left">刘慈欣</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">11</td>
-<td align="left">老人与海</td>
-<td align="left">海明威</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">10</td>
-<td align="left"><a href="https://book.douban.com/subject/26765928/">屠夫十字镇</a></td>
-<td align="left">［美］约翰·威廉斯【李广荣译】</td>
-<td align="left">2018</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">9</td>
-<td align="left">战天京</td>
-<td align="left">谭伯牛</td>
-<td align="left">2018</td>
-<td align="center">2%</td>
-</tr>
-<tr>
-<td align="center">8</td>
-<td align="left">琅琊榜</td>
-<td align="left">海晏</td>
-<td align="left">2017</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="left">藏地密码</td>
-<td align="left">何马</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="left">无尾狗</td>
-<td align="left">阿丁</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="left">水浒传</td>
-<td align="left">施耐庵</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="left">康熙大帝、雍正皇帝、乾隆皇帝</td>
-<td align="left">二月河</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="left">金瓶梅</td>
-<td align="left">兰陵笑笑生</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="left">杜月笙全传</td>
-<td align="left">【忘记】</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left">三国演义</td>
-<td align="left">罗贯中</td>
-<td align="left">&lt;2016</td>
-<td align="center">100%</td>
-</tr>
-</tbody></table>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><table>
-<thead>
-<tr>
-<th align="center">序号</th>
-<th align="left">书名</th>
-<th align="left">作者</th>
-<th align="left">时间</th>
-<th align="center">阅读状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">42</td>
-<td align="left"><a href="https://d.dedao.cn/FotqG9q7SwbTlI5t">边水往事</a></td>
-<td align="left">沈星星</td>
-<td align="left">2024.8.30</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">41</td>
-<td align="left"><a href="https://book.douban.com/subject/36314525/">安·兰德的小说写作课</a></td>
-<td align="left">[美] 安·兰德</td>
-<td align="left">2024.8~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">40</td>
-<td align="left"><a href="https://book.douban.com/subject/36392914/">安·兰德的非虚构写作课</a></td>
-<td align="left">[美] 安·兰德</td>
-<td align="left">2024.7~</td>
-<td align="center">32%</td>
-</tr>
-<tr>
-<td align="center">39</td>
-<td align="left"><a href="https://book.douban.com/subject/6811366/">禅与摩托车维修艺术</a></td>
-<td align="left">罗伯特•M.波西格 (Robert M.Pirsig) 译者: 张国辰</td>
-<td align="left">2024.8~</td>
-<td align="center">12%</td>
-</tr>
-<tr>
-<td align="center">38</td>
-<td align="left"><a href="https://book.douban.com/subject/35960123/">复盘工作法</a></td>
-<td align="left">王建和、宋晓亮</td>
-<td align="left">2022.8.19~</td>
-<td align="center">30%</td>
-</tr>
-<tr>
-<td align="center">37</td>
-<td align="left"><a href="https://book.douban.com/subject/35870746/">阅读的方法</a></td>
-<td align="left">罗振宇</td>
-<td align="left">2022.4.28~2022.6.9</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">36</td>
-<td align="left"><a href="https://book.douban.com/subject/35754843/">精进3 : 找到你的潜在生态位</a></td>
-<td align="left">作者: 采铜</td>
-<td align="left">2022.2.21~2022.2.24</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">35</td>
-<td align="left"><a href="https://book.douban.com/subject/35178772/">如何高质量睡眠：修复并保持最佳身体和精神状态的操作系统</a></td>
-<td align="left">作者: 英）迈克尔·阿克顿·史密斯 译者: 白洁</td>
-<td align="left">2022.1~</td>
-<td align="center">20%</td>
-</tr>
-<tr>
-<td align="center">34</td>
-<td align="left"><a href="https://book.douban.com/subject/30367990/">写作这回事：创作生涯回忆录</a></td>
-<td align="left">作者: [美] 斯蒂芬·金 译者: 张坤</td>
-<td align="left">2022.1~</td>
-<td align="center">20%</td>
-</tr>
-<tr>
-<td align="center">33</td>
-<td align="left"><a href="https://book.douban.com/subject/35082304/">博弈论究竟是什么</a></td>
-<td align="left">万维钢</td>
-<td align="left">2021.9.1~2021.9.7</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">32</td>
-<td align="left"><a href="https://book.douban.com/subject/27167267/">人性的因素:毛姆短篇小说全集2</a></td>
-<td align="left">作者: [英] 毛姆 译者: 陈以侃</td>
-<td align="left">2021.7.15~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">31</td>
-<td align="left"><a href="https://book.douban.com/subject/35496147/">有本事</a></td>
-<td align="left">冯唐</td>
-<td align="left">2021.7.11~2021.7.15</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">30</td>
-<td align="left"><a href="https://book.douban.com/subject/27111185/">女性贫困</a></td>
-<td align="left">[日] NHK特别节目录制组 译者: 李颖</td>
-<td align="left">2021.4.18~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">29</td>
-<td align="left"><a href="https://book.douban.com/subject/27086926/">活着活着就老了</a></td>
-<td align="left">冯唐</td>
-<td align="left">2021.4.18~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">28</td>
-<td align="left"><a href="https://book.douban.com/subject/35303843/">中国话</a></td>
-<td align="left">郑子宁</td>
-<td align="left">2021.4.9~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">27</td>
-<td align="left"><a href="https://book.douban.com/subject/35143751/">写作是门手艺</a></td>
-<td align="left">刘军强</td>
-<td align="left">2021.4.13~</td>
-<td align="center">6%</td>
-</tr>
-<tr>
-<td align="center">26</td>
-<td align="left"><a href="https://book.douban.com/subject/6794016/">如何成为一个怪物</a></td>
-<td align="left">冯唐</td>
-<td align="left">2021.3.21~2021.4.18</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">25</td>
-<td align="left"><a href="https://book.douban.com/subject/3369600/">当我谈跑步时我谈些什么</a></td>
-<td align="left">[日] 村上春树 译者:  施小炜</td>
-<td align="left">2021.4.10~2021.4.11</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">24</td>
-<td align="left"><a href="https://book.douban.com/subject/33459665/">高效写作</a></td>
-<td align="left">刘主编</td>
-<td align="left">2021.3.4~</td>
-<td align="center">3%</td>
-</tr>
-<tr>
-<td align="center">23</td>
-<td align="left"><a href="https://book.douban.com/subject/30314033/">无所畏</a></td>
-<td align="left">冯唐</td>
-<td align="left">2021.3.15~2021.3.21</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">22</td>
-<td align="left"><a href="https://book.douban.com/subject/34995224/">36岁，人生半熟</a></td>
-<td align="left">宽宽</td>
-<td align="left">2021.3.9~2021.3.17</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">21</td>
-<td align="left">桃花源记（绘本）</td>
-<td align="left">陶渊明 著；鞠占圃 绘</td>
-<td align="left">2021.2.21~2021.2.21</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">20</td>
-<td align="left"><a href="https://book.douban.com/subject/35171309/">味道的传承：影响中国菜的那些人</a></td>
-<td align="left">王硕 董克平 兰明路 屈浩 周晓燕</td>
-<td align="left">2021.2.18~</td>
-<td align="center">3%</td>
-</tr>
-<tr>
-<td align="center">19</td>
-<td align="left"><a href="https://book.douban.com/subject/25749845/">把时间当做朋友(第三版)</a></td>
-<td align="left">李笑来</td>
-<td align="left">2021.2.04~2021.2.22</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">18</td>
-<td align="left"><a href="https://book.douban.com/subject/30377427/">陆羽茶经：经典本</a></td>
-<td align="left">王建荣</td>
-<td align="left">2020.9~</td>
-<td align="center">1%</td>
-</tr>
-<tr>
-<td align="center">17</td>
-<td align="left"><a href="https://book.douban.com/subject/30346218/">态度-吴军家书</a></td>
-<td align="left">吴军</td>
-<td align="left">2020.9~</td>
-<td align="center">34%</td>
-</tr>
-<tr>
-<td align="center">16</td>
-<td align="left"><a href="https://book.douban.com/subject/27055728/">如何成为一个有趣的人</a></td>
-<td align="left">王小圈</td>
-<td align="left">2020.9~2020.9.29</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">15</td>
-<td align="left"><a href="https://book.douban.com/subject/34464343/">学会呼吸-重新掌握天生本能</a></td>
-<td align="left">[爱尔兰] 帕特里克·麦基翁 &#x2F; Patrick McKeown</td>
-<td align="left">2020.8~</td>
-<td align="center">13%</td>
-</tr>
-<tr>
-<td align="center">14</td>
-<td align="left"><a href="https://book.douban.com/subject/35082292/">学习究竟是什么</a></td>
-<td align="left">万维钢</td>
-<td align="left">2020.6~2020.9.6</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">13</td>
-<td align="left"><a href="https://book.douban.com/subject/24257229/">鼠疫</a></td>
-<td align="left">(法)阿尔贝·加缪</td>
-<td align="left">2020.5~</td>
-<td align="center">50%</td>
-</tr>
-<tr>
-<td align="center">12</td>
-<td align="left"><a href="https://book.douban.com/subject/26761696/">精进-如何成为一个很厉害的人</a></td>
-<td align="left">采铜</td>
-<td align="left">2019.4</td>
-<td align="center">15%</td>
-</tr>
-<tr>
-<td align="center">11</td>
-<td align="left">冥想</td>
-<td align="left">斯瓦米·拉玛 (Swami Rama)</td>
-<td align="left">2019.4</td>
-<td align="center">10%</td>
-</tr>
-<tr>
-<td align="center">10</td>
-<td align="left">技术：如何用一年时间获得十年经验</td>
-<td align="left">郝培强</td>
-<td align="left">2018.11</td>
-<td align="center">100%</td>
-</tr>
-<tr>
-<td align="center">9</td>
-<td align="left">习惯的力量</td>
-<td align="left">［美］查尔斯·都希格【吴奕俊、陈丽丽、曹烨译】</td>
-<td align="left">2018</td>
-<td align="center">20%</td>
-</tr>
-<tr>
-<td align="center">8</td>
-<td align="left">深度工作</td>
-<td align="left">［美］卡尔·纽波特【宋伟、后浪】</td>
-<td align="left">2018</td>
-<td align="center">70%</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="left">秒懂力</td>
-<td align="left">唐文</td>
-<td align="left">2018</td>
-<td align="center">67%</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="left">微习惯</td>
-<td align="left">［美］斯蒂芬·盖斯【桂君译】</td>
-<td align="left">2018</td>
-<td align="center">76%</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="left">刻意练习</td>
-<td align="left">［美］安德森·艾利克森、罗伯特普尔【王正林译】</td>
-<td align="left">2018</td>
-<td align="center">22%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="left">人类简史-从动物到上帝</td>
-<td align="left">［以色列］尤瓦尔·赫拉利【林俊宏译】</td>
-<td align="left">2018</td>
-<td align="center">54%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="left">如何高效学习</td>
-<td align="left">［加］斯科特·扬【程冕译】</td>
-<td align="left">2018</td>
-<td align="center">54%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="left">如何阅读一本书</td>
-<td align="left">［加］莫提默·J. 艾德勒、查尔斯·范多伦【 郝明义、朱衣译】</td>
-<td align="left">2018</td>
-<td align="center">50%</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left">好孩子：三分天注定，七分靠教育</td>
-<td align="left">洪兰、尹建莉</td>
-<td align="left">&lt;2016</td>
-<td align="center">82%</td>
-</tr>
-</tbody></table>
+
+<h1 id="安装vsftpd"><a href="#安装vsftpd" class="headerlink" title="安装vsftpd"></a>安装vsftpd</h1><p>查看是否已经安装vsftpd</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm -qa | grep vsftpd</span><br></pre></td></tr></table></figure>
+<p>如果没有，就安装，并设置开机启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure>
+<p>当前yum安装的FTP版本为：vsftpd-3.0.2-22.el7.x86_64</p>
+<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><p>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。<br>修改配置文件：<br>打开&#x2F;etc&#x2F;vsftpd&#x2F;vsftpd.conf，做如下配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">listen=YES</span><br><span class="line">anonymous_enable=NO //设定不允许匿名访问</span><br><span class="line">dirmessage_enable=YES</span><br><span class="line">allow_writeable_chroot=YES</span><br><span class="line"><span class="comment">#以下两行设置作用为启用日志</span></span><br><span class="line">dual_log_enable=YES</span><br><span class="line">vsftpd_log_file=/var/log/vsftpd.log</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">chroot_local_user=YES</span><br><span class="line">guest_enable=YES</span><br><span class="line">guest_username=admin</span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf //设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名</span><br><span class="line">pam_service_name=vsftpd //PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span><br><span class="line">local_enable=YES</span><br><span class="line">accept_timeout=60</span><br><span class="line">connect_timeout=60</span><br><span class="line">idle_session_timeout=60</span><br><span class="line">data_connection_timeout=120</span><br><span class="line"><span class="comment">#chown_uploads=YES</span></span><br><span class="line"><span class="comment">#chown_username=admin</span></span><br><span class="line"><span class="comment">#pasv_enable=YES</span></span><br><span class="line"><span class="comment">#pasv_max_port=60000</span></span><br><span class="line"><span class="comment">#pasv_min_port=20000</span></span><br></pre></td></tr></table></figure>
+<p>经验证，FTP3.0.2版本必须加参数：allow_writeable_chroot&#x3D;YES，6.8默认安装vsftpd-2.2.2-13.el6_6.1.x86_64不加也能生效，如果3.0.2不加此参数会报如下错误：<br>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>根本原因在于，从vsftpd_2.3.5版开始，取消了根目录的可写权限。因此，网上的普遍解决方案是以下两种：</p>
+<h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a-w /vaf/ftp</span><br></pre></td></tr></table></figure>
+<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>vim &#x2F;etc&#x2F;vsftpd.conf add the following</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure>
+<p>经验证，如果加上参数allow_writeable_chroot，即使去掉参数chroot_local_user&#x3D;YES，也可正常访问。<br>进行认证：<br>首先，安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install db4 db4-utils</span><br></pre></td></tr></table></figure>
+<p>然后，创建用户密码文本&#x2F;etc&#x2F;vsftpd&#x2F;vuser_passwd.txt ，注意奇行是用户名，偶行是密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">test</span></span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
+<p>接着，生成虚拟用户认证的db文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">db_load -T -t <span class="built_in">hash</span> -f /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br></pre></td></tr></table></figure>
+<p>随后，编辑认证文件&#x2F;etc&#x2F;pam.d&#x2F;vsftpd，全部注释掉原来语句，再增加以下两句：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br></pre></td></tr></table></figure>
+<p>mkdir &#x2F;etc&#x2F;vsftpd&#x2F;vuser_conf&#x2F;</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/vsftpd/vuser_conf/test //文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span><br><span class="line"></span><br><span class="line">write_enable=YES //可写</span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_enable=YES</span><br><span class="line">anon_mkdir_write_enable=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line">local_root=/httx/run/appdown/paasftpuser /虚拟用户根目录,根据实际情况修改</span><br></pre></td></tr></table></figure>
+<h4 id="设置Selinux"><a href="#设置Selinux" class="headerlink" title="设置Selinux"></a>设置Selinux</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setsebool -P ftp_home_dir=1   //设置ftp可以使用home目录</span><br><span class="line">sersebool -P allow_ftpd_full_access=1 //设置ftp用户可以有所有权限</span><br></pre></td></tr></table></figure>
+<p>设置FTP根目录权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /ftp/www   //创建目录</span><br><span class="line"><span class="built_in">chmod</span> R 755 /ftp</span><br><span class="line"><span class="built_in">chmod</span> R 750 /ftp/www</span><br></pre></td></tr></table></figure>
+<p>ftp访问目录权限尽量最小</p>
+<h4 id="设置防火墙"><a href="#设置防火墙" class="headerlink" title="设置防火墙"></a>设置防火墙</h4><p>打开&#x2F;etc&#x2F;sysconfig&#x2F;iptables<br>在“-A INPUT –m state –state NEW –m tcp –p –dport 22 –j ACCEPT”，下添加：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport 21 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>然后保存，并关闭该文件，在终端内运行下面的命令，刷新防火墙配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service iptables restart</span><br></pre></td></tr></table></figure>
+<p>OK，FTP搭建完成！</p>
 ]]></content>
       <categories>
-        <category>dayDayUp</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>书单</tag>
+        <tag>CentOS7.4</tag>
+        <tag>vsftp</tag>
       </tags>
   </entry>
   <entry>
-    <title>Sentry搭建</title>
-    <url>/2024/08/16/Sentry%E6%90%AD%E5%BB%BA/</url>
-    <content><![CDATA[<p>概要</p>
-<span id="more"></span>]]></content>
+    <title>CentOS7.4 update ntp</title>
+    <url>/2018/02/13/CentOS7-4-update-ntp/</url>
+    <content><![CDATA[<p>CentOS6.8 x86_64升级ntp-4.2.8p9.tar.gz</p>
+<span id="more"></span>
+
+<p>#准备工作</p>
+<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install gcc gcc-c++ openssl-devel libstdc++* libcap*</span><br></pre></td></tr></table></figure>
+<h2 id="备份旧版本的配置文件"><a href="#备份旧版本的配置文件" class="headerlink" title="备份旧版本的配置文件"></a>备份旧版本的配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> -ar /etc/ntp /etc/ntp.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf /etc/ntp.conf.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd /etc/init.d/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd /etc/sysconfig/ntpd.bak</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate /etc/sysconfig/ntpdate.bak</span><br></pre></td></tr></table></figure>
+<h2 id="卸载原ntpd服务"><a href="#卸载原ntpd服务" class="headerlink" title="卸载原ntpd服务"></a>卸载原ntpd服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y erase ntp ntpdate</span><br></pre></td></tr></table></figure>
+<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><h2 id="x2F-configure"><a href="#x2F-configure" class="headerlink" title=".&#x2F;configure"></a>.&#x2F;configure</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf ntp-4.2.8p10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ntp-4.2.8p10</span><br><span class="line">./configure --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --enable-linuxcaps --with-lineeditlibs=readline --docdir=/usr/share/doc/ntp-4.2.8p9 --enable-all-clocks --enable-parse-clocks --enable-clockctl</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<h2 id="创建配置"><a href="#创建配置" class="headerlink" title="创建配置"></a>创建配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> /etc/init.d/ntpd.bak /etc/init.d/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpd.bak /etc/sysconfig/ntpd</span><br><span class="line"><span class="built_in">cp</span> /etc/sysconfig/ntpdate.bak /etc/sysconfig/ntpdate</span><br><span class="line"><span class="built_in">mv</span> /etc/ntp.bak /etc/ntp</span><br><span class="line"><span class="built_in">cp</span> /etc/ntp.conf.bak /etc/ntp.conf</span><br></pre></td></tr></table></figure>
+<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ntp.conf</span><br></pre></td></tr></table></figure>
+<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service ntpd start</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS7</tag>
+        <tag>ntp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Django-route</title>
+    <url>/2018/03/10/Django-route/</url>
+    <content><![CDATA[<p>Django路由系统:动态路由、指定参数名、默认参数</p>
+<span id="more"></span>
+<h2 id="Django路由系统"><a href="#Django路由系统" class="headerlink" title="Django路由系统"></a>Django路由系统</h2><h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>urls.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> patterns, include,url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.views <span class="keyword">import</span> index, login, <span class="built_in">list</span></span><br><span class="line">urlpatterns = patterns(<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#一个参数</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(\d*)/(\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#两个参数，按顺序获取</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/(?P&lt;id&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>),  <span class="comment">#指定参数名,获取参数时名字必须为name, id</span></span><br><span class="line">    url(<span class="string">r&#x27;^list/(?P&lt;name&gt;\d*)/$&#x27;</span>, <span class="built_in">list</span>, &#123;<span class="string">&#x27;id&#x27;</span>:<span class="number">222</span>&#125;),  <span class="comment">#默认参数值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>views.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, id1, id2</span>):</span><br><span class="line">    <span class="built_in">print</span> <span class="built_in">id</span></span><br><span class="line">    <span class="built_in">print</span> id1, id2</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
+<p>指定参数名：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>(<span class="params">request, <span class="built_in">id</span>, name</span>):</span><br><span class="line">    <span class="built_in">print</span> name, <span class="built_in">id</span></span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
+<p>请求链接：<a href="http://localhost:9000/list/100">http://localhost:9000/list/100</a>         #一个参数<br>请求链接：<a href="http://localhost:9000/list/100/1000">http://localhost:9000/list/100/1000</a>    #两个参数<br>注：请求链接最后必须要加&#x2F;,如果不加，urls配置中必须要加上终止符：&#x2F;$,这样请求时会自动加上&#x2F;</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Django</tag>
+        <tag>路由系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux内核升级</title>
+    <url>/2020/11/02/Linux%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7/</url>
+    <content><![CDATA[<p>Linux内核大版本升级</p>
+<span id="more"></span>
+
+<h1 id="3-10内核升级至4-4"><a href="#3-10内核升级至4-4" class="headerlink" title="3.10内核升级至4.4"></a>3.10内核升级至4.4</h1><h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><p>腾讯云<br>Centos7.8<br>内核版本：3.10.0-1127.19.1.el7.x86_64</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>内核版本升级至当前最新稳定版：4.4.241-1.el7.elrepo.x86_64</p>
+<h2 id="kernel-3-10-gt-4-4升级步骤"><a href="#kernel-3-10-gt-4-4升级步骤" class="headerlink" title="kernel 3.10-&gt;4.4升级步骤"></a>kernel 3.10-&gt;4.4升级步骤</h2><h3 id="yum源修改"><a href="#yum源修改" class="headerlink" title="yum源修改"></a>yum源修改</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入公钥</span></span><br><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">升级安装ELRepo</span></span><br><span class="line">yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">载入elrepo-kernel 元数据</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel repolist</span><br></pre></td></tr></table></figure>
+<h3 id="查看可用rpm包"><a href="#查看可用rpm包" class="headerlink" title="查看可用rpm包"></a>查看可用rpm包</h3><p>yum –disablerepo&#x3D;* –enablerepo&#x3D;elrepo-kernel list kernel*</p>
+<h3 id="安装最新稳定版kernel"><a href="#安装最新稳定版kernel" class="headerlink" title="安装最新稳定版kernel"></a>安装最新稳定版kernel</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">lt：长期支持版本；ml：主线版本</span></span><br><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install  kernel-lt.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h4 id="删除旧版本工具包"><a href="#删除旧版本工具包" class="headerlink" title="删除旧版本工具包"></a>删除旧版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-tools-libs.x86_64 kernel-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h4 id="安装新版本工具包"><a href="#安装新版本工具包" class="headerlink" title="安装新版本工具包"></a>安装新版本工具包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum --disablerepo=\* --enablerepo=elrepo-kernel install kernel-lt-tools.x86_64  -y</span><br></pre></td></tr></table></figure>
+<h3 id="将内核启动修改为本机最新版本"><a href="#将内核启动修改为本机最新版本" class="headerlink" title="将内核启动修改为本机最新版本"></a>将内核启动修改为本机最新版本</h3><h4 id="查看内核版本"><a href="#查看内核版本" class="headerlink" title="查看内核版本"></a>查看内核版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看内核启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# awk -F \&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">0 : CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">1 : CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">2 : CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">3 : CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">4 : CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br><span class="line">或</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看系统可用内核</span></span><br><span class="line">[root@dev-node-1 ~]# grep &quot;^menuentry&quot; /boot/grub2/grub.cfg | cut -d &quot;&#x27;&quot; -f2</span><br><span class="line">CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (3.10.0-1127.13.1.el7.x86_64) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-4acec6de0e4741b6bc249381506fa844) 7 (Core)</span><br><span class="line">CentOS Linux (0-rescue-0ea734564f9a4e2881b866b82d679dfc) 7 (Core)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前实际启动顺序</span></span><br><span class="line">[root@dev-node-1 ~]# grub2-editenv list</span><br><span class="line">saved_entry=CentOS Linux (3.10.0-1127.19.1.el7.x86_64) 7 (Core)</span><br></pre></td></tr></table></figure>
+<h4 id="设置默认启动"><a href="#设置默认启动" class="headerlink" title="设置默认启动"></a>设置默认启动</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-set-default &quot;CentOS Linux (4.4.241-1.el7.elrepo.x86_64) 7 (Core)&quot;</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grub2-set-default 0     // 0代表查看内核启动顺序时的序号</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑/etc/default/grub文件</span></span><br><span class="line">vim /etc/default/grub</span><br><span class="line">GRUB_DEFAULT=saved 改为GRUB_DEFAULT=0</span><br></pre></td></tr></table></figure>
+<h4 id="生成grub配置文件"><a href="#生成grub配置文件" class="headerlink" title="生成grub配置文件"></a>生成grub配置文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# grub2-mkconfig  -o /boot/grub2/grub.cfg</span><br><span class="line">Generating grub configuration file ...</span><br><span class="line">Found linux image: /boot/vmlinuz-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-4.4.241-1.el7.elrepo.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.19.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-1127.13.1.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-4acec6de0e4741b6bc249381506fa844</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-4acec6de0e4741b6bc249381506fa844.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-0ea734564f9a4e2881b866b82d679dfc</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-0ea734564f9a4e2881b866b82d679dfc.img</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="重启-amp-验证"><a href="#重启-amp-验证" class="headerlink" title="重启&amp;验证"></a>重启&amp;验证</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# reboot</span><br><span class="line"></span><br><span class="line">[root@dev-node-1 ~]# uname -r</span><br><span class="line">4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除旧内核（可选）"><a href="#删除旧内核（可选）" class="headerlink" title="删除旧内核（可选）"></a>删除旧内核（可选）</h3><h4 id="查看本机内所有内核"><a href="#查看本机内所有内核" class="headerlink" title="查看本机内所有内核"></a>查看本机内所有内核</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@dev-node-1 ~]# rpm -qa | grep kernel</span><br><span class="line">kernel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-headers-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-lt-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">kernel-lt-tools-4.4.241-1.el7.elrepo.x86_64</span><br><span class="line">abrt-addon-kerneloops-2.1.11-57.el7.centos.x86_64</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line">kernel-lt-tools-libs-4.4.241-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+<h4 id="yum-remove"><a href="#yum-remove" class="headerlink" title="yum remove"></a>yum remove</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum remove kernel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-devel-3.10.0-1127.13.1.el7.x86_64 \</span><br><span class="line">kernel-3.10.0-1127.19.1.el7.x86_64</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>或</p>
+<h4 id="yum-utils工具"><a href="#yum-utils工具" class="headerlink" title="yum-utils工具"></a>yum-utils工具</h4><p>如果安装的内核不多于 3 个，yum-utils 工具不会删除任何一个。只有在安装的内核大于 3 个时，才会自动删除旧内核。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装yum-utils</span></span><br><span class="line">[root@dev-node-1 ~]# yum install yum-utils</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除旧版本</span></span><br><span class="line">package-cleanup --oldkernels</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS7</tag>
+        <tag>kernel</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JumpServer添加访问k8s集群</title>
+    <url>/2022/02/22/JumpServer%E6%B7%BB%E5%8A%A0%E8%AE%BF%E9%97%AEk8s%E9%9B%86%E7%BE%A4/</url>
+    <content><![CDATA[<p>Jumpserver中添加k8s，方便直接从Jumpserver管理k8s集群</p>
+<span id="more"></span>
+
+<h3 id="一、k8s准备"><a href="#一、k8s准备" class="headerlink" title="一、k8s准备"></a>一、k8s准备</h3><h4 id="1-创建对象ClusterRole"><a href="#1-创建对象ClusterRole" class="headerlink" title="1.创建对象ClusterRole"></a>1.创建对象ClusterRole</h4><p>此对象定义具体权限</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">create</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">delete</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deletecollection</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">patch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-创建对象ServiceAccount"><a href="#2-创建对象ServiceAccount" class="headerlink" title="2.创建对象ServiceAccount"></a>2.创建对象ServiceAccount</h4><p>此对象为创建用户，并自动生成Secret对象，即token</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
+<h4 id="3-创建对象ClusterRoleBinding"><a href="#3-创建对象ClusterRoleBinding" class="headerlink" title="3.创建对象ClusterRoleBinding"></a>3.创建对象ClusterRoleBinding</h4><p>此对象将ClusterRole定义的权限赋给ServiceAccount</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-bind-jmsClusterRole</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jmsClusterRole</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jms-serviceaccount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-获取token值"><a href="#4-获取token值" class="headerlink" title="4.获取token值"></a>4.获取token值</h4><p>此步骤也可参考Jumpserver官网：<a href="https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/">https://docs.jumpserver.org/zh/master/admin-guide/app/kubernetes/</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export</span> <span class="string">POD_NAME=`kubectl</span> <span class="string">get</span> <span class="string">secret</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">jms|awk</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span><span class="string">`</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">describe</span> <span class="string">secret</span> <span class="string">$&#123;POD_NAME&#125;</span> <span class="string">-n</span> <span class="string">kube-system|grep</span> <span class="string">&#x27;token:&#x27;</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="attr">token:</span>      <span class="string">it-is-example-token-pZCI6IlB0MUR2dEdtRW5lN19nQWg1WWdWN2o5U1FicTA2dDYtT2VfMk1ScTd0RG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJqbXMtc2VydmljZWFjY291bnQtdG9rZW4tcnB3d2giLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiam1zLXNlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMGZkYjIwOWUtMTgyYi00M2JmLTgyNDctZTAwN2VkOWI1ZTY4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmptcy1zZXJ2aWNlYWNjb3VudCJ9.o8N_m_QtpLOj5OHxvlnepzqypmx8xfE63_GQnzbSfy4deGR1WY0UElxLZcWrajhzHIOP2cBkzVF-X4K6sZoixV1tI0qevHC-gu2v-VZkzv0h-lwbJfMWNV9fiF2alZ9VCVSIXXUBRJ49Wd6ecn8N5_BAIXZ3rLePYxhJA9t_Vlx8l_8stE-AXn9W5IRRy6bzFCpJqR0Mua8BDvv8UJMPT7PPFp3bmBdTNuFOlwpoUNHNtKERGpN19N9Zg05bNaHZwphABOK2mlHDwERAJ3JDFrC1bztUZCYgxXhDQnCG_EJE54SpoMNVvvRgyTw5BJAZYizEmM2_ljytCgdAEznD5g</span></span><br></pre></td></tr></table></figure>
+<h3 id="二、配置Jumpserver"><a href="#二、配置Jumpserver" class="headerlink" title="二、配置Jumpserver"></a>二、配置Jumpserver</h3><h4 id="1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"><a href="#1-创建K8S协议系统账户，“令牌”输入框填入上文获取到的token" class="headerlink" title="1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token"></a>1.创建K8S协议系统账户，“令牌”输入框填入上文获取到的token</h4><p>![输入token]<img height="60%" src="/images/jumpserver-input_token.png" width="60%"/></p>
+<h4 id="2-应用管理-kubernetes中创建应用"><a href="#2-应用管理-kubernetes中创建应用" class="headerlink" title="2.应用管理-kubernetes中创建应用"></a>2.应用管理-kubernetes中创建应用</h4><p>注：“集群”中填写jms能够访问到的集群地址，此处填写TKE提供的内网ip地址<br>![输入集群地址]<img height="60%" src="/images/jumpserver-input_cluster_addr.png" width="60%"/></p>
+<h4 id="3-赋权后即可访问k8s集群信息，测试"><a href="#3-赋权后即可访问k8s集群信息，测试" class="headerlink" title="3.赋权后即可访问k8s集群信息，测试"></a>3.赋权后即可访问k8s集群信息，测试</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Jumpserver</category>
+      </categories>
+      <tags>
+        <tag>jumpserver</tag>
+        <tag>k8s</tag>
+      </tags>
   </entry>
 </search>
